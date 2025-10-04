@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Home, NotFound, Login } from '@pages';
+import { Home, NotFound, Login, SignUp } from '@pages';
 import MainLayout from '@components/layout/MainLayout';
 import { ROUTES } from '@constants';
 
@@ -9,6 +9,7 @@ const AppRoutes = () => {
     <BrowserRouter>
       <Routes>
         <Route path={ROUTES.LOGIN} element={<Login />} />
+        <Route path={ROUTES.REGISTER} element={<SignUp />} />
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} />
           {/* Add more routes here */}
