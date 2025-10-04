@@ -1,8 +1,18 @@
-// Home Page
+import React from 'react';
+import HeroSection from '@components/home/HeroSection';
+import FeaturesSection from '@components/home/FeaturesSection';
+import FAQSection from '@components/home/FAQSection';
+import HowItWorksSection from '@components/home/HowItWorksSection';
+import CTASection from '@components/home/CTASection';
+
 const Home = () => {
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold">Home Page</h1>
+    <div>
+      <HeroSection />
+      <FeaturesSection />
+      <FAQSection />
+      <HowItWorksSection />
+      <CTASection />
     </div>
   );
 };
