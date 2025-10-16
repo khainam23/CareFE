@@ -4,7 +4,8 @@ import ProfessionalInfo from '@components/signup/ProfessionalInfo';
 import Expertise from '@components/signup/Expertise';
 import Education from '@components/signup/Education';
 import FinalStep from '@components/signup/FinalStep';
-import CareNowLogo from '@assets/icons/CareNowLogo.svg';
+import Logo from '@assets/images/Logo.svg';
+import BgImage from '@assets/images/image 16.svg';
 
 const STEPS = {
   ROLE_SELECTION: 1,
@@ -54,12 +55,15 @@ const SignUp = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center py-12 px-4">
-      <div className="w-full max-w-3xl space-y-8">
+    <div
+      className="min-h-screen flex flex-col items-center justify-center py-12 px-4 bg-cover bg-center"
+      style={{ backgroundImage: `url(${BgImage})` }}
+    >
+      <div className="w-full max-w-5xl space-y-8">
         <div className="flex justify-center">
-          <img src={CareNowLogo} alt="CareNow" className="h-7" />
+          <img src={Logo} alt="LifeEase" className="h-24" />
         </div>
-        <div className="bg-white p-8 rounded-xl shadow-sm">
+        <div className="p-2 md:p-4">
           {renderStep()}
         </div>
       </div>

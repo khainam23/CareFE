@@ -1,18 +1,18 @@
 import React from 'react';
-import HeroSection from '@components/home/HeroSection';
-import FeaturesSection from '@components/home/FeaturesSection';
-import FAQSection from '@components/home/FAQSection';
-import HowItWorksSection from '@components/home/HowItWorksSection';
-import CTASection from '@components/home/CTASection';
+// import HeroSection from '@components/home/HeroSection';
+// import FeaturesSection from '@components/home/FeaturesSection';
+// import FAQSection from '@components/home/FAQSection';
+// import HowItWorksSection from '@components/home/HowItWorksSection';
+// import CTASection from '@components/home/CTASection';
 
 const Home = () => {
   return (
     <div>
-      <HeroSection />
+      {/* <HeroSection />
       <FeaturesSection />
       <FAQSection />
       <HowItWorksSection />
-      <CTASection />
+      <CTASection /> */}
     </div>
   );
 };
