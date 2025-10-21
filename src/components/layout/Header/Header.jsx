@@ -1,30 +1,29 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import CareNowLogo from '@assets/icons/CareNowLogo.svg';
 
 const Header = () => {
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
-      <div className="container mx-auto px-6 py-4">
+    <header className="sticky top-0 z-50 bg-white shadow-sm">
+      <div className="container px-6 py-4 mx-auto">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center">
             <img src={CareNowLogo} alt="CareNow" className="h-7" />
           </Link>
 
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/tim-kiem-bao-mau" className="text-gray-700 hover:text-teal-600 transition-colors">
+          <nav className="items-center hidden space-x-8 md:flex">
+            <Link to="/tim-kiem-bao-mau" className="text-gray-700 transition-colors hover:text-teal-600">
               Tìm kiếm báo mẫu
             </Link>
-            <Link to="/tro-thanh-chuyen-vien" className="text-gray-700 hover:text-teal-600 transition-colors">
+            <Link to="/tro-thanh-chuyen-vien" className="text-gray-700 transition-colors hover:text-teal-600">
               Trở thành chuyên viên chăm sóc
             </Link>
-            <Link to="/ve-carenows" className="text-gray-700 hover:text-teal-600 transition-colors">
+            <Link to="/ve-carenows" className="text-gray-700 transition-colors hover:text-teal-600">
               Về CareNows
             </Link>
           </nav>
 
-          <div className="hidden md:flex items-center space-x-4">
-            <Link to="/login" className="text-gray-700 hover:text-teal-600 transition-colors font-medium">
+          <div className="items-center hidden space-x-4 md:flex">
+            <Link to="/login" className="font-medium text-gray-700 transition-colors hover:text-teal-600">
               Đăng nhập
             </Link>
             <Link
