@@ -4,4 +4,6 @@
 
 /* Thiết lập các màu sắc sẽ sử dụng */
 
-
+html, body {
+  height: 100%;
+}
