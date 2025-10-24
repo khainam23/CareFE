@@ -31,7 +31,7 @@ export default function SignUp() {
   // Type Selection Screen
   if (!selectedType) {
     return (
-      <Box components={<TypeSelection types={TYPES} onSelectType={handleTypeSelect} />} title="Chọn loại tài khoản" />
+      <Box components={<TypeSelection types={TYPES} onSelectType={handleTypeSelect} />} title="Tham gia với tư cách khách hàng hoặc chuyên viên chăm sóc" />
     );
   }
 
