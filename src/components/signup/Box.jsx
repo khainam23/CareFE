@@ -4,7 +4,7 @@ import logo from '@assets/images/Logo.svg';
 export default function Box({ components, title }) {
   return (
     <div 
-      className="flex justify-center w-full h-full bg-image align-center"
+      className="flex justify-center w-full min-h-screen bg-center bg-cover align-center"
       style={{ backgroundImage: `url(${image_svg_16})` }}
     >
       {/* Lớp nội dung phía trước */}

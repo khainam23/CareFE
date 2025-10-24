@@ -16,57 +16,70 @@ export default function CustomerSignUp({ currentStep, onNextStep, onPrevStep, on
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
-      {/* Stepper */}
-      <div className="mb-8">
-        <div className="flex justify-between">
-          {CUSTOMER_STEPS.map((step) => (
-            <div key={step.id} className="flex-1">
+    <div className="w-full max-w-4xl mx-auto">
+      {/* Progress Indicator */}
+      <div className="flex justify-center mb-8 align-center">
+        <div className="flex items-center gap-2">
+          {CUSTOMER_STEPS.map((step, index) => (
+            <div key={step.id} className="flex items-center">
               <div
-                className={`p-3 rounded-lg text-center ${
+                className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
                   currentStep >= step.id ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600'
                 }`}
               >
-                <p className="font-semibold">{step.title}</p>
-                <p className="text-sm">{step.description}</p>
+                {step.id}
               </div>
-              {step.id < CUSTOMER_STEPS.length && (
-                <div className={`h-1 ${currentStep > step.id ? 'bg-blue-500' : 'bg-gray-300'}`} />
+              {index < CUSTOMER_STEPS.length - 1 && (
+                <div className={`w-12 h-1 mx-2 ${currentStep > step.id ? 'bg-blue-500' : 'bg-gray-300'}`} />
               )}
             </div>
           ))}
         </div>
       </div>
 
-      {/* Form Content */}
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {currentStep === 1 && <Step1Customer />}
-        {currentStep === 2 && <Step2Customer />}
-        {currentStep === 3 && <Step3Customer />}
+      {/* Form Content - All sections visible */}
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Section 1: Basic Info */}
+        <div className="p-6 bg-white border-2 border-gray-200 rounded-lg">
+          <h2 className="pb-2 mb-4 text-lg font-semibold border-b border-gray-300">
+            {CUSTOMER_STEPS[0].title}
+          </h2>
+          <p className="mb-4 text-sm text-gray-600">{CUSTOMER_STEPS[0].description}</p>
+          <Step1Customer />
+        </div>
+
+        {/* Section 2: Personal Info */}
+        <div className="p-6 bg-white border-2 border-gray-200 rounded-lg">
+          <h2 className="pb-2 mb-4 text-lg font-semibold border-b border-gray-300">
+            {CUSTOMER_STEPS[1].title}
+          </h2>
+          <p className="mb-4 text-sm text-gray-600">{CUSTOMER_STEPS[1].description}</p>
+          <Step2Customer />
+        </div>
+
+        {/* Section 3: Address */}
+        <div className="p-6 bg-white border-2 border-gray-200 rounded-lg">
+          <h2 className="pb-2 mb-4 text-lg font-semibold border-b border-gray-300">
+            {CUSTOMER_STEPS[2].title}
+          </h2>
+          <p className="mb-4 text-sm text-gray-600">{CUSTOMER_STEPS[2].description}</p>
+          <Step3Customer />
+        </div>
 
         {/* Buttons */}
-        <div className="flex justify-end gap-4">
+        <div className="flex justify-end gap-4 pt-4">
           <button
             type="button"
             onClick={onBack}
-            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+            className="px-6 py-2 transition bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
           >
             Quay lại
           </button>
-          {currentStep > 1 && (
-            <button
-              type="button"
-              onClick={onPrevStep}
-              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-            >
-              Trước
-            </button>
-          )}
           <button
             type="submit"
-            className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+            className="px-6 py-2 text-white transition bg-blue-500 rounded-lg hover:bg-blue-600"
           >
-            {currentStep === CUSTOMER_STEPS.length ? 'Hoàn tất' : 'Tiếp theo'}
+            Hoàn tất
           </button>
         </div>
       </form>

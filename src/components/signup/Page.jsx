@@ -4,7 +4,7 @@ import Header from '@components/layout/Header';
 export default function Page({ components }) {
   return (
     <div 
-      className="flex justify-center w-full h-full bg-image align-center"
+      className="flex justify-center w-full min-h-screen bg-center bg-cover align-center"
       style={{ backgroundImage: `url(${image_svg_29})` }}
     >
       {/* Nội dung phía trên */}
