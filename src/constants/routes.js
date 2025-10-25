@@ -8,6 +8,7 @@ export const ROUTES = {
   ABOUT: '/ve-lifeease',
   PROFILE: '/profile',
   CUSTOMER_INFO: '/customer-info',
+  EMPLOYEE_PROFILE: '/employee-profile',
   SETTINGS: '/settings',
   NOT_FOUND: '*',
 };

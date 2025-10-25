@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Home, NotFound, Login, SignUp, FindCaregiver, About, CustomerInfo } from '@pages';
+import { Home, NotFound, Login, SignUp, FindCaregiver, About, CustomerInfo, EmployeeProfile } from '@pages';
 import MainLayout from '@components/layout/MainLayout';
 import { ROUTES } from '@constants';
 
@@ -17,6 +17,7 @@ const AppRoutes = () => {
           <Route path={ROUTES.ABOUT} element={<About />} />
           <Route path={ROUTES.CUSTOMER_INFO} element={<CustomerInfo />} />
           <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
+          <Route path={ROUTES.EMPLOYEE_PROFILE} element={<EmployeeProfile />} />
         </Route>
       </Routes>
     </BrowserRouter>
