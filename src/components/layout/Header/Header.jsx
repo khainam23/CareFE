@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import CareNowLogo from '@assets/icons/CareNowLogo.svg';
+import CareNowLogo from '@assets/images/Logo.svg';
+import {ROUTES} from '@constants';
 
 const Header = () => {
   return (
@@ -7,18 +8,18 @@ const Header = () => {
       <div className="container px-6 py-4 mx-auto">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center">
-            <img src={CareNowLogo} alt="CareNow" className="h-7" />
+            <img src={CareNowLogo} alt="CareNow" className="h-20" />
           </Link>
 
           <nav className="items-center hidden space-x-8 md:flex">
-            <Link to="/tim-kiem-bao-mau" className="text-gray-700 transition-colors hover:text-teal-600">
-              Tìm kiếm báo mẫu
+            <Link to={ROUTES.HOME} className="text-gray-700 transition-colors hover:text-teal-600">
+              Trang chủ
             </Link>
-            <Link to="/tro-thanh-chuyen-vien" className="text-gray-700 transition-colors hover:text-teal-600">
-              Trở thành chuyên viên chăm sóc
+            <Link to={ROUTES.FIND_CAREGIVER} className="text-gray-700 transition-colors hover:text-teal-600">
+              Tìm người chăm sóc
             </Link>
-            <Link to="/ve-carenows" className="text-gray-700 transition-colors hover:text-teal-600">
-              Về CareNows
+            <Link to={ROUTES.ABOUT} className="text-gray-700 transition-colors hover:text-teal-600">
+              Về LifeEase
             </Link>
           </nav>
 

@@ -4,6 +4,8 @@ export const ROUTES = {
   LOGIN: '/login',
   REGISTER: '/register',
   DASHBOARD: '/dashboard',
+  FIND_CAREGIVER: '/tim-kiem-chuyen-vien',
+  ABOUT: '/ve-lifeease',
   PROFILE: '/profile',
   SETTINGS: '/settings',
   NOT_FOUND: '*',

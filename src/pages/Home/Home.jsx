@@ -18,12 +18,6 @@ const Home = () => {
     setSearchForm(prev => ({ ...prev, [name]: value }));
   };
 
-/*************  ✨ Windsurf Command ⭐  *************/
-/**
- * Handle search logic
- * @param {Object} searchForm - Search form with location, time and name
- */
-/*******  42df6659-1bce-4a3f-9ef0-eb6a0049f2a5  *******/
   const handleSearch = () => {
     console.log('Search:', searchForm);
     // Handle search logic
