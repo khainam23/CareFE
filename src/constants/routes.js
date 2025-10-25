@@ -7,6 +7,7 @@ export const ROUTES = {
   FIND_CAREGIVER: '/tim-kiem-chuyen-vien',
   ABOUT: '/ve-lifeease',
   PROFILE: '/profile',
+  CUSTOMER_INFO: '/customer-info',
   SETTINGS: '/settings',
   NOT_FOUND: '*',
 };
