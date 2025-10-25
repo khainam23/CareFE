@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import CareNowLogo from '@assets/icons/CareNowLogo.svg';
+import CareNowLogo from '@assets/images/Logo.svg';
 import { Send } from 'lucide-react';
 
 const Footer = () => {
@@ -10,7 +10,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Logo and Newsletter */}
           <div className="lg:col-span-2">
-            <img src={CareNowLogo} alt="CareNow" className="h-9 mb-6" />
+            <img src={CareNowLogo} alt="CareNow" className="h-20 mb-6" />
             <p className="text-lg mb-4">Đăng ký để nhận những thông tin mới</p>
             <form className="flex">
               <input
