@@ -1,20 +1,100 @@
-// Validation helpers
+// Validation utilities
 export const validateEmail = (email) => {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(email);
-};
-
-export const validatePassword = (password) => {
-  // At least 8 characters, one uppercase, one lowercase, one number
-  const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$/;
-  return re.test(password);
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
 };
 
 export const validatePhone = (phone) => {
-  const re = /^[0-9]{10,11}$/;
-  return re.test(phone);
+  // Vietnamese phone number format: 0xxxxxxxxx or +84xxxxxxxxx
+  const phoneRegex = /^(\+84|0)[0-9]{9}$/;
+  return phoneRegex.test(phone);
+};
+
+export const validatePassword = (password) => {
+  return password && password.length >= 6;
+};
+
+export const validateFullName = (fullName) => {
+  return fullName && fullName.trim().length >= 2 && fullName.trim().length <= 100;
+};
+
+export const validateIdCard = (idCard) => {
+  // Vietnamese ID card: 9-12 digits
+  const idCardRegex = /^[0-9]{9,12}$/;
+  return idCardRegex.test(idCard);
 };
 
 export const validateRequired = (value) => {
-  return value !== null && value !== undefined && value.toString().trim() !== '';
+  return value && value.toString().trim().length > 0;
+};
+
+// Form validation for customer registration
+export const validateCustomerForm = (formData) => {
+  const errors = {};
+  
+  if (!validateEmail(formData.email)) {
+    errors.email = 'Email không hợp lệ';
+  }
+  
+  if (!validatePassword(formData.password)) {
+    errors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
+  }
+  
+  if (!validateFullName(formData.fullName)) {
+    errors.fullName = 'Họ tên phải từ 2-100 ký tự';
+  }
+  
+  if (!validatePhone(formData.phoneNumber)) {
+    errors.phoneNumber = 'Số điện thoại không hợp lệ';
+  }
+  
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors
+  };
+};
+
+// Form validation for caregiver registration
+export const validateCaregiverForm = (formData) => {
+  const errors = {};
+  
+  if (!validateEmail(formData.email)) {
+    errors.email = 'Email không hợp lệ';
+  }
+  
+  if (!validatePassword(formData.password)) {
+    errors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
+  }
+  
+  if (!validateFullName(formData.fullName)) {
+    errors.fullName = 'Họ tên phải từ 2-100 ký tự';
+  }
+  
+  if (!validatePhone(formData.phoneNumber)) {
+    errors.phoneNumber = 'Số điện thoại không hợp lệ';
+  }
+  
+  if (!validateRequired(formData.address)) {
+    errors.address = 'Địa chỉ không được để trống';
+  }
+  
+  if (!validateIdCard(formData.idCardNumber)) {
+    errors.idCardNumber = 'Số CMND/CCCD phải có 9-12 chữ số';
+  }
+  
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors
+  };
+};
+
+export default {
+  validateEmail,
+  validatePhone,
+  validatePassword,
+  validateFullName,
+  validateIdCard,
+  validateRequired,
+  validateCustomerForm,
+  validateCaregiverForm
 };
