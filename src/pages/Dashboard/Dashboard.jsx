@@ -11,7 +11,7 @@ export default function Dashboard() {
     navigate('/login');
   };
 
-  const userRole = user?.role || user?.roles?.[0] || 'User';
+  const userRole = (user?.role || user?.roles?.[0] || 'User').replace('ROLE_', '');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -89,6 +89,15 @@ export default function Dashboard() {
                 <h3 className="text-sm font-medium text-blue-800">Quyền Support</h3>
                 <p className="text-xs text-blue-700 mt-1">
                   Bạn có quyền hỗ trợ và quản lý yêu cầu khách hàng
+                </p>
+              </div>
+            )}
+
+            {userRole.toLowerCase() === 'caregiver' && (
+              <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <h3 className="text-sm font-medium text-green-800">Quyền Caregiver</h3>
+                <p className="text-xs text-green-700 mt-1">
+                  Bạn có quyền quản lý hồ sơ và lịch làm việc của mình
                 </p>
               </div>
             )}

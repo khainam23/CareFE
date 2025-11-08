@@ -13,11 +13,11 @@ const AppRoutes = () => {
         <Route path={ROUTES.LOGIN} element={<Login />} />
         <Route path={ROUTES.REGISTER} element={<SignUp />} />
         
-        {/* Protected Dashboard Route - Admin & Support only */}
+        {/* Protected Dashboard Route - Admin, Support & Caregiver */}
         <Route 
           path={ROUTES.DASHBOARD} 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'support']}>
+            <ProtectedRoute allowedRoles={['admin', 'support', 'caregiver']}>
               <Dashboard />
             </ProtectedRoute>
           } 

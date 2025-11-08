@@ -12,7 +12,12 @@ export const authService = {
       }
       return response.data;
     } catch (error) {
-      throw error.response?.data || error.message;
+      console.error('Login error details:', error.response?.data || error);
+      const errorData = error.response?.data;
+      if (errorData) {
+        throw new Error(errorData.message || 'Đăng nhập thất bại');
+      }
+      throw new Error(error.message || 'Có lỗi xảy ra khi đăng nhập');
     }
   },
 

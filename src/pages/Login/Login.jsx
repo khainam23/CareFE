@@ -32,22 +32,36 @@ export default function Login() {
 
   // Hàm điều hướng theo vai trò
   const redirectByRole = (userData) => {
-    const role = userData.role || userData.roles?.[0];
+    console.log('Redirecting user with data:', userData);
+    // Backend trả về roles là array với format ROLE_XXX, lấy role đầu tiên
+    const roleWithPrefix = userData.roles?.[0] || userData.role;
+    console.log('User role with prefix:', roleWithPrefix);
     
-    switch (role?.toLowerCase()) {
+    if (!roleWithPrefix) {
+      console.error('No role found for user');
+      navigate('/');
+      return;
+    }
+    
+    // Loại bỏ prefix "ROLE_" nếu có
+    const role = roleWithPrefix.replace('ROLE_', '').toLowerCase();
+    console.log('Processed role:', role);
+    
+    switch (role) {
       case 'admin':
         navigate('/dashboard');
         break;
       case 'support':
         navigate('/dashboard');
         break;
+      case 'caregiver':
+        navigate('/dashboard');
+        break;
       case 'customer':
         navigate('/');
         break;
-      case 'caregiver':
-        navigate('/employee-profile');
-        break;
       default:
+        console.warn('Unknown role, redirecting to home:', role);
         navigate('/');
     }
   };
@@ -90,6 +104,8 @@ export default function Login() {
 
     try {
       const response = await login(formData);
+      console.log('Login response:', response);
+      
       if (response.success) {
         // Xử lý ghi nhớ đăng nhập
         if (rememberMe) {
@@ -104,6 +120,9 @@ export default function Login() {
         
         // Điều hướng theo vai trò
         redirectByRole(response.data);
+      } else {
+        // Trường hợp response không success
+        alert(response.message || 'Đăng nhập thất bại');
       }
     } catch (error) {
       console.error('Login error:', error);

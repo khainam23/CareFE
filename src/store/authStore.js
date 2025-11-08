@@ -82,7 +82,13 @@ export const useAuthStore = create((set, get) => ({
   // Check if user has specific role
   hasRole: (role) => {
     const { user } = get();
-    return user?.roles?.includes(role) || false;
+    if (!user?.roles) return false;
+    
+    // Xử lý cả trường hợp có và không có prefix ROLE_
+    const roleToCheck = role.startsWith('ROLE_') ? role : `ROLE_${role.toUpperCase()}`;
+    return user.roles.some(r => 
+      r === roleToCheck || r === role || r.replace('ROLE_', '') === role.toUpperCase()
+    );
   },
 
   // Update user info

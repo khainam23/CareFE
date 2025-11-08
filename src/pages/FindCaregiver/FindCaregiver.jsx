@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/common';
 import { Star, MapPin, Clock } from 'lucide-react';
-import { customerService } from '@/services/customerService';
+import { publicService } from '@/services/publicService';
 import { useNavigate } from 'react-router-dom';
 
 const CAREGIVER_TYPES = ['Bảo mẫu toàn thời gian', 'Bảo mẫu theo giờ', 'Người giúp việc nhà'];
@@ -43,17 +43,26 @@ function FindCaregiver() {
       try {
         setLoading(true);
         setError(null);
-        const response = await customerService.getCaregivers();
+        const response = await publicService.getCaregivers();
+        
+        console.log('API Response:', response);
         
         // Extract data from ApiResponse structure
         if (response.success && response.data) {
+          setCaregivers(response.data);
+        } else if (Array.isArray(response)) {
+          // If response is directly an array
+          setCaregivers(response);
+        } else if (response.data && Array.isArray(response.data)) {
+          // If data is nested
           setCaregivers(response.data);
         } else {
           setCaregivers([]);
         }
       } catch (err) {
         console.error('Error fetching caregivers:', err);
-        setError(err.message || 'Không thể tải danh sách bảo mẫu');
+        const errorMsg = err?.message || err?.error || JSON.stringify(err) || 'Không thể tải danh sách bảo mẫu';
+        setError(errorMsg);
         setCaregivers([]);
       } finally {
         setLoading(false);

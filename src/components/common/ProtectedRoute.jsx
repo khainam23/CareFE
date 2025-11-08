@@ -9,9 +9,9 @@ export default function ProtectedRoute({ children, allowedRoles = [] }) {
   }
 
   if (allowedRoles.length > 0) {
-    const userRole = user?.role || user?.roles?.[0];
+    const userRole = (user?.role || user?.roles?.[0] || '').replace('ROLE_', '');
     const hasPermission = allowedRoles.some(
-      role => role.toLowerCase() === userRole?.toLowerCase()
+      role => role.toLowerCase() === userRole.toLowerCase()
     );
 
     if (!hasPermission) {

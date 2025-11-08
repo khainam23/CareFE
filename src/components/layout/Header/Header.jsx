@@ -46,12 +46,12 @@ const Header = () => {
 
   const getDashboardLink = () => {
     const role = user?.role || user?.roles?.[0];
-    switch (role?.toLowerCase()) {
+    const roleNormalized = role?.replace('ROLE_', '').toLowerCase();
+    switch (roleNormalized) {
       case 'admin':
       case 'support':
-        return '/dashboard';
       case 'caregiver':
-        return '/employee-profile';
+        return '/dashboard';
       case 'customer':
         return '/customer-info';
       default:
@@ -102,24 +102,25 @@ const Header = () => {
                       <p className="text-sm font-medium text-gray-900">{user?.email}</p>
                       <p className="text-xs text-gray-500">{getUserRole()}</p>
                     </div>
-                    
-                    <Link
-                      to={getDashboardLink()}
-                      onClick={() => setShowDropdown(false)}
-                      className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                    >
-                      <User className="w-4 h-4" />
-                      <span>Trang cá nhân</span>
-                    </Link>
 
-                    <Link
-                      to="/settings"
-                      onClick={() => setShowDropdown(false)}
-                      className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                    >
-                      <Settings className="w-4 h-4" />
-                      <span>Cài đặt</span>
-                    </Link>
+                    <div className="py-2">
+                      <Link
+                        to={getDashboardLink()}
+                        onClick={() => setShowDropdown(false)}
+                        className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                      >
+                        <User className="w-4 h-4" />
+                        <span>Dashboard</span>
+                      </Link>
+                      <Link
+                        to="/settings"
+                        onClick={() => setShowDropdown(false)}
+                        className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                      >
+                        <Settings className="w-4 h-4" />
+                        <span>Cài đặt</span>
+                      </Link>
+                    </div>
 
                     <div className="border-t border-gray-100 mt-2 pt-2">
                       <button
