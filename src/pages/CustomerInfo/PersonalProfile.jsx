@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, Mail, Phone, MapPin, Calendar, Edit2, Check, X, Loader2 } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Calendar, Edit2, Check, X, Loader2, Clock, FileText } from 'lucide-react';
 import { customerService } from '@/services/customerService';
 import { useAuthStore } from '@/store/authStore';
 import Swal from 'sweetalert2';
@@ -21,6 +21,11 @@ const PersonalProfile = () => {
   });
 
   const [editForm, setEditForm] = useState(profile);
+  
+  // Bookings state
+  const [bookings, setBookings] = useState([]);
+  const [bookingsLoading, setBookingsLoading] = useState(false);
+  const [bookingsError, setBookingsError] = useState(null);
 
   // Fetch profile data on mount
   useEffect(() => {
@@ -33,6 +38,7 @@ const PersonalProfile = () => {
     }
     
     fetchProfile();
+    fetchBookings();
   }, []);
 
   const fetchProfile = async () => {
@@ -139,6 +145,57 @@ const PersonalProfile = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Fetch bookings
+  const fetchBookings = async () => {
+    try {
+      setBookingsLoading(true);
+      setBookingsError(null);
+      const response = await customerService.getBookings();
+      
+      console.log('Bookings response:', response);
+      
+      if (response.success && response.data) {
+        setBookings(response.data);
+      } else {
+        setBookingsError(response.message || 'Không thể tải lịch chăm sóc');
+      }
+    } catch (error) {
+      console.error('Error fetching bookings:', error);
+      setBookingsError(error.message || 'Không thể tải lịch chăm sóc');
+    } finally {
+      setBookingsLoading(false);
+    }
+  };
+
+  // Get status badge color
+  const getStatusBadge = (status) => {
+    const statusConfig = {
+      PENDING: { label: 'Chờ xác nhận', color: 'bg-yellow-100 text-yellow-800' },
+      CONFIRMED: { label: 'Đã xác nhận', color: 'bg-blue-100 text-blue-800' },
+      IN_PROGRESS: { label: 'Đang thực hiện', color: 'bg-green-100 text-green-800' },
+      COMPLETED: { label: 'Hoàn thành', color: 'bg-gray-100 text-gray-800' },
+      CANCELLED: { label: 'Đã hủy', color: 'bg-red-100 text-red-800' },
+    };
+    
+    return statusConfig[status] || { label: status, color: 'bg-gray-100 text-gray-800' };
+  };
+
+  // Format date
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleDateString('vi-VN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+  };
+
+  // Format time
+  const formatTime = (timeString) => {
+    if (!timeString) return '';
+    return timeString.substring(0, 5); // HH:mm
   };
 
   // Loading state
@@ -393,6 +450,127 @@ const PersonalProfile = () => {
               <X size={18} />
               Hủy
             </button>
+          </div>
+        )}
+      </div>
+
+      {/* Bookings Section */}
+      <div className="bg-white rounded-lg border border-gray-200 p-8">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+            <Calendar size={24} className="text-teal-600" />
+            Lịch chăm sóc đã đặt
+          </h3>
+          {!bookingsLoading && bookings.length > 0 && (
+            <span className="text-sm text-gray-600">
+              {bookings.length} lịch hẹn
+            </span>
+          )}
+        </div>
+
+        {bookingsLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <Loader2 className="w-8 h-8 animate-spin text-teal-500 mx-auto mb-2" />
+              <p className="text-gray-600">Đang tải lịch chăm sóc...</p>
+            </div>
+          </div>
+        ) : bookingsError ? (
+          <div className="text-center py-12">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <X className="w-8 h-8 text-red-500" />
+            </div>
+            <p className="text-gray-600 mb-4">{bookingsError}</p>
+            <button
+              onClick={fetchBookings}
+              className="px-6 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors"
+            >
+              Thử lại
+            </button>
+          </div>
+        ) : bookings.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Calendar className="w-8 h-8 text-gray-400" />
+            </div>
+            <p className="text-gray-600">Chưa có lịch chăm sóc nào</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {bookings.map((booking) => {
+              const statusBadge = getStatusBadge(booking.status);
+              return (
+                <div
+                  key={booking.id}
+                  className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h4 className="text-lg font-semibold text-gray-800">
+                          {booking.caregiverName || 'Người chăm sóc'}
+                        </h4>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusBadge.color}`}>
+                          {statusBadge.label}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600">
+                        Mã đặt lịch: #{booking.id}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex items-center gap-2 text-gray-700">
+                      <Calendar size={16} className="text-teal-600" />
+                      <span className="text-sm">
+                        <span className="font-medium">Ngày:</span> {formatDate(booking.startDate)}
+                        {booking.endDate && booking.endDate !== booking.startDate && 
+                          ` - ${formatDate(booking.endDate)}`
+                        }
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-gray-700">
+                      <Clock size={16} className="text-teal-600" />
+                      <span className="text-sm">
+                        <span className="font-medium">Giờ:</span> {formatTime(booking.startTime)}
+                        {booking.endTime && ` - ${formatTime(booking.endTime)}`}
+                      </span>
+                    </div>
+
+                    {booking.address && (
+                      <div className="flex items-center gap-2 text-gray-700 md:col-span-2">
+                        <MapPin size={16} className="text-teal-600" />
+                        <span className="text-sm">
+                          <span className="font-medium">Địa chỉ:</span> {booking.address}
+                        </span>
+                      </div>
+                    )}
+
+                    {booking.notes && (
+                      <div className="flex items-start gap-2 text-gray-700 md:col-span-2">
+                        <FileText size={16} className="text-teal-600 mt-0.5" />
+                        <span className="text-sm">
+                          <span className="font-medium">Ghi chú:</span> {booking.notes}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {booking.totalPrice && (
+                    <div className="mt-4 pt-4 border-t border-gray-200">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600">Tổng chi phí:</span>
+                        <span className="text-lg font-bold text-teal-600">
+                          {booking.totalPrice.toLocaleString('vi-VN')} VNĐ
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

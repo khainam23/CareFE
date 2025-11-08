@@ -1,59 +1,171 @@
-import React, { useState } from 'react';
-import { Calendar, Clock, MapPin, User, Star, Check, X, ChevronDown } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Calendar, Clock, MapPin, User, Star, Check, X, ChevronDown, Loader2 } from 'lucide-react';
+import { customerService } from '@/services/customerService';
+import Swal from 'sweetalert2';
 
 const ScheduledCare = () => {
   const [expandedId, setExpandedId] = useState(null);
-  const [appointments, setAppointments] = useState([
-    {
-      id: 1,
-      caregiver: 'Chị Trang',
-      service: 'Chăm sóc tại nhà',
-      date: '2024-01-20',
-      time: '08:00 - 12:00',
-      address: '123 Đường ABC, Quận 1, TP.HCM',
-      status: 'confirmed',
-      rating: null,
-    },
-    {
-      id: 2,
-      caregiver: 'Anh Minh',
-      service: 'Theo dõi sức khỏe',
-      date: '2024-01-22',
-      time: '14:00 - 15:30',
-      address: '123 Đường ABC, Quận 1, TP.HCM',
-      status: 'completed',
-      rating: 5,
-    },
-    {
-      id: 3,
-      caregiver: 'Chị Hoa',
-      service: 'Chăm sóc tại nhà',
-      date: '2024-01-25',
-      time: '09:00 - 13:00',
-      address: '123 Đường ABC, Quận 1, TP.HCM',
-      status: 'completed',
-      rating: 4,
-    },
-    {
-      id: 4,
-      caregiver: 'Anh Toàn',
-      service: 'Dịch vụ linh hoạt',
-      date: '2024-02-01',
-      time: '10:00 - 11:30',
-      address: '123 Đường ABC, Quận 1, TP.HCM',
-      status: 'pending',
-      rating: null,
-    },
-  ]);
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handleRating = (id, rating) => {
-    setAppointments(appointments.map(apt =>
-      apt.id === id ? { ...apt, rating } : apt
-    ));
+  // Fetch bookings on mount
+  useEffect(() => {
+    fetchBookings();
+  }, []);
+
+  const fetchBookings = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await customerService.getBookings();
+      
+      console.log('Bookings response:', response);
+      
+      if (response.success && response.data) {
+        // Transform API data to match component structure
+        const transformedData = response.data.map(booking => ({
+          id: booking.id,
+          caregiver: booking.caregiverName || 'Người chăm sóc',
+          service: booking.serviceType || 'Dịch vụ chăm sóc',
+          date: formatDate(booking.startDate),
+          time: `${formatTime(booking.startTime)}${booking.endTime ? ' - ' + formatTime(booking.endTime) : ''}`,
+          address: booking.address || '',
+          status: mapStatus(booking.status),
+          rating: booking.rating || null,
+          rawData: booking, // Keep original data for reference
+        }));
+        setAppointments(transformedData);
+      } else {
+        const errorMsg = response.message || 'Không thể tải lịch chăm sóc';
+        setError(errorMsg);
+      }
+    } catch (error) {
+      console.error('Error fetching bookings:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Không thể tải lịch chăm sóc';
+      setError(errorMessage);
+      
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi tải dữ liệu',
+        text: errorMessage,
+        confirmButtonText: 'Thử lại',
+        showCancelButton: true,
+        cancelButtonText: 'Đóng',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetchBookings();
+        }
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleCancel = (id) => {
-    setAppointments(appointments.filter(apt => apt.id !== id));
+  // Map API status to component status
+  const mapStatus = (apiStatus) => {
+    const statusMap = {
+      'PENDING': 'pending',
+      'CONFIRMED': 'confirmed',
+      'IN_PROGRESS': 'confirmed',
+      'COMPLETED': 'completed',
+      'CANCELLED': 'cancelled',
+    };
+    return statusMap[apiStatus] || 'pending';
+  };
+
+  // Format date
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleDateString('vi-VN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+  };
+
+  // Format time
+  const formatTime = (timeString) => {
+    if (!timeString) return '';
+    return timeString.substring(0, 5); // HH:mm
+  };
+
+  const handleRating = async (id, rating) => {
+    try {
+      const appointment = appointments.find(apt => apt.id === id);
+      if (!appointment) return;
+
+      // Call API to create review
+      const response = await customerService.createReview({
+        bookingId: id,
+        caregiverId: appointment.rawData?.caregiverId,
+        rating: rating,
+        comment: '', // Can add comment field later
+      });
+
+      if (response.success) {
+        setAppointments(appointments.map(apt =>
+          apt.id === id ? { ...apt, rating } : apt
+        ));
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'Cảm ơn!',
+          text: 'Đánh giá của bạn đã được ghi nhận',
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      }
+    } catch (error) {
+      console.error('Error rating appointment:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi',
+        text: error.message || 'Không thể gửi đánh giá',
+      });
+    }
+  };
+
+  const handleCancel = async (id) => {
+    const result = await Swal.fire({
+      title: 'Xác nhận hủy',
+      text: 'Bạn có chắc muốn hủy buổi chăm sóc này?',
+      icon: 'warning',
+      input: 'textarea',
+      inputPlaceholder: 'Lý do hủy (không bắt buộc)',
+      showCancelButton: true,
+      confirmButtonText: 'Hủy buổi',
+      cancelButtonText: 'Đóng',
+      confirmButtonColor: '#ef4444',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await customerService.cancelBooking(id, result.value || '');
+        
+        if (response.success) {
+          // Update local state
+          setAppointments(appointments.map(apt =>
+            apt.id === id ? { ...apt, status: 'cancelled' } : apt
+          ));
+          
+          Swal.fire({
+            icon: 'success',
+            title: 'Đã hủy',
+            text: 'Buổi chăm sóc đã được hủy thành công',
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        }
+      } catch (error) {
+        console.error('Error cancelling appointment:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Lỗi',
+          text: error.message || 'Không thể hủy buổi chăm sóc',
+        });
+      }
+    }
   };
 
   const getStatusBadge = (status) => {
@@ -70,6 +182,39 @@ const ScheduledCare = () => {
       </span>
     );
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-teal-500 mx-auto mb-2" />
+          <p className="text-gray-600">Đang tải lịch chăm sóc...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center max-w-md">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <X className="w-8 h-8 text-red-500" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">Không thể tải dữ liệu</h3>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={fetchBookings}
+            className="px-6 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors"
+          >
+            Thử lại
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
