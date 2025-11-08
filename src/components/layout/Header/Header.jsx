@@ -104,14 +104,35 @@ const Header = () => {
                     </div>
 
                     <div className="py-2">
-                      <Link
-                        to={getDashboardLink()}
-                        onClick={() => setShowDropdown(false)}
-                        className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                      >
-                        <User className="w-4 h-4" />
-                        <span>Dashboard</span>
-                      </Link>
+                      {(() => {
+                        const role = user?.role || user?.roles?.[0];
+                        const roleNormalized = role?.replace('ROLE_', '').toLowerCase();
+                        
+                        if (roleNormalized === 'customer') {
+                          return (
+                            <Link
+                              to="/customer-info"
+                              onClick={() => setShowDropdown(false)}
+                              className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                            >
+                              <User className="w-4 h-4" />
+                              <span>Thông tin cá nhân</span>
+                            </Link>
+                          );
+                        } else if (roleNormalized === 'admin' || roleNormalized === 'caregiver' || roleNormalized === 'support') {
+                          return (
+                            <Link
+                              to="/dashboard"
+                              onClick={() => setShowDropdown(false)}
+                              className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                            >
+                              <User className="w-4 h-4" />
+                              <span>Dashboard</span>
+                            </Link>
+                          );
+                        }
+                        return null;
+                      })()}
                       <Link
                         to="/settings"
                         onClick={() => setShowDropdown(false)}

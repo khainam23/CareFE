@@ -102,12 +102,14 @@ function CaregiverDetail() {
 
   const handleBookingSubmit = async (bookingData) => {
     try {
-      // Format data theo yêu cầu của backend
+      // Format data theo yêu cầu của backend API
       const formattedData = {
+        serviceId: 1, // Default service ID - you may want to make this dynamic
         caregiverId: bookingData.caregiverId,
-        startDate: `${bookingData.startDate}T${bookingData.startTime}:00`,
-        endDate: `${bookingData.endDate}T${bookingData.endTime}:00`,
-        notes: bookingData.notes || '',
+        scheduledStartTime: `${bookingData.startDate}T${bookingData.startTime}:00`,
+        scheduledEndTime: `${bookingData.endDate}T${bookingData.endTime}:00`,
+        location: caregiver?.address || '',
+        customerNote: bookingData.notes || '',
       };
 
       console.log('Sending booking data:', formattedData);
@@ -122,11 +124,21 @@ function CaregiverDetail() {
       }, 2000);
     } catch (err) {
       console.error('Booking error:', err);
-      // Show detailed error message
-      const errorMessage = err?.data?.message || err?.message || 'Có lỗi xảy ra khi đặt lịch';
-      const errorDetails = err?.data?.data ? JSON.stringify(err.data.data) : '';
-      console.error('Error details:', errorDetails);
-      throw new Error(`${errorMessage}${errorDetails ? ': ' + errorDetails : ''}`);
+      // Show detailed error message with validation details
+      let errorMessage = err?.message || 'Có lỗi xảy ra khi đặt lịch';
+      
+      // Extract validation errors if available
+      if (err?.data && typeof err.data === 'object') {
+        const validationErrors = Object.entries(err.data)
+          .map(([field, message]) => `${field}: ${message}`)
+          .join(', ');
+        if (validationErrors) {
+          errorMessage += ` - ${validationErrors}`;
+        }
+      }
+      
+      console.error('Error details:', err);
+      throw new Error(errorMessage);
     }
   };
 
@@ -214,11 +226,6 @@ function CaregiverDetail() {
 
                   <div className="space-y-3 mb-6">
                     <div className="flex items-center gap-3 text-gray-700">
-                      <Clock size={20} className="text-teal-500" />
-                      <span>{caregiver.caregiverType || 'N/A'}</span>
-                    </div>
-
-                    <div className="flex items-center gap-3 text-gray-700">
                       <MapPin size={20} className="text-teal-500" />
                       <span>{caregiver.address || 'N/A'}</span>
                     </div>
@@ -241,16 +248,6 @@ function CaregiverDetail() {
                         <span>{caregiver.email}</span>
                       </div>
                     )}
-                  </div>
-
-                  <div className="flex gap-3">
-                    <Button variant="primary" className="flex items-center gap-2">
-                      <MessageCircle size={18} />
-                      Liên hệ ngay
-                    </Button>
-                    <Button variant="secondary" onClick={handleBooking}>
-                      Đặt lịch
-                    </Button>
                   </div>
                 </div>
               </div>
@@ -347,9 +344,6 @@ function CaregiverDetail() {
               <div className="space-y-3">
                 <Button variant="primary" className="w-full" onClick={handleBooking}>
                   Đặt lịch ngay
-                </Button>
-                <Button variant="secondary" className="w-full">
-                  Lưu hồ sơ
                 </Button>
               </div>
 
