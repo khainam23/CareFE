@@ -1,20 +1,97 @@
-import React, { useState } from 'react';
-import { Button, Input } from '@/components/common';
-import { User, Mail, Phone, MapPin, Calendar, Edit2, Check, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { User, Mail, Phone, MapPin, Calendar, Edit2, Check, X, Loader2 } from 'lucide-react';
+import { customerService } from '@/services/customerService';
+import { useAuthStore } from '@/store/authStore';
+import Swal from 'sweetalert2';
 
 const PersonalProfile = () => {
+  const { updateUser } = useAuthStore();
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
   const [profile, setProfile] = useState({
-    name: 'Nguyễn Văn A',
-    email: 'nguyenvana@email.com',
-    phone: '0912345678',
-    address: '123 Đường ABC, Quận 1, TP.HCM',
-    dateOfBirth: '1990-01-15',
-    gender: 'Nam',
-    notes: 'Có bệnh tiểu đường, cần chăm sóc đặc biệt',
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    dateOfBirth: '',
+    gender: '',
+    notes: '',
   });
 
   const [editForm, setEditForm] = useState(profile);
+
+  // Fetch profile data on mount
+  useEffect(() => {
+    // Check if user is authenticated
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError('Vui lòng đăng nhập để xem thông tin cá nhân');
+      setLoading(false);
+      return;
+    }
+    
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await customerService.getProfile();
+      
+      console.log('Profile response:', response);
+      
+      if (response.success && response.data) {
+        const profileData = {
+          name: response.data.name || '',
+          email: response.data.email || '',
+          phone: response.data.phone || '',
+          address: response.data.address || '',
+          dateOfBirth: response.data.dateOfBirth || '',
+          gender: response.data.gender || '',
+          notes: response.data.notes || '',
+        };
+        setProfile(profileData);
+        setEditForm(profileData);
+      } else {
+        // If API returns success: false, show error message
+        const errorMsg = response.message || 'Không thể tải thông tin';
+        setError(errorMsg);
+        throw new Error(errorMsg);
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      
+      // Show detailed error message
+      const errorMessage = error.response?.data?.message || error.message || 'Không thể tải thông tin cá nhân';
+      setError(errorMessage);
+      
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi tải dữ liệu',
+        html: `
+          <p>${errorMessage}</p>
+          <p class="text-sm text-gray-600 mt-2">Có thể do:</p>
+          <ul class="text-sm text-left text-gray-600 mt-1">
+            <li>• Backend chưa chạy</li>
+            <li>• Token hết hạn</li>
+            <li>• Không có quyền truy cập</li>
+          </ul>
+        `,
+        confirmButtonText: 'Thử lại',
+        showCancelButton: true,
+        cancelButtonText: 'Đóng',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetchProfile();
+        }
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -25,15 +102,77 @@ const PersonalProfile = () => {
     setIsEditing(false);
   };
 
-  const handleSave = () => {
-    setProfile(editForm);
-    setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+      const response = await customerService.updateProfile(editForm);
+      
+      if (response.success) {
+        setProfile(editForm);
+        setIsEditing(false);
+        
+        // Update user in auth store if name changed
+        if (editForm.name !== profile.name) {
+          updateUser({ name: editForm.name });
+        }
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'Thành công',
+          text: 'Cập nhật thông tin thành công',
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi',
+        text: error.message || 'Không thể cập nhật thông tin',
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditForm(prev => ({ ...prev, [name]: value }));
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-teal-500 mx-auto mb-2" />
+          <p className="text-gray-600">Đang tải thông tin...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state - show error message with retry button
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center max-w-md">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <X className="w-8 h-8 text-red-500" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">Không thể tải thông tin</h3>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={fetchProfile}
+            className="px-6 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors"
+          >
+            Thử lại
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -43,7 +182,8 @@ const PersonalProfile = () => {
         {!isEditing && (
           <button
             onClick={handleEdit}
-            className="flex items-center gap-2 px-4 py-2 text-teal-600 hover:bg-teal-50 rounded-lg transition-colors"
+            disabled={saving}
+            className="flex items-center gap-2 px-4 py-2 text-teal-600 hover:bg-teal-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Edit2 size={18} />
             Chỉnh sửa
@@ -230,14 +370,25 @@ const PersonalProfile = () => {
           <div className="flex gap-4 mt-8">
             <button
               onClick={handleSave}
-              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors font-medium"
+              disabled={saving}
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Check size={18} />
-              Lưu thay đổi
+              {saving ? (
+                <>
+                  <Loader2 size={18} className="animate-spin" />
+                  Đang lưu...
+                </>
+              ) : (
+                <>
+                  <Check size={18} />
+                  Lưu thay đổi
+                </>
+              )}
             </button>
             <button
               onClick={handleCancel}
-              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+              disabled={saving}
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <X size={18} />
               Hủy
