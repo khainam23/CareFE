@@ -5,6 +5,7 @@ export const ROUTES = {
   REGISTER: '/register',
   DASHBOARD: '/dashboard',
   FIND_CAREGIVER: '/tim-kiem-chuyen-vien',
+  CAREGIVER_DETAIL: '/caregivers/:id',
   ABOUT: '/ve-lifeease',
   PROFILE: '/profile',
   CUSTOMER_INFO: '/customer-info',
