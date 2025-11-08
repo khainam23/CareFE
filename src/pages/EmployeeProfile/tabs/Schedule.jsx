@@ -1,8 +1,57 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Rectangle131 from '@/assets/images/Rectangle 131.svg';
+import { caregiverService } from '@/services/caregiverService';
 
 const Schedule = () => {
   const [activeTab, setActiveTab] = useState('pending');
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchBookings();
+  }, []);
+
+  const fetchBookings = async () => {
+    try {
+      setLoading(true);
+      const response = await caregiverService.getBookings();
+      if (response.success) {
+        setBookings(response.data || []);
+      }
+    } catch (err) {
+      console.error('Error fetching bookings:', err);
+      setError(err.message || 'Không thể tải dữ liệu');
+      setBookings([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAcceptBooking = async (bookingId) => {
+    try {
+      const response = await caregiverService.acceptBooking(bookingId);
+      if (response.success) {
+        fetchBookings();
+      }
+    } catch (err) {
+      alert(err.message || 'Không thể chấp nhận đơn');
+    }
+  };
+
+  const handleRejectBooking = async (bookingId) => {
+    const reason = prompt('Lý do từ chối:');
+    if (!reason) return;
+    
+    try {
+      const response = await caregiverService.rejectBooking(bookingId, reason);
+      if (response.success) {
+        fetchBookings();
+      }
+    } catch (err) {
+      alert(err.message || 'Không thể từ chối đơn');
+    }
+  };
 
   // Mock data for fixed schedule
   const fixedSchedule = [
@@ -15,51 +64,49 @@ const Schedule = () => {
     { day: 'Chủ nhật', hours: 'Nghỉ', status: 'Ngày nghỉ' },
   ];
 
-  // Mock data for appointments
-  const appointments = {
-    pending: [
-      {
-        id: 1,
-        customerName: 'Bà Nguyễn Thị A',
-        date: '15/01/2025',
-        time: '14:00 - 16:00',
-        hospital: 'Bệnh viện Quốc tế',
-        notes: 'Chăm sóc sau phẫu thuật',
-        price: '500,000 đ',
-      },
-      {
-        id: 2,
-        customerName: 'Ông Trần Văn B',
-        date: '16/01/2025',
-        time: '09:00 - 11:00',
-        hospital: 'Bệnh viện Hữu nghị',
-        notes: 'Chăm sóc bệnh nhân cao tuổi',
-        price: '400,000 đ',
-      },
-    ],
-    approved: [
-      {
-        id: 3,
-        customerName: 'Chị Lê Thị C',
-        date: '14/01/2025',
-        time: '10:00 - 12:00',
-        hospital: 'Bệnh viện Nhi đồng',
-        notes: 'Chăm sóc hôm nay',
-        price: '450,000 đ',
-      },
-    ],
-    cancelled: [
-      {
-        id: 4,
-        customerName: 'Cô Phạm Thị D',
-        date: '13/01/2025',
-        time: '15:00 - 17:00',
-        hospital: 'Phòng khám đa khoa',
-        notes: 'Đã hủy',
-        price: '350,000 đ',
-      },
-    ],
+  // Filter bookings by status
+  const getFilteredBookings = () => {
+    if (!bookings || bookings.length === 0) return [];
+    
+    switch (activeTab) {
+      case 'pending':
+        return bookings.filter(b => b.status === 'ASSIGNED' || b.status === 'PENDING');
+      case 'approved':
+        return bookings.filter(b => b.status === 'ACCEPTED' || b.status === 'IN_PROGRESS');
+      case 'cancelled':
+        return bookings.filter(b => b.status === 'CANCELLED' || b.status === 'REJECTED');
+      default:
+        return bookings;
+    }
   };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN');
+  };
+
+  const formatTime = (startTime, endTime) => {
+    if (!startTime || !endTime) return '';
+    const start = new Date(startTime).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    const end = new Date(endTime).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    return `${start} - ${end}`;
+  };
+
+  const formatPrice = (price) => {
+    if (!price) return '0 đ';
+    return `${price.toLocaleString('vi-VN')} đ`;
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500"></div>
+      </div>
+    );
+  }
+
+  const filteredBookings = getFilteredBookings();
 
   return (
     <div className="space-y-6">
@@ -163,67 +210,79 @@ const Schedule = () => {
         </div>
 
         <div className="p-6 space-y-4">
-          {appointments[activeTab].map((appointment) => (
-            <div key={appointment.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-              <h4 className="text-lg font-semibold text-gray-900 mb-3">{appointment.customerName}</h4>
-              
-              {/* Họ và tên */}
-              <div className="mb-2">
-                <span className="text-sm font-semibold text-gray-600">Họ và tên: </span>
-                <span className="text-sm text-gray-900">{appointment.customerName}</span>
-              </div>
-              
-              {/* Thời gian */}
-              <div className="mb-2">
-                <span className="text-sm font-semibold text-gray-600">Thời gian: </span>
-                <span className="text-sm text-gray-900">{appointment.date}</span>
-              </div>
-              
-              {/* Giờ */}
-              <div className="mb-2">
-                <span className="text-sm font-semibold text-gray-600">Giờ: </span>
-                <span className="text-sm text-gray-900">{appointment.time}</span>
-              </div>
-              
-              {/* Bệnh viện */}
-              <div className="mb-2">
-                <span className="text-sm font-semibold text-gray-600">Bệnh viện: </span>
-                <span className="text-sm text-gray-900">{appointment.hospital}</span>
-              </div>
-              
-              {/* Chú thích về bệnh nhân nếu có */}
-              {appointment.notes && (
-                <div className="mb-4 p-3 bg-gray-50 rounded border-l-4 border-teal-500">
-                  <span className="text-sm font-semibold text-gray-600">Ghi chú: </span>
-                  <span className="text-sm text-gray-900">{appointment.notes}</span>
-                </div>
-              )}
-
-              <div className="flex gap-3 items-center">
-                {/* Giá tiền */}
-                <div className="flex-1">
-                  <span className="text-lg font-bold text-teal-600">{appointment.price}</span>
+          {filteredBookings.length > 0 ? (
+            filteredBookings.map((appointment) => (
+              <div key={appointment.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                <h4 className="text-lg font-semibold text-gray-900 mb-3">{appointment.customerName}</h4>
+                
+                {/* Họ và tên */}
+                <div className="mb-2">
+                  <span className="text-sm font-semibold text-gray-600">Họ và tên: </span>
+                  <span className="text-sm text-gray-900">{appointment.customerName}</span>
                 </div>
                 
-                {/* Hoạt động */}
-                <div className="flex gap-2">
-                  {activeTab === 'pending' && (
-                    <>
-                      <button className="bg-green-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-green-600 transition-colors text-sm">
-                        Xác nhận đơn
-                      </button>
-                      <button className="bg-red-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-600 transition-colors text-sm">
-                        Từ chối đơn
-                      </button>
-                    </>
-                  )}
-                  <button className="bg-white border-2 border-teal-500 text-teal-500 py-2 px-4 rounded-lg font-semibold hover:bg-teal-50 transition-colors text-sm">
-                    Xem chi tiết
-                  </button>
+                {/* Thời gian */}
+                <div className="mb-2">
+                  <span className="text-sm font-semibold text-gray-600">Thời gian: </span>
+                  <span className="text-sm text-gray-900">{formatDate(appointment.scheduledStartTime)}</span>
+                </div>
+                
+                {/* Giờ */}
+                <div className="mb-2">
+                  <span className="text-sm font-semibold text-gray-600">Giờ: </span>
+                  <span className="text-sm text-gray-900">{formatTime(appointment.scheduledStartTime, appointment.scheduledEndTime)}</span>
+                </div>
+                
+                {/* Địa điểm */}
+                <div className="mb-2">
+                  <span className="text-sm font-semibold text-gray-600">Địa điểm: </span>
+                  <span className="text-sm text-gray-900">{appointment.location || 'Chưa cập nhật'}</span>
+                </div>
+                
+                {/* Chú thích về bệnh nhân nếu có */}
+                {appointment.customerNote && (
+                  <div className="mb-4 p-3 bg-gray-50 rounded border-l-4 border-teal-500">
+                    <span className="text-sm font-semibold text-gray-600">Ghi chú: </span>
+                    <span className="text-sm text-gray-900">{appointment.customerNote}</span>
+                  </div>
+                )}
+
+                <div className="flex gap-3 items-center">
+                  {/* Giá tiền */}
+                  <div className="flex-1">
+                    <span className="text-lg font-bold text-teal-600">{formatPrice(appointment.totalPrice)}</span>
+                  </div>
+                  
+                  {/* Hoạt động */}
+                  <div className="flex gap-2">
+                    {activeTab === 'pending' && (
+                      <>
+                        <button 
+                          onClick={() => handleAcceptBooking(appointment.id)}
+                          className="bg-green-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-green-600 transition-colors text-sm"
+                        >
+                          Xác nhận đơn
+                        </button>
+                        <button 
+                          onClick={() => handleRejectBooking(appointment.id)}
+                          className="bg-red-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-600 transition-colors text-sm"
+                        >
+                          Từ chối đơn
+                        </button>
+                      </>
+                    )}
+                    <button className="bg-white border-2 border-teal-500 text-teal-500 py-2 px-4 rounded-lg font-semibold hover:bg-teal-50 transition-colors text-sm">
+                      Xem chi tiết
+                    </button>
+                  </div>
                 </div>
               </div>
+            ))
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              Không có đơn đặt lịch nào
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>

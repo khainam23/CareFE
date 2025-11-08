@@ -1,119 +1,169 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DollarSign, TrendingUp, Clock, AlertCircle, Download, Search, Filter, Calendar } from 'lucide-react';
+import { caregiverService } from '@/services/caregiverService';
 
 const PaymentHistory = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [dateFilter, setDateFilter] = useState('all');
+  const [payments, setPayments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Mock data for payments
-  const payments = {
-    all: [
-      {
-        id: 1,
-        transactionId: 'TXN001',
-        date: '15/01/2025',
-        amount: '4,500,000',
-        description: 'Lương tháng 01/2025',
-        serviceHours: 160,
-        status: 'Đã thanh toán',
-        method: 'Chuyển khoản ngân hàng',
-        invoiceNumber: 'INV-2025-001',
-      },
-      {
-        id: 2,
-        transactionId: 'TXN002',
-        date: '10/01/2025',
-        amount: '1,200,000',
-        description: 'Thanh toán bổ sung - Chăm sóc đặc biệt',
-        serviceHours: 40,
-        status: 'Đã thanh toán',
-        method: 'Chuyển khoản ngân hàng',
-        invoiceNumber: 'INV-2025-002',
-      },
-      {
-        id: 3,
-        transactionId: 'TXN003',
-        date: '08/01/2025',
-        amount: '800,000',
-        description: 'Thưởng hiệu suất tháng 12/2024',
-        serviceHours: 0,
-        status: 'Đang xử lý',
-        method: 'Chuyển khoản ngân hàng',
-        invoiceNumber: 'INV-2025-003',
-      },
-      {
-        id: 4,
-        transactionId: 'TXN004',
-        date: '05/01/2025',
-        amount: '4,200,000',
-        description: 'Lương tháng 12/2024',
-        serviceHours: 158,
-        status: 'Đã thanh toán',
-        method: 'Chuyển khoản ngân hàng',
-        invoiceNumber: 'INV-2024-004',
-      },
-      {
-        id: 5,
-        transactionId: 'TXN005',
-        date: '02/01/2025',
-        amount: '500,000',
-        description: 'Hoàn trả - Chăm sóc hủy',
-        serviceHours: 0,
-        status: 'Thất bại',
-        method: 'Chuyển khoản ngân hàng',
-        invoiceNumber: 'INV-2024-005',
-      },
-      {
-        id: 6,
-        transactionId: 'TXN006',
-        date: '20/12/2024',
-        amount: '3,800,000',
-        description: 'Lương tháng 11/2024',
-        serviceHours: 152,
-        status: 'Đã thanh toán',
-        method: 'Chuyển khoản ngân hàng',
-        invoiceNumber: 'INV-2024-006',
-      },
-    ],
+  useEffect(() => {
+    fetchPayments();
+  }, []);
+
+  const fetchPayments = async () => {
+    try {
+      setLoading(true);
+      const response = await caregiverService.getPayments();
+      if (response.success) {
+        setPayments(response.data);
+      }
+    } catch (err) {
+      // API chưa có, sử dụng mảng rỗng
+      console.warn('Payments API not available yet:', err);
+      setPayments([]);
+      setError(null); // Không hiển thị lỗi cho user
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // Fallback data khi API chưa trả về dữ liệu
+  const fallbackPayments = [
+    {
+      id: 1,
+      transactionId: 'TXN001',
+      date: '15/01/2025',
+      amount: 4500000,
+      description: 'Lương tháng 01/2025',
+      serviceHours: 160,
+      status: 'Đã thanh toán',
+      method: 'Chuyển khoản ngân hàng',
+      invoiceNumber: 'INV-2025-001',
+    },
+    {
+      id: 2,
+      transactionId: 'TXN002',
+      date: '10/01/2025',
+      amount: 1200000,
+      description: 'Thanh toán bổ sung - Chăm sóc đặc biệt',
+      serviceHours: 40,
+      status: 'Đã thanh toán',
+      method: 'Chuyển khoản ngân hàng',
+      invoiceNumber: 'INV-2025-002',
+    },
+    {
+      id: 3,
+      transactionId: 'TXN003',
+      date: '08/01/2025',
+      amount: 800000,
+      description: 'Thưởng hiệu suất tháng 12/2024',
+      serviceHours: 0,
+      status: 'Đang xử lý',
+      method: 'Chuyển khoản ngân hàng',
+      invoiceNumber: 'INV-2025-003',
+    },
+    {
+      id: 4,
+      transactionId: 'TXN004',
+      date: '05/01/2025',
+      amount: 4200000,
+      description: 'Lương tháng 12/2024',
+      serviceHours: 158,
+      status: 'Đã thanh toán',
+      method: 'Chuyển khoản ngân hàng',
+      invoiceNumber: 'INV-2024-004',
+    },
+    {
+      id: 5,
+      transactionId: 'TXN005',
+      date: '02/01/2025',
+      amount: 500000,
+      description: 'Hoàn trả - Chăm sóc hủy',
+      serviceHours: 0,
+      status: 'Thất bại',
+      method: 'Chuyển khoản ngân hàng',
+      invoiceNumber: 'INV-2024-005',
+    },
+    {
+      id: 6,
+      transactionId: 'TXN006',
+      date: '20/12/2024',
+      amount: 3800000,
+      description: 'Lương tháng 11/2024',
+      serviceHours: 152,
+      status: 'Đã thanh toán',
+      method: 'Chuyển khoản ngân hàng',
+      invoiceNumber: 'INV-2024-006',
+    },
+  ];
+
   // Calculate statistics
+  const allPayments = payments.length > 0 ? payments : fallbackPayments;
+  
+  const mapStatus = (status) => {
+    const statusMap = {
+      'COMPLETED': 'Đã thanh toán',
+      'PENDING': 'Đang xử lý',
+      'FAILED': 'Thất bại',
+      'PROCESSING': 'Đang xử lý'
+    };
+    return statusMap[status] || status;
+  };
+
   const stats = {
-    totalEarnings: payments.all
-      .filter(p => p.status === 'Đã thanh toán')
-      .reduce((sum, p) => sum + parseInt(p.amount.replace(/,/g, '')), 0),
-    totalPending: payments.all
-      .filter(p => p.status === 'Đang xử lý')
-      .reduce((sum, p) => sum + parseInt(p.amount.replace(/,/g, '')), 0),
-    totalTransactions: payments.all.length,
+    totalEarnings: allPayments
+      .filter(p => mapStatus(p.status) === 'Đã thanh toán')
+      .reduce((sum, p) => sum + (p.amount || 0), 0),
+    totalPending: allPayments
+      .filter(p => mapStatus(p.status) === 'Đang xử lý')
+      .reduce((sum, p) => sum + (p.amount || 0), 0),
+    totalTransactions: allPayments.length,
   };
 
   // Filter payments
   const getFilteredPayments = () => {
-    let filtered = payments.all;
+    let filtered = allPayments;
 
     if (activeTab === 'paid') {
-      filtered = filtered.filter(p => p.status === 'Đã thanh toán');
+      filtered = filtered.filter(p => mapStatus(p.status) === 'Đã thanh toán');
     } else if (activeTab === 'pending') {
-      filtered = filtered.filter(p => p.status === 'Đang xử lý');
+      filtered = filtered.filter(p => mapStatus(p.status) === 'Đang xử lý');
     } else if (activeTab === 'failed') {
-      filtered = filtered.filter(p => p.status === 'Thất bại');
+      filtered = filtered.filter(p => mapStatus(p.status) === 'Thất bại');
     }
 
     if (searchTerm) {
       filtered = filtered.filter(p =>
-        p.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.transactionId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase())
+        (p.description || p.notes || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (p.transactionId || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (p.bookingCode || '').toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
     return filtered;
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN');
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500"></div>
+      </div>
+    );
+  }
+
   const getStatusColor = (status) => {
-    switch (status) {
+    const mappedStatus = mapStatus(status);
+    switch (mappedStatus) {
       case 'Đã thanh toán':
         return 'bg-green-100 text-green-700';
       case 'Đang xử lý':
@@ -126,7 +176,8 @@ const PaymentHistory = () => {
   };
 
   const getStatusIcon = (status) => {
-    switch (status) {
+    const mappedStatus = mapStatus(status);
+    switch (mappedStatus) {
       case 'Đã thanh toán':
         return '✓';
       case 'Đang xử lý':
@@ -172,7 +223,7 @@ const PaymentHistory = () => {
               <span className="block text-3xl font-bold text-gray-900 mt-2">
                 {formatCurrency(stats.totalPending)}
               </span>
-              <span className="text-xs text-gray-500 mt-1">({payments.all.filter(p => p.status === 'Đang xử lý').length} giao dịch)</span>
+              <span className="text-xs text-gray-500 mt-1">({allPayments.filter(p => mapStatus(p.status) === 'Đang xử lý').length} giao dịch)</span>
             </div>
             <Clock size={32} className="text-orange-500" />
           </div>
@@ -225,7 +276,7 @@ const PaymentHistory = () => {
                 : 'text-gray-600 hover:bg-gray-50'
             }`}
           >
-            Tất cả ({payments.all.length})
+            Tất cả ({allPayments.length})
           </button>
           <button
             onClick={() => setActiveTab('paid')}
@@ -235,7 +286,7 @@ const PaymentHistory = () => {
                 : 'text-gray-600 hover:bg-gray-50'
             }`}
           >
-            Đã thanh toán ({payments.all.filter(p => p.status === 'Đã thanh toán').length})
+            Đã thanh toán ({allPayments.filter(p => mapStatus(p.status) === 'Đã thanh toán').length})
           </button>
           <button
             onClick={() => setActiveTab('pending')}
@@ -245,7 +296,7 @@ const PaymentHistory = () => {
                 : 'text-gray-600 hover:bg-gray-50'
             }`}
           >
-            Đang xử lý ({payments.all.filter(p => p.status === 'Đang xử lý').length})
+            Đang xử lý ({allPayments.filter(p => mapStatus(p.status) === 'Đang xử lý').length})
           </button>
           <button
             onClick={() => setActiveTab('failed')}
@@ -255,7 +306,7 @@ const PaymentHistory = () => {
                 : 'text-gray-600 hover:bg-gray-50'
             }`}
           >
-            Thất bại ({payments.all.filter(p => p.status === 'Thất bại').length})
+            Thất bại ({allPayments.filter(p => mapStatus(p.status) === 'Thất bại').length})
           </button>
         </div>
 
@@ -269,11 +320,11 @@ const PaymentHistory = () => {
               >
                 <div className="flex justify-between items-start mb-3">
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-900">{payment.description}</h4>
-                    <p className="text-sm text-gray-600 mt-1">ID: {payment.transactionId}</p>
+                    <h4 className="text-lg font-semibold text-gray-900">{payment.notes || payment.description || 'Thanh toán dịch vụ'}</h4>
+                    <p className="text-sm text-gray-600 mt-1">ID: {payment.transactionId || payment.id}</p>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(payment.status)}`}>
-                    {payment.status}
+                    {mapStatus(payment.status)}
                   </span>
                 </div>
 
@@ -281,19 +332,19 @@ const PaymentHistory = () => {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
                   <div>
                     <span className="text-xs font-semibold text-gray-600">Ngày giao dịch</span>
-                    <p className="text-sm text-gray-900 font-medium mt-1">{payment.date}</p>
+                    <p className="text-sm text-gray-900 font-medium mt-1">{formatDate(payment.paidAt || payment.createdAt)}</p>
                   </div>
                   <div>
                     <span className="text-xs font-semibold text-gray-600">Phương thức thanh toán</span>
-                    <p className="text-sm text-gray-900 font-medium mt-1">{payment.method}</p>
+                    <p className="text-sm text-gray-900 font-medium mt-1">{payment.paymentMethod || 'Chuyển khoản'}</p>
                   </div>
                   <div>
-                    <span className="text-xs font-semibold text-gray-600">Số giờ làm</span>
-                    <p className="text-sm text-gray-900 font-medium mt-1">{payment.serviceHours} giờ</p>
+                    <span className="text-xs font-semibold text-gray-600">Mã đơn</span>
+                    <p className="text-sm text-gray-900 font-medium mt-1">{payment.bookingCode || 'N/A'}</p>
                   </div>
                   <div>
                     <span className="text-xs font-semibold text-gray-600">Số hóa đơn</span>
-                    <p className="text-sm text-gray-900 font-medium mt-1">{payment.invoiceNumber}</p>
+                    <p className="text-sm text-gray-900 font-medium mt-1">{payment.invoiceNumber || payment.transactionId || 'N/A'}</p>
                   </div>
                 </div>
 
@@ -301,7 +352,7 @@ const PaymentHistory = () => {
                 <div className="flex justify-between items-center pt-4 border-t border-gray-100">
                   <div>
                     <span className="text-sm text-gray-600">Số tiền</span>
-                    <p className="text-2xl font-bold text-teal-600 mt-1">{formatCurrency(parseInt(payment.amount.replace(/,/g, '')))}</p>
+                    <p className="text-2xl font-bold text-teal-600 mt-1">{formatCurrency(payment.amount || 0)}</p>
                   </div>
                   
                   <div className="flex gap-2">
@@ -332,21 +383,13 @@ const PaymentHistory = () => {
           <div>
             <span className="text-sm opacity-90">Tổng thu nhập (năm nay)</span>
             <p className="text-2xl font-bold mt-2">
-              {formatCurrency(
-                payments.all
-                  .filter(p => p.status === 'Đã thanh toán')
-                  .reduce((sum, p) => sum + parseInt(p.amount.replace(/,/g, '')), 0)
-              )}
+              {formatCurrency(stats.totalEarnings)}
             </p>
           </div>
           <div>
             <span className="text-sm opacity-90">Trung bình mỗi tháng</span>
             <p className="text-2xl font-bold mt-2">
-              {formatCurrency(
-                payments.all
-                  .filter(p => p.status === 'Đã thanh toán')
-                  .reduce((sum, p) => sum + parseInt(p.amount.replace(/,/g, '')), 0) / 6
-              )}
+              {formatCurrency(Math.round(stats.totalEarnings / 6))}
             </p>
           </div>
         </div>

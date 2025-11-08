@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Upload, Eye, EyeOff, Edit2, Save, X, AlertCircle, Lock, Bell, Globe, LogOut } from 'lucide-react';
+import { caregiverService } from '@/services/caregiverService';
 
 const ProfileSettings = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [notifications, setNotifications] = useState({
     emailNotifications: true,
     smsNotifications: false,
@@ -12,23 +15,58 @@ const ProfileSettings = () => {
     paymentAlerts: true,
   });
 
-  // Mock user data
+  // User data
   const [profileData, setProfileData] = useState({
-    fullName: 'Nguyễn Văn A',
-    email: 'nguyen.van.a@email.com',
-    phone: '0912345678',
-    dateOfBirth: '15/05/1990',
-    gender: 'Nam',
-    idNumber: '123456789',
-    address: '123 Đường ABC, Quận 1, TP.HCM',
-    city: 'Thành phố Hồ Chí Minh',
-    specialization: 'Chăm sóc bệnh nhân cao tuổi',
-    certifications: 'Chứng chỉ y tế cơ bản, CPR',
-    experienceYears: '5',
+    fullName: '',
+    email: '',
+    phone: '',
+    dateOfBirth: '',
+    gender: '',
+    idNumber: '',
+    address: '',
+    city: '',
+    specialization: '',
+    certifications: '',
+    experienceYears: '',
     language: 'vi',
   });
 
   const [formData, setFormData] = useState(profileData);
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      setLoading(true);
+      const response = await caregiverService.getProfile();
+      if (response.success && response.data) {
+        const data = response.data;
+        const mappedData = {
+          fullName: data.fullName || '',
+          email: data.email || '',
+          phone: data.phoneNumber || '',
+          dateOfBirth: data.dateOfBirth || '',
+          gender: data.gender || '',
+          idNumber: data.idCardNumber || '',
+          address: data.address || '',
+          city: data.city || '',
+          specialization: data.bio || '',
+          certifications: data.skills || '',
+          experienceYears: data.experience || '',
+          language: 'vi',
+        };
+        setProfileData(mappedData);
+        setFormData(mappedData);
+      }
+    } catch (err) {
+      console.error('Error fetching profile:', err);
+      setError(err.message || 'Không thể tải dữ liệu');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -45,15 +83,50 @@ const ProfileSettings = () => {
     }));
   };
 
-  const handleSave = () => {
-    setProfileData(formData);
-    setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      const updateData = {
+        bio: formData.specialization,
+        skills: formData.certifications,
+        experience: formData.experienceYears,
+        idCardNumber: formData.idNumber,
+        availableSchedule: formData.availableSchedule || '',
+        hourlyRate: formData.hourlyRate || null,
+      };
+      
+      const response = await caregiverService.updateProfile(updateData);
+      if (response.success) {
+        setProfileData(formData);
+        setIsEditing(false);
+        alert('Cập nhật thành công!');
+        fetchProfile(); // Refresh data from server
+      }
+    } catch (err) {
+      console.error('Error updating profile:', err);
+      alert(err.message || 'Không thể cập nhật profile');
+    }
   };
 
   const handleCancel = () => {
     setFormData(profileData);
     setIsEditing(false);
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+        {error}
+      </div>
+    );
+  }
 
   const ToggleSwitch = ({ checked, onChange }) => (
     <button

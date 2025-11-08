@@ -2,6 +2,16 @@ import axiosInstance from '../api/axiosConfig';
 import { API_ENDPOINTS } from '../api/endpoints';
 
 export const caregiverService = {
+  // Lấy thống kê dashboard
+  getDashboardStats: async () => {
+    try {
+      const response = await axiosInstance.get(API_ENDPOINTS.CAREGIVER.DASHBOARD_STATS);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
   // Lấy thông tin profile
   getProfile: async () => {
     try {
@@ -93,6 +103,16 @@ export const caregiverService = {
         response
       });
       return result.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  // Lấy lịch sử thanh toán
+  getPayments: async () => {
+    try {
+      const response = await axiosInstance.get(API_ENDPOINTS.CAREGIVER.PAYMENTS);
+      return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
     }

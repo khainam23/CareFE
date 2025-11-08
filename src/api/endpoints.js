@@ -35,8 +35,8 @@ export const API_ENDPOINTS = {
 
   // Caregiver
   CAREGIVER: {
-    PROFILE: '/api/caregivers/me',
-    UPDATE_PROFILE: '/api/caregivers/me',
+    PROFILE: '/api/caregiver/profile',
+    UPDATE_PROFILE: '/api/caregiver/profile',
     BOOKINGS: '/api/caregiver/bookings',
     ACCEPT_BOOKING: (id) => `/api/caregiver/bookings/${id}/accept`,
     REJECT_BOOKING: (id) => `/api/caregiver/bookings/${id}/reject`,
@@ -44,6 +44,8 @@ export const API_ENDPOINTS = {
     REVIEWS: '/api/caregiver/reviews',
     RESPOND_REVIEW: (id) => `/api/caregiver/reviews/${id}/respond`,
     UPDATE_AVAILABILITY: '/api/caregiver/availability',
+    DASHBOARD_STATS: '/api/caregiver/dashboard/stats',
+    PAYMENTS: '/api/caregiver/payments',
   },
 
   // Support

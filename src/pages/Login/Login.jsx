@@ -55,7 +55,7 @@ export default function Login() {
         navigate('/dashboard');
         break;
       case 'caregiver':
-        navigate('/dashboard');
+        navigate('/employee-profile');
         break;
       case 'customer':
         navigate('/');

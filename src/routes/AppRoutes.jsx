@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Home, NotFound, Login, SignUp, FindCaregiver, CaregiverDetail, About, CustomerInfo, EmployeeProfile } from '@pages';
 import MainLayout from '@components/layout/MainLayout';
 import ProtectedRoute from '@components/common/ProtectedRoute';
-import Dashboard from '../pages/Dashboard/Dashboard';
 import { ROUTES } from '@constants';
 
 // App Routes
@@ -18,7 +17,7 @@ const AppRoutes = () => {
           path={ROUTES.DASHBOARD} 
           element={
             <ProtectedRoute allowedRoles={['admin', 'support', 'caregiver']}>
-              <Dashboard />
+              <EmployeeProfile />
             </ProtectedRoute>
           } 
         />
