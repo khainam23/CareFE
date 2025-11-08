@@ -6,3 +6,4 @@ export { default as FindCaregiver } from './FindCaregiver';
 export { default as About } from './About';
 export { default as CustomerInfo } from './CustomerInfo';
 export { default as EmployeeProfile } from './EmployeeProfile/EmployeeProfile';
+export { default as Dashboard } from './Dashboard/Dashboard';

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
@@ -6,13 +6,51 @@ import { validateEmail, validatePassword } from '../../utils/validation';
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login, loading } = useAuthStore();
+  const { login, loading, isAuthenticated, user } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const [errors, setErrors] = useState({});
+
+  // Kiểm tra nếu đã đăng nhập thì redirect
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      redirectByRole(user);
+    }
+    
+    // Khôi phục thông tin đăng nhập nếu có remember me
+    const savedEmail = localStorage.getItem('rememberedEmail');
+    const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
+    if (savedEmail && savedRememberMe) {
+      setFormData(prev => ({ ...prev, email: savedEmail }));
+      setRememberMe(true);
+    }
+  }, [isAuthenticated, user, navigate]);
+
+  // Hàm điều hướng theo vai trò
+  const redirectByRole = (userData) => {
+    const role = userData.role || userData.roles?.[0];
+    
+    switch (role?.toLowerCase()) {
+      case 'admin':
+        navigate('/dashboard');
+        break;
+      case 'support':
+        navigate('/dashboard');
+        break;
+      case 'customer':
+        navigate('/');
+        break;
+      case 'caregiver':
+        navigate('/employee-profile');
+        break;
+      default:
+        navigate('/');
+    }
+  };
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -53,8 +91,19 @@ export default function Login() {
     try {
       const response = await login(formData);
       if (response.success) {
+        // Xử lý ghi nhớ đăng nhập
+        if (rememberMe) {
+          localStorage.setItem('rememberedEmail', formData.email);
+          localStorage.setItem('rememberMe', 'true');
+        } else {
+          localStorage.removeItem('rememberedEmail');
+          localStorage.removeItem('rememberMe');
+        }
+
         alert('Đăng nhập thành công!');
-        navigate('/dashboard');
+        
+        // Điều hướng theo vai trò
+        redirectByRole(response.data);
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -140,6 +189,31 @@ export default function Login() {
             </div>
           </div>
 
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <input
+                id="remember-me"
+                name="remember-me"
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
+              />
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 cursor-pointer">
+                Ghi nhớ đăng nhập
+              </label>
+            </div>
+
+            <div className="text-sm">
+              <Link
+                to="/forgot-password"
+                className="text-blue-600 hover:text-blue-500"
+              >
+                Quên mật khẩu?
+              </Link>
+            </div>
+          </div>
+
           <div>
             <button
               type="submit"
@@ -152,15 +226,6 @@ export default function Login() {
             >
               {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
             </button>
-          </div>
-
-          <div className="text-center">
-            <Link
-              to="/forgot-password"
-              className="text-sm text-blue-600 hover:text-blue-500"
-            >
-              Quên mật khẩu?
-            </Link>
           </div>
         </form>
 
