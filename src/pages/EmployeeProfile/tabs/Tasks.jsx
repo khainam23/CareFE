@@ -1,69 +1,79 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CheckCircle2, Clock, AlertCircle, Plus, Filter, Search } from 'lucide-react';
+import { caregiverService } from '@/services/caregiverService';
 
 const Tasks = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data for tasks
-  const tasks = {
-    all: [
-      {
-        id: 1,
-        customerName: 'Bà Nguyễn Thị A',
-        taskType: 'Chăm sóc cá nhân',
-        description: 'Tắm và giúp mặc quần áo',
-        dueDate: '15/01/2025',
-        dueTime: '09:00',
-        priority: 'Cao',
-        status: 'Chưa hoàn thành',
-      },
-      {
-        id: 2,
-        customerName: 'Ông Trần Văn B',
-        taskType: 'Hỗ trợ y tế',
-        description: 'Đo huyết áp và ghi chép kết quả',
-        dueDate: '15/01/2025',
-        dueTime: '14:00',
-        priority: 'Trung bình',
-        status: 'Chưa hoàn thành',
-      },
-      {
-        id: 3,
-        customerName: 'Chị Lê Thị C',
-        taskType: 'Chăm sóc cá nhân',
-        description: 'Rửa mặt và chải tóc',
-        dueDate: '14/01/2025',
-        dueTime: '10:00',
-        priority: 'Thấp',
-        status: 'Đã hoàn thành',
-      },
-      {
-        id: 4,
-        customerName: 'Cô Phạm Thị D',
-        taskType: 'Trợ cấp sinh hoạt',
-        description: 'Giúp lau dọn phòng',
-        dueDate: '16/01/2025',
-        dueTime: '11:00',
-        priority: 'Trung bình',
-        status: 'Chưa hoàn thành',
-      },
-      {
-        id: 5,
-        customerName: 'Ông Hoàng Văn E',
-        taskType: 'Hỗ trợ y tế',
-        description: 'Chuẩn bị thuốc và uống thuốc đúng giờ',
-        dueDate: '13/01/2025',
-        dueTime: '08:00',
-        priority: 'Cao',
-        status: 'Đã hoàn thành',
-      },
-    ],
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  const fetchTasks = async () => {
+    try {
+      setLoading(true);
+      const response = await caregiverService.getBookings();
+      if (response.success) {
+        const mappedTasks = response.data.map(booking => ({
+          id: booking.id,
+          customerName: booking.customerName,
+          taskType: booking.serviceName || 'Chăm sóc',
+          description: booking.customerNote || 'Không có ghi chú',
+          dueDate: booking.scheduledStartTime,
+          dueTime: booking.scheduledStartTime,
+          priority: getPriority(booking.scheduledStartTime),
+          status: mapStatus(booking.status),
+          bookingStatus: booking.status,
+        }));
+        setTasks(mappedTasks);
+      }
+    } catch (err) {
+      console.error('Error fetching tasks:', err);
+      setTasks([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Filter tasks based on status
+  const mapStatus = (bookingStatus) => {
+    if (bookingStatus === 'COMPLETED') return 'Đã hoàn thành';
+    return 'Chưa hoàn thành';
+  };
+
+  const getPriority = (dateTime) => {
+    const now = new Date();
+    const scheduled = new Date(dateTime);
+    const hoursDiff = (scheduled - now) / (1000 * 60 * 60);
+    
+    if (hoursDiff < 2) return 'Cao';
+    if (hoursDiff < 24) return 'Trung bình';
+    return 'Thấp';
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleDateString('vi-VN');
+  };
+
+  const formatTime = (dateString) => {
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const handleComplete = async (taskId) => {
+    try {
+      await caregiverService.completeBooking(taskId);
+      fetchTasks();
+    } catch (err) {
+      alert('Không thể hoàn thành nhiệm vụ');
+    }
+  };
+
   const getFilteredTasks = () => {
-    let filtered = tasks.all;
+    let filtered = tasks;
 
     if (activeTab === 'pending') {
       filtered = filtered.filter(task => task.status === 'Chưa hoàn thành');
@@ -81,6 +91,14 @@ const Tasks = () => {
 
     return filtered;
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500"></div>
+      </div>
+    );
+  }
 
   const getStatusColor = (status) => {
     if (status === 'Đã hoàn thành') {
@@ -112,7 +130,7 @@ const Tasks = () => {
           <div className="flex items-center justify-between">
             <div>
               <span className="text-sm font-medium text-gray-600">Tổng nhiệm vụ</span>
-              <span className="block text-3xl font-bold text-gray-900 mt-2">{tasks.all.length}</span>
+              <span className="block text-3xl font-bold text-gray-900 mt-2">{tasks.length}</span>
             </div>
             <CheckCircle2 size={32} className="text-blue-500" />
           </div>
@@ -123,7 +141,7 @@ const Tasks = () => {
             <div>
               <span className="text-sm font-medium text-gray-600">Chưa hoàn thành</span>
               <span className="block text-3xl font-bold text-gray-900 mt-2">
-                {tasks.all.filter(t => t.status === 'Chưa hoàn thành').length}
+                {tasks.filter(t => t.status === 'Chưa hoàn thành').length}
               </span>
             </div>
             <Clock size={32} className="text-orange-500" />
@@ -135,7 +153,7 @@ const Tasks = () => {
             <div>
               <span className="text-sm font-medium text-gray-600">Đã hoàn thành</span>
               <span className="block text-3xl font-bold text-gray-900 mt-2">
-                {tasks.all.filter(t => t.status === 'Đã hoàn thành').length}
+                {tasks.filter(t => t.status === 'Đã hoàn thành').length}
               </span>
             </div>
             <CheckCircle2 size={32} className="text-green-500" />
@@ -160,9 +178,12 @@ const Tasks = () => {
             <Filter size={18} />
             Lọc
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-teal-500 text-white rounded-lg font-semibold hover:bg-teal-600 transition-colors">
+          <button 
+            onClick={fetchTasks}
+            className="flex items-center gap-2 px-4 py-2 bg-teal-500 text-white rounded-lg font-semibold hover:bg-teal-600 transition-colors"
+          >
             <Plus size={18} />
-            Thêm nhiệm vụ
+            Làm mới
           </button>
         </div>
       </div>
@@ -178,7 +199,7 @@ const Tasks = () => {
                 : 'text-gray-600 hover:bg-gray-50'
             }`}
           >
-            Tất cả ({tasks.all.length})
+            Tất cả ({tasks.length})
           </button>
           <button
             onClick={() => setActiveTab('pending')}
@@ -188,7 +209,7 @@ const Tasks = () => {
                 : 'text-gray-600 hover:bg-gray-50'
             }`}
           >
-            Chưa hoàn thành ({tasks.all.filter(t => t.status === 'Chưa hoàn thành').length})
+            Chưa hoàn thành ({tasks.filter(t => t.status === 'Chưa hoàn thành').length})
           </button>
           <button
             onClick={() => setActiveTab('completed')}
@@ -198,7 +219,7 @@ const Tasks = () => {
                 : 'text-gray-600 hover:bg-gray-50'
             }`}
           >
-            Đã hoàn thành ({tasks.all.filter(t => t.status === 'Đã hoàn thành').length})
+            Đã hoàn thành ({tasks.filter(t => t.status === 'Đã hoàn thành').length})
           </button>
         </div>
 
@@ -229,11 +250,11 @@ const Tasks = () => {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
                   <div>
                     <span className="text-xs font-semibold text-gray-600">Ngày hạn</span>
-                    <p className="text-sm text-gray-900 font-medium">{task.dueDate}</p>
+                    <p className="text-sm text-gray-900 font-medium">{formatDate(task.dueDate)}</p>
                   </div>
                   <div>
                     <span className="text-xs font-semibold text-gray-600">Giờ hạn</span>
-                    <p className="text-sm text-gray-900 font-medium">{task.dueTime}</p>
+                    <p className="text-sm text-gray-900 font-medium">{formatTime(task.dueTime)}</p>
                   </div>
                   <div>
                     <span className="text-xs font-semibold text-gray-600">Mức độ ưu tiên</span>
@@ -249,15 +270,13 @@ const Tasks = () => {
 
                 {/* Actions */}
                 <div className="flex gap-2 justify-end">
-                  {task.status === 'Chưa hoàn thành' && (
-                    <>
-                      <button className="bg-green-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-green-600 transition-colors text-sm">
-                        Hoàn thành
-                      </button>
-                      <button className="bg-white border-2 border-gray-300 text-gray-600 py-2 px-4 rounded-lg font-semibold hover:bg-gray-50 transition-colors text-sm">
-                        Chỉnh sửa
-                      </button>
-                    </>
+                  {task.status === 'Chưa hoàn thành' && task.bookingStatus === 'ACCEPTED' && (
+                    <button 
+                      onClick={() => handleComplete(task.id)}
+                      className="bg-green-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-green-600 transition-colors text-sm"
+                    >
+                      Hoàn thành
+                    </button>
                   )}
                   <button className="bg-white border-2 border-teal-500 text-teal-500 py-2 px-4 rounded-lg font-semibold hover:bg-teal-50 transition-colors text-sm">
                     Chi tiết

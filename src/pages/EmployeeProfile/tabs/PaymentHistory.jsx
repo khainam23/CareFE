@@ -17,92 +17,46 @@ const PaymentHistory = () => {
   const fetchPayments = async () => {
     try {
       setLoading(true);
-      const response = await caregiverService.getPayments();
-      if (response.success) {
-        setPayments(response.data);
+      // Thử lấy từ payments API trước
+      try {
+        const response = await caregiverService.getPayments();
+        if (response.success && response.data) {
+          setPayments(response.data);
+          return;
+        }
+      } catch (paymentErr) {
+        console.warn('Payments API not available, using bookings instead');
+      }
+      
+      // Fallback: Lấy từ bookings đã hoàn thành
+      const bookingsResponse = await caregiverService.getBookings();
+      if (bookingsResponse.success) {
+        const completedBookings = bookingsResponse.data.filter(b => b.status === 'COMPLETED');
+        const mappedPayments = completedBookings.map(booking => ({
+          id: booking.id,
+          transactionId: `TXN${booking.id}`,
+          bookingId: booking.id,
+          bookingCode: booking.bookingCode,
+          amount: booking.totalPrice || 0,
+          paymentMethod: 'BANK_TRANSFER',
+          status: 'COMPLETED',
+          paidAt: booking.actualEndTime || booking.updatedAt,
+          notes: `Thanh toán cho ${booking.serviceName || 'dịch vụ chăm sóc'}`,
+          createdAt: booking.createdAt,
+        }));
+        setPayments(mappedPayments);
       }
     } catch (err) {
-      // API chưa có, sử dụng mảng rỗng
-      console.warn('Payments API not available yet:', err);
+      console.error('Error fetching payments:', err);
       setPayments([]);
-      setError(null); // Không hiển thị lỗi cho user
+      setError(null);
     } finally {
       setLoading(false);
     }
   };
 
-  // Fallback data khi API chưa trả về dữ liệu
-  const fallbackPayments = [
-    {
-      id: 1,
-      transactionId: 'TXN001',
-      date: '15/01/2025',
-      amount: 4500000,
-      description: 'Lương tháng 01/2025',
-      serviceHours: 160,
-      status: 'Đã thanh toán',
-      method: 'Chuyển khoản ngân hàng',
-      invoiceNumber: 'INV-2025-001',
-    },
-    {
-      id: 2,
-      transactionId: 'TXN002',
-      date: '10/01/2025',
-      amount: 1200000,
-      description: 'Thanh toán bổ sung - Chăm sóc đặc biệt',
-      serviceHours: 40,
-      status: 'Đã thanh toán',
-      method: 'Chuyển khoản ngân hàng',
-      invoiceNumber: 'INV-2025-002',
-    },
-    {
-      id: 3,
-      transactionId: 'TXN003',
-      date: '08/01/2025',
-      amount: 800000,
-      description: 'Thưởng hiệu suất tháng 12/2024',
-      serviceHours: 0,
-      status: 'Đang xử lý',
-      method: 'Chuyển khoản ngân hàng',
-      invoiceNumber: 'INV-2025-003',
-    },
-    {
-      id: 4,
-      transactionId: 'TXN004',
-      date: '05/01/2025',
-      amount: 4200000,
-      description: 'Lương tháng 12/2024',
-      serviceHours: 158,
-      status: 'Đã thanh toán',
-      method: 'Chuyển khoản ngân hàng',
-      invoiceNumber: 'INV-2024-004',
-    },
-    {
-      id: 5,
-      transactionId: 'TXN005',
-      date: '02/01/2025',
-      amount: 500000,
-      description: 'Hoàn trả - Chăm sóc hủy',
-      serviceHours: 0,
-      status: 'Thất bại',
-      method: 'Chuyển khoản ngân hàng',
-      invoiceNumber: 'INV-2024-005',
-    },
-    {
-      id: 6,
-      transactionId: 'TXN006',
-      date: '20/12/2024',
-      amount: 3800000,
-      description: 'Lương tháng 11/2024',
-      serviceHours: 152,
-      status: 'Đã thanh toán',
-      method: 'Chuyển khoản ngân hàng',
-      invoiceNumber: 'INV-2024-006',
-    },
-  ];
-
   // Calculate statistics
-  const allPayments = payments.length > 0 ? payments : fallbackPayments;
+  const allPayments = payments;
   
   const mapStatus = (status) => {
     const statusMap = {
@@ -175,19 +129,7 @@ const PaymentHistory = () => {
     }
   };
 
-  const getStatusIcon = (status) => {
-    const mappedStatus = mapStatus(status);
-    switch (mappedStatus) {
-      case 'Đã thanh toán':
-        return '✓';
-      case 'Đang xử lý':
-        return '⏱';
-      case 'Thất bại':
-        return '✕';
-      default:
-        return '○';
-    }
-  };
+
 
   const filteredPayments = getFilteredPayments();
 
