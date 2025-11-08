@@ -22,12 +22,30 @@ export const customerService = {
     }
   },
 
-  // Tìm kiếm chuyên viên chăm sóc
-  searchCaregivers: async (searchParams = {}) => {
+  // Lấy danh sách caregivers có sẵn
+  getCaregivers: async () => {
     try {
-      const response = await axiosInstance.get(API_ENDPOINTS.CUSTOMER.SEARCH_CAREGIVERS, {
-        params: searchParams
-      });
+      const response = await axiosInstance.get(API_ENDPOINTS.CUSTOMER.CAREGIVERS);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  // Lấy chi tiết caregiver
+  getCaregiverDetail: async (caregiverId) => {
+    try {
+      const response = await axiosInstance.get(API_ENDPOINTS.CUSTOMER.CAREGIVER_DETAIL(caregiverId));
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  // Lấy reviews của caregiver
+  getCaregiverReviews: async (caregiverId) => {
+    try {
+      const response = await axiosInstance.get(API_ENDPOINTS.CUSTOMER.CAREGIVER_REVIEWS(caregiverId));
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;

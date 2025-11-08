@@ -23,12 +23,14 @@ export const API_ENDPOINTS = {
   CUSTOMER: {
     PROFILE: '/api/customers/me',
     UPDATE_PROFILE: '/api/customers/me',
-    BOOKINGS: '/api/customers/bookings',
-    CREATE_BOOKING: '/api/bookings',
-    CANCEL_BOOKING: (id) => `/api/customers/bookings/${id}/cancel`,
-    REVIEWS: '/api/customers/reviews',
-    CREATE_REVIEW: '/api/reviews',
-    SEARCH_CAREGIVERS: '/api/caregivers/search',
+    BOOKINGS: '/api/customer/bookings',
+    CREATE_BOOKING: '/api/customer/bookings',
+    CANCEL_BOOKING: (id) => `/api/customer/bookings/${id}/cancel`,
+    REVIEWS: '/api/customer/reviews',
+    CREATE_REVIEW: '/api/customer/reviews',
+    CAREGIVERS: '/api/customer/caregivers',
+    CAREGIVER_DETAIL: (id) => `/api/customer/caregivers/${id}`,
+    CAREGIVER_REVIEWS: (id) => `/api/customer/caregivers/${id}/reviews`,
   },
 
   // Caregiver

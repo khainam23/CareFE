@@ -1,154 +1,8 @@
-import { useState, useMemo } from 'react';
-import { Button, Input } from '@/components/common';
+import { useState, useMemo, useEffect } from 'react';
+import { Button } from '@/components/common';
 import { Star, MapPin, Clock } from 'lucide-react';
-
-// Mock data
-const MOCK_CAREGIVERS = [
-  {
-    id: 1,
-    name: 'Nguyễn Thị Hương',
-    type: 'Bảo mẫu toàn thời gian',
-    experience: 5,
-    rating: 4.8,
-    reviews: 45,
-    price: 150000,
-    district: 'Quận 1',
-    avatar: 'https://via.placeholder.com/200?text=Nguyen+Thi+Huong',
-    description: '5 năm kinh nghiệm chăm sóc trẻ em, tổn tại kỹ năng...',
-  },
-  {
-    id: 2,
-    name: 'Trần Thị Mai',
-    type: 'Bảo mẫu theo giờ',
-    experience: 3,
-    rating: 4.6,
-    reviews: 32,
-    price: 120000,
-    district: 'Quận 2',
-    avatar: 'https://via.placeholder.com/200?text=Tran+Thi+Mai',
-    description: '3 năm kinh nghiệm, chuyên giáo dục sớm...',
-  },
-  {
-    id: 3,
-    name: 'Phạm Thị Linh',
-    type: 'Người giúp việc nhà',
-    experience: 7,
-    rating: 4.9,
-    reviews: 58,
-    price: 180000,
-    district: 'Quận 3',
-    avatar: 'https://via.placeholder.com/200?text=Pham+Thi+Linh',
-    description: '7 năm kinh nghiệm, tin cậy và tận tâm...',
-  },
-  {
-    id: 4,
-    name: 'Võ Thị Ngọc',
-    type: 'Bảo mẫu toàn thời gian',
-    experience: 4,
-    rating: 4.7,
-    reviews: 40,
-    price: 160000,
-    district: 'Quận 4',
-    avatar: 'https://via.placeholder.com/200?text=Vo+Thi+Ngoc',
-    description: '4 năm kinh nghiệm, có chứng chỉ chuyên môn...',
-  },
-  {
-    id: 5,
-    name: 'Đặng Thị Hà',
-    type: 'Bảo mẫu theo giờ',
-    experience: 2,
-    rating: 4.5,
-    reviews: 25,
-    price: 110000,
-    district: 'Quận 5',
-    avatar: 'https://via.placeholder.com/200?text=Dang+Thi+Ha',
-    description: '2 năm kinh nghiệm, vui vẻ và thân thiện...',
-  },
-  {
-    id: 6,
-    name: 'Hoàng Thị Lan',
-    type: 'Bảo mẫu toàn thời gian',
-    experience: 6,
-    rating: 4.8,
-    reviews: 52,
-    price: 170000,
-    district: 'Quận 1',
-    avatar: 'https://via.placeholder.com/200?text=Hoang+Thi+Lan',
-    description: '6 năm kinh nghiệm, được đánh giá cao...',
-  },
-  {
-    id: 7,
-    name: 'Lê Thị Thu',
-    type: 'Người giúp việc nhà',
-    experience: 5,
-    rating: 4.6,
-    reviews: 38,
-    price: 140000,
-    district: 'Quận 2',
-    avatar: 'https://via.placeholder.com/200?text=Le+Thi+Thu',
-    description: '5 năm kinh nghiệm, chuyên môn cao...',
-  },
-  {
-    id: 8,
-    name: 'Bùi Thị Hồng',
-    type: 'Bảo mẫu theo giờ',
-    experience: 3,
-    rating: 4.7,
-    reviews: 44,
-    price: 125000,
-    district: 'Quận 3',
-    avatar: 'https://via.placeholder.com/200?text=Bui+Thi+Hong',
-    description: '3 năm kinh nghiệm, giàu kinh nghiệm...',
-  },
-  {
-    id: 9,
-    name: 'Dương Thị Hương',
-    type: 'Bảo mẫu toàn thời gian',
-    experience: 8,
-    rating: 4.9,
-    reviews: 65,
-    price: 190000,
-    district: 'Quận 4',
-    avatar: 'https://via.placeholder.com/200?text=Duong+Thi+Huong',
-    description: '8 năm kinh nghiệm, chuyên gia trong lĩnh vực...',
-  },
-  {
-    id: 10,
-    name: 'Kiều Thị Hà',
-    type: 'Bảo mẫu theo giờ',
-    experience: 4,
-    rating: 4.6,
-    reviews: 35,
-    price: 130000,
-    district: 'Quận 5',
-    avatar: 'https://via.placeholder.com/200?text=Kieu+Thi+Ha',
-    description: '4 năm kinh nghiệm, chăm chỉ và trung thực...',
-  },
-  {
-    id: 11,
-    name: 'Tạ Thị Anh',
-    type: 'Người giúp việc nhà',
-    experience: 6,
-    rating: 4.8,
-    reviews: 48,
-    price: 165000,
-    district: 'Quận 1',
-    avatar: 'https://via.placeholder.com/200?text=Ta+Thi+Anh',
-    description: '6 năm kinh nghiệm, có tâm huyết...',
-  },
-  {
-    id: 12,
-    name: 'Nô Thị Kiều',
-    type: 'Bảo mẫu toàn thời gian',
-    experience: 5,
-    rating: 4.7,
-    reviews: 42,
-    price: 155000,
-    district: 'Quận 2',
-    avatar: 'https://via.placeholder.com/200?text=No+Thi+Kieu',
-    description: '5 năm kinh nghiệm, được khách hàng yêu thích...',
-  },
-];
+import { customerService } from '@/services/customerService';
+import { useNavigate } from 'react-router-dom';
 
 const CAREGIVER_TYPES = ['Bảo mẫu toàn thời gian', 'Bảo mẫu theo giờ', 'Người giúp việc nhà'];
 const GENDERS = ['Nữ', 'Nam', 'Không quan trọng'];
@@ -165,6 +19,11 @@ const EXPERIENCE_RANGES = [
 const ITEMS_PER_PAGE = 8;
 
 function FindCaregiver() {
+  const navigate = useNavigate();
+  const [caregivers, setCaregivers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
   const [filters, setFilters] = useState({
     type: '',
     gender: '',
@@ -177,6 +36,32 @@ function FindCaregiver() {
   });
 
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Fetch caregivers from API
+  useEffect(() => {
+    const fetchCaregivers = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await customerService.getCaregivers();
+        
+        // Extract data from ApiResponse structure
+        if (response.success && response.data) {
+          setCaregivers(response.data);
+        } else {
+          setCaregivers([]);
+        }
+      } catch (err) {
+        console.error('Error fetching caregivers:', err);
+        setError(err.message || 'Không thể tải danh sách bảo mẫu');
+        setCaregivers([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCaregivers();
+  }, []);
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
@@ -203,37 +88,39 @@ function FindCaregiver() {
 
   // Filter caregivers based on current filters
   const filteredCaregivers = useMemo(() => {
-    return MOCK_CAREGIVERS.filter(caregiver => {
-      // Filter by type
-      if (filters.type && caregiver.type !== filters.type) return false;
+    return caregivers.filter(caregiver => {
+      // Filter by type (caregiverType from backend)
+      if (filters.type && caregiver.caregiverType !== filters.type) return false;
 
-      // Filter by district
-      if (filters.district && caregiver.district !== filters.district) return false;
+      // Filter by district (address from backend)
+      if (filters.district && !caregiver.address?.includes(filters.district)) return false;
 
-      // Filter by rating
-      if (filters.rating > 0 && caregiver.rating < filters.rating) return false;
+      // Filter by rating (averageRating from backend)
+      if (filters.rating > 0 && (caregiver.averageRating || 0) < filters.rating) return false;
 
-      // Filter by experience
+      // Filter by experience (yearsOfExperience from backend)
       if (filters.experience) {
         const range = EXPERIENCE_RANGES.find(r => r.label === filters.experience);
-        if (range && (caregiver.experience < range.min || caregiver.experience > range.max)) {
+        const experience = caregiver.yearsOfExperience || 0;
+        if (range && (experience < range.min || experience > range.max)) {
           return false;
         }
       }
 
-      // Filter by price
-      if (caregiver.price < filters.priceMin || caregiver.price > filters.priceMax) {
+      // Filter by price (hourlyRate from backend)
+      const price = caregiver.hourlyRate || 0;
+      if (price < filters.priceMin || price > filters.priceMax) {
         return false;
       }
 
-      // Filter by search (name)
-      if (filters.search && !caregiver.name.toLowerCase().includes(filters.search.toLowerCase())) {
+      // Filter by search (fullName from backend)
+      if (filters.search && !caregiver.fullName?.toLowerCase().includes(filters.search.toLowerCase())) {
         return false;
       }
 
       return true;
     });
-  }, [filters]);
+  }, [caregivers, filters]);
 
   // Pagination
   const totalPages = Math.ceil(filteredCaregivers.length / ITEMS_PER_PAGE);
@@ -255,55 +142,62 @@ function FindCaregiver() {
     </div>
   );
 
-  const CaregiverCard = ({ caregiver }) => (
-    <div className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
-      <div className="bg-gradient-to-r from-teal-50 to-blue-50 p-4">
-        <img
-          src={caregiver.avatar}
-          alt={caregiver.name}
-          className="w-full h-40 object-cover rounded-lg mb-3"
-        />
-        <h3 className="text-lg font-bold text-gray-800">{caregiver.name}</h3>
-        <p className="text-sm text-gray-600">{caregiver.description}</p>
-      </div>
+  const CaregiverCard = ({ caregiver }) => {
+    const handleViewDetail = () => {
+      navigate(`/caregivers/${caregiver.id}`);
+    };
 
-      <div className="p-4 space-y-3">
-        <div className="flex items-center gap-2 text-gray-700">
-          <Clock size={16} className="text-teal-500" />
-          <span className="text-sm">{caregiver.type}</span>
+    return (
+      <div className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+        <div className="bg-gradient-to-r from-teal-50 to-blue-50 p-4">
+          <div className="w-full h-40 bg-gray-200 rounded-lg mb-3 flex items-center justify-center">
+            <span className="text-4xl text-gray-400">👤</span>
+          </div>
+          <h3 className="text-lg font-bold text-gray-800">{caregiver.fullName || 'N/A'}</h3>
+          <p className="text-sm text-gray-600 line-clamp-2">{caregiver.bio || 'Chưa có mô tả'}</p>
         </div>
 
-        <div className="flex items-center gap-2 text-gray-700">
-          <MapPin size={16} className="text-teal-500" />
-          <span className="text-sm">{caregiver.district}</span>
-        </div>
+        <div className="p-4 space-y-3">
+          <div className="flex items-center gap-2 text-gray-700">
+            <Clock size={16} className="text-teal-500" />
+            <span className="text-sm">{caregiver.caregiverType || 'N/A'}</span>
+          </div>
 
-        <div className="flex items-center justify-between">
-          <StarRating rating={caregiver.rating} />
-          <span className="text-xs text-gray-500">({caregiver.reviews})</span>
-        </div>
+          <div className="flex items-center gap-2 text-gray-700">
+            <MapPin size={16} className="text-teal-500" />
+            <span className="text-sm line-clamp-1">{caregiver.address || 'N/A'}</span>
+          </div>
 
-        <div className="pt-2 border-t">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs text-gray-500">Giá / giờ</p>
-              <p className="text-lg font-bold text-teal-600">
-                {caregiver.price.toLocaleString()}đ
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="text-xs text-gray-500">Kinh nghiệm</p>
-              <p className="text-lg font-bold text-gray-800">{caregiver.experience}+ năm</p>
+            <StarRating rating={caregiver.averageRating || 0} />
+            <span className="text-xs text-gray-500">({caregiver.totalReviews || 0})</span>
+          </div>
+
+          <div className="pt-2 border-t">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-gray-500">Giá / giờ</p>
+                <p className="text-lg font-bold text-teal-600">
+                  {(caregiver.hourlyRate || 0).toLocaleString()}đ
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-gray-500">Kinh nghiệm</p>
+                <p className="text-lg font-bold text-gray-800">{caregiver.yearsOfExperience || 0}+ năm</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <button className="w-full bg-teal-500 text-white py-2 rounded-lg hover:bg-teal-600 transition-colors font-medium text-sm">
-          Xem chi tiết
-        </button>
+          <button 
+            onClick={handleViewDetail}
+            className="w-full bg-teal-500 text-white py-2 rounded-lg hover:bg-teal-600 transition-colors font-medium text-sm"
+          >
+            Xem chi tiết
+          </button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -477,27 +371,45 @@ function FindCaregiver() {
 
           {/* Results */}
           <div className="lg:col-span-3">
-            {/* Results Info */}
-            <div className="mb-6 flex items-center justify-between">
-              <div>
-                <p className="text-gray-600">
-                  Tìm thấy <span className="font-bold text-gray-900">{filteredCaregivers.length}</span> bảo mẫu
-                </p>
-              </div>
-              {filteredCaregivers.length > 0 && (
-                <p className="text-sm text-gray-500">
-                  Hiển thị {(currentPage - 1) * ITEMS_PER_PAGE + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, filteredCaregivers.length)} trong {filteredCaregivers.length}
-                </p>
-              )}
-            </div>
-
-            {/* No Results */}
-            {filteredCaregivers.length === 0 ? (
+            {/* Loading State */}
+            {loading ? (
               <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-                <p className="text-gray-500 text-lg mb-2">Không tìm thấy bảo mẫu phù hợp</p>
-                <p className="text-gray-400">Vui lòng thử lại với các bộ lọc khác</p>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500 mx-auto mb-4"></div>
+                <p className="text-gray-500">Đang tải danh sách bảo mẫu...</p>
+              </div>
+            ) : error ? (
+              <div className="bg-white rounded-lg shadow-sm p-12 text-center">
+                <p className="text-red-500 text-lg mb-2">Lỗi: {error}</p>
+                <button 
+                  onClick={() => window.location.reload()}
+                  className="mt-4 px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600"
+                >
+                  Thử lại
+                </button>
               </div>
             ) : (
+              <>
+                {/* Results Info */}
+                <div className="mb-6 flex items-center justify-between">
+                  <div>
+                    <p className="text-gray-600">
+                      Tìm thấy <span className="font-bold text-gray-900">{filteredCaregivers.length}</span> bảo mẫu
+                    </p>
+                  </div>
+                  {filteredCaregivers.length > 0 && (
+                    <p className="text-sm text-gray-500">
+                      Hiển thị {(currentPage - 1) * ITEMS_PER_PAGE + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, filteredCaregivers.length)} trong {filteredCaregivers.length}
+                    </p>
+                  )}
+                </div>
+
+                {/* No Results */}
+                {filteredCaregivers.length === 0 ? (
+                  <div className="bg-white rounded-lg shadow-sm p-12 text-center">
+                    <p className="text-gray-500 text-lg mb-2">Không tìm thấy bảo mẫu phù hợp</p>
+                    <p className="text-gray-400">Vui lòng thử lại với các bộ lọc khác</p>
+                  </div>
+                ) : (
               <>
                 {/* Cards Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -561,6 +473,8 @@ function FindCaregiver() {
                 )}
               </>
             )}
+          </>
+        )}
           </div>
         </div>
       </div>
