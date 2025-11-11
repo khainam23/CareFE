@@ -13,7 +13,7 @@ export default function Login() {
     email: '',
     password: ''
   });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState({}); 
 
   // Kiểm tra nếu đã đăng nhập thì redirect
   useEffect(() => {
@@ -49,7 +49,7 @@ export default function Login() {
     
     switch (role) {
       case 'admin':
-        navigate('/dashboard');
+        navigate('/admin/dashboard');
         break;
       case 'support':
         navigate('/dashboard');
