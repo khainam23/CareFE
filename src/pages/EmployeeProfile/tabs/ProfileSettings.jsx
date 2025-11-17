@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Upload, Eye, EyeOff, Edit2, Save, X, AlertCircle, Lock, Bell, Globe, LogOut } from 'lucide-react';
 import { caregiverService } from '@/services/caregiverService';
+import DatePickerInput from '@/components/DatePickerInput';
 
 const ProfileSettings = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -76,6 +77,13 @@ const ProfileSettings = () => {
     }));
   };
 
+  const handleDateChange = (value) => {
+    setFormData(prev => ({
+      ...prev,
+      dateOfBirth: value
+    }));
+  };
+
   const handleNotificationChange = (key) => {
     setNotifications(prev => ({
       ...prev,
@@ -146,15 +154,24 @@ const ProfileSettings = () => {
   const FormInput = ({ label, name, value, type = 'text', disabled = false, placeholder = '' }) => (
     <div>
       <label className="block text-sm font-semibold text-gray-700 mb-2">{label}</label>
-      <input
-        type={type}
-        name={name}
-        value={value}
-        onChange={handleInputChange}
-        disabled={disabled || !isEditing}
-        placeholder={placeholder}
-        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed"
-      />
+      {type === 'date' ? (
+        <DatePickerInput
+          value={value}
+          onChange={handleDateChange}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed"
+          disabled={disabled || !isEditing}
+        />
+      ) : (
+        <input
+          type={type}
+          name={name}
+          value={value}
+          onChange={handleInputChange}
+          disabled={disabled || !isEditing}
+          placeholder={placeholder}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed"
+        />
+      )}
     </div>
   );
 
@@ -196,7 +213,7 @@ const ProfileSettings = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormInput label="Họ và tên" name="fullName" value={formData.fullName} />
           <FormInput label="Email" name="email" value={formData.email} type="email" disabled />
-          <FormInput label="Ngày sinh" name="dateOfBirth" value={formData.dateOfBirth} />
+          <FormInput label="Ngày sinh" name="dateOfBirth" value={formData.dateOfBirth} type="date" />
           <FormInput label="Giới tính" name="gender" value={formData.gender} />
           <FormInput label="Số CCCD/Hộ chiếu" name="idNumber" value={formData.idNumber} />
           <FormInput label="Số điện thoại" name="phone" value={formData.phone} type="tel" />

@@ -15,6 +15,7 @@ import { useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import { validateCustomerForm } from '../../utils/validation';
 import { useNavigate } from 'react-router-dom';
+import DatePickerInput from '@/components/DatePickerInput';
 
 const CUSTOMER_STEPS = [
   {
@@ -316,11 +317,10 @@ function Step1Customer({ formData, onChange, errors }) {
           </label>
           <div className="relative">
             <Calendar className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
-            <input
-              type="date"
+            <DatePickerInput
               value={formData.dateOfBirth}
-              onChange={(e) => onChange('dateOfBirth', e.target.value)}
-              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              onChange={(value) => onChange('dateOfBirth', value)}
+              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer"
             />
           </div>
         </div>
@@ -517,6 +517,8 @@ function Step4Customer() {
 }
 
 function Step5Customer() {
+  const [careRecipientDob, setCareRecipientDob] = useState('');
+
   return (
     <div className="space-y-4">
       <div>
@@ -537,9 +539,10 @@ function Step5Customer() {
           <label className="block mb-2 text-sm font-medium">Ngày sinh</label>
           <div className="relative">
             <Calendar className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
-            <input
-              type="date"
-              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            <DatePickerInput
+              value={careRecipientDob}
+              onChange={setCareRecipientDob}
+              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer"
             />
           </div>
         </div>

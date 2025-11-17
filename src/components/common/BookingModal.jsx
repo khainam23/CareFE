@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, Calendar, Clock, DollarSign } from 'lucide-react';
 import Button from './Button/Button';
+import DatePickerInput from '@/components/DatePickerInput';
 
 function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
   const [formData, setFormData] = useState({
@@ -90,7 +91,8 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
 
   if (!isOpen) return null;
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date();
+  const minEndDate = formData.startDate ? new Date(formData.startDate) : today;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -138,14 +140,15 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
                   <Calendar size={16} className="inline mr-1" />
                   Ngày bắt đầu
                 </label>
-                <input
-                  type="date"
-                  name="startDate"
+                <DatePickerInput
                   value={formData.startDate}
-                  onChange={handleChange}
-                  min={today}
+                  onChange={(value) =>
+                    handleChange({ target: { name: 'startDate', value } })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 cursor-pointer"
+                  minDate={today}
+                  disabled={loading}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
               </div>
 
@@ -154,14 +157,15 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
                   <Calendar size={16} className="inline mr-1" />
                   Ngày kết thúc
                 </label>
-                <input
-                  type="date"
-                  name="endDate"
+                <DatePickerInput
                   value={formData.endDate}
-                  onChange={handleChange}
-                  min={formData.startDate || today}
+                  onChange={(value) =>
+                    handleChange({ target: { name: 'endDate', value } })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 cursor-pointer"
+                  minDate={minEndDate}
+                  disabled={loading}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
               </div>
             </div>

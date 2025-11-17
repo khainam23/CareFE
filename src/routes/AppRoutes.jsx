@@ -9,11 +9,13 @@ import CaregiversList from '@pages/Admin/Caregivers/CaregiversList';
 import BookingsList from '@pages/Admin/Bookings/BookingsList';
 import ServicesList from '@pages/Admin/Services/ServicesList';
 import { ROUTES } from '@constants';
+import ScrollToTop from '@/components/ScrollToTop';
 
 // App Routes
 const AppRoutes = () => {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path={ROUTES.LOGIN} element={<Login />} />
         <Route path={ROUTES.REGISTER} element={<SignUp />} />

@@ -5,6 +5,7 @@ import image54 from '@/assets/images/image 54.svg';
 import rectangle200 from '@/assets/images/Rectangle 200.svg';
 import rectangle201 from '@/assets/images/Rectangle 201.svg';
 import rectangle202 from '@/assets/images/Rectangle 202.svg';
+import DatePickerInput from '@/components/DatePickerInput';
 
 const Home = () => {
   const [searchForm, setSearchForm] = useState({
@@ -16,6 +17,10 @@ const Home = () => {
   const handleSearchChange = (e) => {
     const { name, value } = e.target;
     setSearchForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleDateChange = (value) => {
+    setSearchForm(prev => ({ ...prev, time: value }));
   };
 
   const handleSearch = () => {
@@ -100,13 +105,16 @@ const Home = () => {
               onChange={handleSearchChange}
               placeholder="Nhập vị trí..."
             />
-            <Input
-              label="Tìm theo thời gian"
-              name="time"
-              type="date"
-              value={searchForm.time}
-              onChange={handleSearchChange}
-            />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Tìm theo thời gian
+              </label>
+              <DatePickerInput
+                value={searchForm.time}
+                onChange={handleDateChange}
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 cursor-pointer"
+              />
+            </div>
             <Input
               label="Tìm theo tên"
               name="name"

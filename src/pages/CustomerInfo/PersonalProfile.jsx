@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { User, Mail, Phone, MapPin, Calendar, Edit2, Check, X, Loader2, Clock, FileText } from 'lucide-react';
 import { customerService } from '@/services/customerService';
 import { useAuthStore } from '@/store/authStore';
+import { formatDate } from '@/utils/helpers';
+import DatePickerInput from '@/components/DatePickerInput';
 import Swal from 'sweetalert2';
 
 const PersonalProfile = () => {
@@ -147,6 +149,10 @@ const PersonalProfile = () => {
     setEditForm(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleDateChange = (value) => {
+    setEditForm(prev => ({ ...prev, dateOfBirth: value }));
+  };
+
   // Fetch bookings
   const fetchBookings = async () => {
     try {
@@ -180,16 +186,6 @@ const PersonalProfile = () => {
     };
     
     return statusConfig[status] || { label: status, color: 'bg-gray-100 text-gray-800' };
-  };
-
-  // Format date
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    return new Date(dateString).toLocaleDateString('vi-VN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    });
   };
 
   // Format time
@@ -340,16 +336,14 @@ const PersonalProfile = () => {
               </span>
             </label>
             {isEditing ? (
-              <input
-                type="date"
-                name="dateOfBirth"
+              <DatePickerInput
                 value={editForm.dateOfBirth}
-                onChange={handleInputChange}
+                onChange={handleDateChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             ) : (
               <p className="px-4 py-2 bg-gray-50 rounded-lg text-gray-800 font-medium">
-                {new Date(profile.dateOfBirth).toLocaleDateString('vi-VN')}
+                {formatDate(profile.dateOfBirth)}
               </p>
             )}
           </div>
