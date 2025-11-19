@@ -8,6 +8,12 @@ import UsersList from '@pages/Admin/Users/UsersList';
 import CaregiversList from '@pages/Admin/Caregivers/CaregiversList';
 import BookingsList from '@pages/Admin/Bookings/BookingsList';
 import ServicesList from '@pages/Admin/Services/ServicesList';
+import SupportLayout from '@components/support/SupportLayout';
+import SupportDashboard from '@pages/Support/Dashboard/SupportDashboard';
+import TicketsList from '@pages/Support/Tickets/TicketsList';
+import TicketDetail from '@pages/Support/Tickets/TicketDetail';
+import UnassignedTickets from '@pages/Support/Tickets/UnassignedTickets';
+import MyTicketsList from '@pages/Support/MyTickets/MyTicketsList';
 import { ROUTES } from '@constants';
 import ScrollToTop from '@/components/ScrollToTop';
 
@@ -34,6 +40,22 @@ const AppRoutes = () => {
           <Route path="caregivers" element={<CaregiversList />} />
           <Route path="bookings" element={<BookingsList />} />
           <Route path="services" element={<ServicesList />} />
+        </Route>
+
+        {/* Support Routes */}
+        <Route
+          path="/support"
+          element={
+            <ProtectedRoute allowedRoles={['support', 'admin']}>
+              <SupportLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="dashboard" element={<SupportDashboard />} />
+          <Route path="tickets" element={<TicketsList />} />
+          <Route path="tickets/:id" element={<TicketDetail />} />
+          <Route path="unassigned" element={<UnassignedTickets />} />
+          <Route path="my-tickets" element={<MyTicketsList />} />
         </Route>
         
         {/* Protected Dashboard Route - Admin, Support & Caregiver */}
