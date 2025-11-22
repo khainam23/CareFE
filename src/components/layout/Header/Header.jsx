@@ -49,7 +49,9 @@ const Header = () => {
     const roleNormalized = role?.replace('ROLE_', '').toLowerCase();
     switch (roleNormalized) {
       case 'admin':
+        return '/admin/dashboard';
       case 'support':
+        return '/support/dashboard';
       case 'caregiver':
         return '/dashboard';
       case 'customer':
@@ -119,7 +121,29 @@ const Header = () => {
                               <span>Thông tin cá nhân</span>
                             </Link>
                           );
-                        } else if (roleNormalized === 'admin' || roleNormalized === 'caregiver' || roleNormalized === 'support') {
+                        } else if (roleNormalized === 'admin') {
+                          return (
+                            <Link
+                              to="/admin/dashboard"
+                              onClick={() => setShowDropdown(false)}
+                              className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                            >
+                              <User className="w-4 h-4" />
+                              <span>Admin Dashboard</span>
+                            </Link>
+                          );
+                        } else if (roleNormalized === 'support') {
+                          return (
+                            <Link
+                              to="/support/dashboard"
+                              onClick={() => setShowDropdown(false)}
+                              className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                            >
+                              <User className="w-4 h-4" />
+                              <span>Support Dashboard</span>
+                            </Link>
+                          );
+                        } else if (roleNormalized === 'caregiver') {
                           return (
                             <Link
                               to="/dashboard"

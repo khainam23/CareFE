@@ -51,9 +51,12 @@ export const API_ENDPOINTS = {
   // Support
   SUPPORT: {
     TICKETS: '/api/support/tickets',
+    TICKET_BY_ID: (id) => `/api/support/tickets/${id}`,
     UNASSIGNED_TICKETS: '/api/support/tickets/unassigned',
+    ASSIGNED_TICKETS: '/api/support/tickets/assigned',
     ASSIGN_TICKET: (id) => `/api/support/tickets/${id}/assign`,
     UPDATE_TICKET: (id) => `/api/support/tickets/${id}`,
+    UPDATE_STATUS: (id) => `/api/support/tickets/${id}/status`,
     RESOLVE_TICKET: (id) => `/api/support/tickets/${id}/resolve`,
     ESCALATE_TICKET: (id) => `/api/support/tickets/${id}/escalate`,
   },

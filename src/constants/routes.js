@@ -12,6 +12,18 @@ export const ROUTES = {
   EMPLOYEE_PROFILE: '/employee-profile',
   SETTINGS: '/settings',
   NOT_FOUND: '*',
+  // Admin routes
+  ADMIN_DASHBOARD: '/admin/dashboard',
+  ADMIN_USERS: '/admin/users',
+  ADMIN_CAREGIVERS: '/admin/caregivers',
+  ADMIN_BOOKINGS: '/admin/bookings',
+  ADMIN_SERVICES: '/admin/services',
+  // Support routes
+  SUPPORT_DASHBOARD: '/support/dashboard',
+  SUPPORT_TICKETS: '/support/tickets',
+  SUPPORT_TICKET_DETAIL: '/support/tickets/:id',
+  SUPPORT_UNASSIGNED: '/support/unassigned',
+  SUPPORT_MY_TICKETS: '/support/my-tickets',
 };
 
 export default ROUTES;

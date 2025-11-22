@@ -52,7 +52,7 @@ export default function Login() {
         navigate('/admin/dashboard');
         break;
       case 'support':
-        navigate('/dashboard');
+        navigate('/support/dashboard');
         break;
       case 'caregiver':
         navigate('/employee-profile');
