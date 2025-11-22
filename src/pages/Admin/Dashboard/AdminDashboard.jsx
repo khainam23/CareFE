@@ -4,6 +4,19 @@ import StatCard from '@components/admin/StatCard';
 import Loading from '@components/common/Loading/Loading';
 import adminService from '@services/adminService';
 import Swal from 'sweetalert2';
+import {
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
@@ -63,7 +76,7 @@ const AdminDashboard = () => {
         <h2 className="text-xl font-semibold text-charcoal-900 mb-4">
           User Statistics
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
           <StatCard
             title="Total Users"
             value={stats.totalUsers || 0}
@@ -89,6 +102,26 @@ const AdminDashboard = () => {
             color="orange"
           />
         </div>
+        {/* Biểu đồ cột User Statistics */}
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart
+              data={[
+                { name: 'Tổng Users', value: stats.totalUsers || 0 },
+                { name: 'Customers', value: stats.totalCustomers || 0 },
+                { name: 'Caregivers', value: stats.totalCaregivers || 0 },
+                { name: 'Pending', value: stats.pendingCaregivers || 0 },
+              ]}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="value" fill="#22c55e" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       {/* Booking Statistics */}
@@ -96,7 +129,7 @@ const AdminDashboard = () => {
         <h2 className="text-xl font-semibold text-charcoal-900 mb-4">
           Booking Statistics
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
           <StatCard
             title="Total Bookings"
             value={stats.totalBookings || 0}
@@ -122,6 +155,33 @@ const AdminDashboard = () => {
             color="red"
           />
         </div>
+        {/* Biểu đồ tròn Booking Status */}
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={[
+                  { name: 'Completed', value: stats.completedBookings || 0 },
+                  { name: 'Pending', value: stats.pendingBookings || 0 },
+                  { name: 'Cancelled', value: stats.cancelledBookings || 0 },
+                ]}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                <Cell fill="#22c55e" />
+                <Cell fill="#f59e0b" />
+                <Cell fill="#ef4444" />
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       {/* Financial Statistics */}
@@ -129,7 +189,7 @@ const AdminDashboard = () => {
         <h2 className="text-xl font-semibold text-charcoal-900 mb-4">
           Financial Statistics
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <StatCard
             title="Total Payments"
             value={stats.totalPayments || 0}
@@ -143,6 +203,24 @@ const AdminDashboard = () => {
             color="green"
           />
         </div>
+        {/* Biểu đồ cột Financial Statistics */}
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart
+              data={[
+                { name: 'Total Payments', value: stats.totalPayments || 0 },
+                { name: 'Total Revenue', value: stats.totalRevenue || 0 },
+              ]}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip formatter={(value) => `$${value.toLocaleString()}`} />
+              <Legend />
+              <Bar dataKey="value" fill="#22c55e" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       {/* Support Statistics */}
@@ -150,7 +228,7 @@ const AdminDashboard = () => {
         <h2 className="text-xl font-semibold text-charcoal-900 mb-4">
           Support Statistics
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <StatCard
             title="Open Tickets"
             value={stats.openTickets || 0}
@@ -164,6 +242,24 @@ const AdminDashboard = () => {
             color="red"
           />
         </div>
+        {/* Biểu đồ cột Support Statistics */}
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart
+              data={[
+                { name: 'Open Tickets', value: stats.openTickets || 0 },
+                { name: 'Unresolved Tickets', value: stats.unresolvedTickets || 0 },
+              ]}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="value" fill="#f59e0b" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       {/* Caregiver Approval Statistics */}
@@ -171,7 +267,7 @@ const AdminDashboard = () => {
         <h2 className="text-xl font-semibold text-charcoal-900 mb-4">
           Caregiver Approvals
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <StatCard
             title="Approved Caregivers"
             value={stats.approvedCaregivers || 0}
@@ -184,6 +280,24 @@ const AdminDashboard = () => {
             icon="Clock"
             color="orange"
           />
+        </div>
+        {/* Biểu đồ cột Caregiver Approvals */}
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart
+              data={[
+                { name: 'Approved', value: stats.approvedCaregivers || 0 },
+                { name: 'Pending', value: stats.pendingCaregivers || 0 },
+              ]}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="value" fill="#22c55e" />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>

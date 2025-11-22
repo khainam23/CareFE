@@ -34,8 +34,8 @@ const AdminHeader = ({ onMenuClick }) => {
                 {user?.roles?.[0] || 'ROLE_ADMIN'}
               </p>
             </div>
-            <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
-              <User size={20} className="text-primary-600" />
+            <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+              <User size={20} className="text-green-600" />
             </div>
           </div>
 
