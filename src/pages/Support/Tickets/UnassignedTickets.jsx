@@ -75,8 +75,8 @@ const UnassignedTickets = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-charcoal-900">Unassigned Tickets</h1>
-          <p className="text-xs sm:text-sm text-chilled-gray-600 mt-1">
+          <h1 className="text-xl sm:text-2xl font-bold text-charcoal-500">Unassigned Tickets</h1>
+          <p className="text-xs sm:text-sm text-chilled-gray-400 mt-1">
             Tickets waiting to be assigned to support staff
           </p>
         </div>
@@ -92,10 +92,10 @@ const UnassignedTickets = () => {
       {tickets.length === 0 ? (
         <div className="bg-white border border-chilled-gray-200 rounded-lg p-12 text-center">
           <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-charcoal-900 mb-2">
+          <h3 className="text-lg font-semibold text-charcoal-500 mb-2">
             All tickets are assigned!
           </h3>
-          <p className="text-chilled-gray-600">
+          <p className="text-chilled-gray-400">
             There are no unassigned tickets at the moment. Great work!
           </p>
         </div>

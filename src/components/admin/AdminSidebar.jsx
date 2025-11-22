@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
@@ -6,9 +6,20 @@ import {
   Calendar,
   Briefcase,
   X,
+  LogOut,
 } from 'lucide-react';
+import { useAuthStore } from '@store/authStore';
+import CareNowLogo from '@assets/images/Logo.svg';
 
 const AdminSidebar = ({ isOpen, onClose }) => {
+  const navigate = useNavigate();
+  const { logout } = useAuthStore();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   const navItems = [
     {
       path: '/admin/dashboard',
@@ -41,13 +52,13 @@ const AdminSidebar = ({ isOpen, onClose }) => {
     <>
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-30 h-screen w-64 bg-green-50 border-r border-green-200 transition-transform duration-300 ${
+        className={`fixed top-0 left-0 z-30 h-screen w-64 bg-green-50 border-r border-green-200 transition-transform duration-300 flex flex-col ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0`}
       >
         {/* Logo */}
         <div className="flex items-center justify-between h-16 px-6 border-b border-green-200">
-          <h1 className="text-xl font-bold text-green-600">Care Admin</h1>
+          <img src={CareNowLogo} alt="CareNow" className="h-12" />
           <button
             onClick={onClose}
             className="lg:hidden p-2 rounded-lg hover:bg-chilled-gray-100"
@@ -57,7 +68,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
         </div>
 
         {/* Navigation */}
-        <nav className="p-4 space-y-2">
+        <nav className="p-4 space-y-2 flex-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -68,8 +79,8 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                     isActive
-                      ? 'bg-green-50 text-green-600 font-medium'
-                      : 'text-chilled-gray-700 hover:bg-green-50'
+                      ? 'bg-green-50 text-green-500 font-medium'
+                      : 'text-chilled-gray-500 hover:bg-green-50'
                   }`
                 }
               >
@@ -79,6 +90,17 @@ const AdminSidebar = ({ isOpen, onClose }) => {
             );
           })}
         </nav>
+
+        {/* Logout Button - Outside nav, at bottom */}
+        <div className="p-4 border-t border-green-200">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-red-500 hover:bg-red-50 font-medium"
+          >
+            <LogOut size={20} />
+            <span>Logout</span>
+          </button>
+        </div>
       </aside>
     </>
   );

@@ -1,11 +1,14 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   Calendar,
   CheckSquare,
   CreditCard,
   Settings,
+  LogOut,
 } from 'lucide-react';
+import { useAuthStore } from '@/store/authStore';
 import Dashboard from './tabs/Dashboard';
 import Schedule from './tabs/Schedule';
 import Tasks from './tabs/Tasks';
@@ -14,6 +17,13 @@ import ProfileSettings from './tabs/ProfileSettings';
 
 const EmployeeProfile = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const navigate = useNavigate();
+  const { logout } = useAuthStore();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -61,8 +71,8 @@ const EmployeeProfile = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`py-4 px-1 border-b-2 font-medium text-sm inline-flex items-center gap-2 whitespace-nowrap transition-colors ${
                     activeTab === tab.id
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ? 'border-primary-600 text-primary-600 bg-primary-50'
+                      : 'border-transparent text-chilled-gray-500 hover:text-chilled-gray-700 hover:border-chilled-gray-300 active:bg-primary-600 active:text-white active:hover:bg-primary-700'
                   }`}
                 >
                   <Icon size={18} />
@@ -77,6 +87,19 @@ const EmployeeProfile = () => {
       {/* Tab Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {renderTabContent()}
+      </div>
+
+      {/* Logout Button */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <div className="bg-white rounded-lg shadow-md p-6 border border-red-200">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 bg-red-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-600 transition-colors active:bg-primary-600 active:hover:bg-primary-700"
+          >
+            <LogOut size={18} />
+            Đăng xuất
+          </button>
+        </div>
       </div>
     </div>
   );

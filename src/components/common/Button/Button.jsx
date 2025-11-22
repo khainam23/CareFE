@@ -7,22 +7,39 @@ const Button = ({
   onClick,
   disabled = false,
   className = '',
+  isActive = false,
+  isToggleable = false,
+  toggleMode = 'independent', // 'independent' | 'selection'
   ...props 
 }) => {
   const baseClasses = 'w-full py-3 rounded-lg font-semibold transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed';
   
-  const variants = {
-    primary: 'bg-teal-500 text-white hover:bg-teal-600',
-    secondary: 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50',
-    outline: 'border border-teal-500 text-teal-500 hover:bg-teal-50',
+  // Toggle styles
+  const getToggleClasses = () => {
+    if (!isToggleable) return '';
+    
+    if (isActive) {
+      return 'bg-primary-600 text-white hover:bg-primary-700';
+    } else {
+      return 'bg-chilled-gray-100 text-chilled-gray-700 hover:bg-chilled-gray-200';
+    }
   };
+
+  // Variant styles (only apply if not toggleable)
+  const variants = {
+    primary: isToggleable ? '' : 'bg-primary-500 text-white hover:bg-primary-600',
+    secondary: isToggleable ? '' : 'bg-white border border-chilled-gray-300 text-chilled-gray-700 hover:bg-chilled-gray-50',
+    outline: isToggleable ? '' : 'border border-primary-500 text-primary-500 hover:bg-primary-50',
+  };
+
+  const variantClass = isToggleable ? getToggleClasses() : variants[variant];
 
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`${baseClasses} ${variants[variant]} ${className}`}
+      className={`${baseClasses} ${variantClass} ${className}`}
       {...props}
     >
       {children}

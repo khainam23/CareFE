@@ -113,8 +113,8 @@ const TicketsList = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-charcoal-900">All Tickets</h1>
-          <p className="text-xs sm:text-sm text-chilled-gray-600 mt-1">
+          <h1 className="text-xl sm:text-2xl font-bold text-charcoal-500">All Tickets</h1>
+          <p className="text-xs sm:text-sm text-chilled-gray-400 mt-1">
             Showing {filteredTickets.length} of {tickets.length} tickets
           </p>
         </div>
@@ -127,10 +127,10 @@ const TicketsList = () => {
       {filteredTickets.length === 0 ? (
         <div className="bg-white border border-chilled-gray-200 rounded-lg p-12 text-center">
           <AlertCircle className="w-12 h-12 text-chilled-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-charcoal-900 mb-2">
+          <h3 className="text-lg font-semibold text-charcoal-500 mb-2">
             No tickets found
           </h3>
-          <p className="text-chilled-gray-600">
+          <p className="text-chilled-gray-400">
             {filters.search || filters.status || filters.priority || filters.category
               ? 'Try adjusting your filters to see more results.'
               : 'There are no support tickets in the system yet.'}
@@ -143,28 +143,28 @@ const TicketsList = () => {
             <table className="w-full">
               <thead className="bg-chilled-gray-50 border-b border-chilled-gray-200">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-400 uppercase tracking-wider">
                     Ticket #
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-400 uppercase tracking-wider">
                     Customer
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-400 uppercase tracking-wider">
                     Category
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-400 uppercase tracking-wider">
                     Priority
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-400 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-400 uppercase tracking-wider">
                     Assigned To
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-400 uppercase tracking-wider">
                     Created
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-400 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -179,21 +179,21 @@ const TicketsList = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <Ticket className="w-4 h-4 text-chilled-gray-400 mr-2" />
-                        <span className="text-sm font-medium text-charcoal-900">
+                        <span className="text-sm font-medium text-charcoal-500">
                           {ticket.ticketNumber}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-charcoal-900">
+                      <div className="text-sm text-charcoal-500">
                         {ticket.customerName}
                       </div>
-                      <div className="text-xs text-chilled-gray-600">
+                      <div className="text-xs text-chilled-gray-400">
                         {ticket.subject}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-chilled-gray-700">
+                      <span className="text-sm text-chilled-gray-400">
                         {ticket.category}
                       </span>
                     </td>
@@ -204,7 +204,7 @@ const TicketsList = () => {
                       <TicketStatusBadge status={ticket.status} />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-chilled-gray-700">
+                      <span className="text-sm text-chilled-gray-400">
                         {ticket.assignedToName || (
                           <span className="text-chilled-gray-400 italic">
                             Unassigned
@@ -213,7 +213,7 @@ const TicketsList = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-chilled-gray-600">
+                      <span className="text-sm text-chilled-gray-500">
                         {formatDate(ticket.createdAt)}
                       </span>
                     </td>
@@ -223,7 +223,7 @@ const TicketsList = () => {
                           e.stopPropagation();
                           handleTicketClick(ticket.id);
                         }}
-                        className="text-sm font-medium text-primary-600 hover:text-primary-700"
+                        className="text-sm font-medium text-primary-600 hover:text-primary-700 px-3 py-1 rounded-lg transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700"
                       >
                         View
                       </button>
@@ -245,7 +245,7 @@ const TicketsList = () => {
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center">
                     <Ticket className="w-4 h-4 text-chilled-gray-400 mr-2" />
-                    <span className="text-sm font-medium text-charcoal-900">
+                    <span className="text-sm font-medium text-charcoal-500">
                       {ticket.ticketNumber}
                     </span>
                   </div>
@@ -255,12 +255,12 @@ const TicketsList = () => {
                   </div>
                 </div>
                 <div className="mb-2">
-                  <p className="text-sm font-medium text-charcoal-900">
+                  <p className="text-sm font-medium text-charcoal-500">
                     {ticket.customerName}
                   </p>
-                  <p className="text-xs text-chilled-gray-600">{ticket.subject}</p>
+                  <p className="text-xs text-chilled-gray-400">{ticket.subject}</p>
                 </div>
-                <div className="flex items-center justify-between text-xs text-chilled-gray-600">
+                <div className="flex items-center justify-between text-xs text-chilled-gray-400">
                   <span>{ticket.category}</span>
                   <span>{formatDate(ticket.createdAt)}</span>
                 </div>

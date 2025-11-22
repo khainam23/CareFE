@@ -13,6 +13,19 @@ import Swal from 'sweetalert2';
 import StatCard from '@components/admin/StatCard';
 import Loading from '@components/common/Loading';
 import supportService from '@services/supportService';
+import {
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
 const SupportDashboard = () => {
   const navigate = useNavigate();
@@ -127,8 +140,8 @@ const SupportDashboard = () => {
     <div className="space-y-4 sm:space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-charcoal-900">Support Dashboard</h1>
-        <p className="text-sm sm:text-base text-chilled-gray-600 mt-2">
+        <h1 className="text-2xl sm:text-3xl font-bold text-charcoal-500">Support Dashboard</h1>
+        <p className="text-sm sm:text-base text-chilled-gray-400 mt-2">
           Overview of support tickets and performance metrics
         </p>
       </div>
@@ -161,46 +174,55 @@ const SupportDashboard = () => {
         />
       </div>
 
-      {/* Additional Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center">
-              <Clock size={20} />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-charcoal-900">
-                Average Resolution Time
-              </h3>
-              <p className="text-2xl font-bold text-purple-600 mt-1">
-                {stats.avgResolutionTime}
-              </p>
-            </div>
-          </div>
+      {/* Performance Metrics Chart */}
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <TrendingUp className="text-charcoal-500" size={20} />
+          <h2 className="text-xl font-semibold text-charcoal-500">
+            Performance Metrics
+          </h2>
         </div>
-
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-teal-100 text-teal-600 flex items-center justify-center">
-              <TrendingUp size={20} />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-charcoal-900">
-                Resolution Rate
-              </h3>
-              <p className="text-2xl font-bold text-teal-600 mt-1">
-                {stats.totalTickets > 0 
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart
+            data={[
+              {
+                name: 'Avg Resolution Time',
+                value: parseInt(stats.avgResolutionTime) || 0,
+                label: stats.avgResolutionTime
+              },
+              {
+                name: 'Resolution Rate',
+                value: stats.totalTickets > 0 
                   ? Math.round(((stats.ticketsByStatus.RESOLVED || 0) / stats.totalTickets) * 100)
-                  : 0}%
-              </p>
-            </div>
-          </div>
-        </div>
+                  : 0,
+                label: `${stats.totalTickets > 0 
+                  ? Math.round(((stats.ticketsByStatus.RESOLVED || 0) / stats.totalTickets) * 100)
+                  : 0}%`
+              },
+              {
+                name: 'Resolved Today',
+                value: stats.resolvedToday
+              }
+            ]}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip 
+              formatter={(value, name, props) => {
+                if (props.payload.label) return props.payload.label;
+                return value;
+              }}
+            />
+            <Legend />
+            <Bar dataKey="value" fill="#06b6d4" />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
 
       {/* Quick Actions */}
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold text-charcoal-900 mb-4">Quick Actions</h2>
+        <h2 className="text-xl font-semibold text-charcoal-500 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <button
             onClick={handleViewUnassigned}
@@ -209,8 +231,8 @@ const SupportDashboard = () => {
             <div className="flex items-center gap-3">
               <AlertCircle className="text-orange-600" size={24} />
               <div className="text-left">
-                <p className="font-semibold text-charcoal-900">Unassigned Tickets</p>
-                <p className="text-sm text-chilled-gray-600">
+                <p className="font-semibold text-charcoal-500">Unassigned Tickets</p>
+                <p className="text-sm text-chilled-gray-400">
                   {stats.unassignedTickets} tickets need attention
                 </p>
               </div>
@@ -227,8 +249,8 @@ const SupportDashboard = () => {
             <div className="flex items-center gap-3">
               <Users className="text-cyan-600" size={24} />
               <div className="text-left">
-                <p className="font-semibold text-charcoal-900">My Tickets</p>
-                <p className="text-sm text-chilled-gray-600">
+                <p className="font-semibold text-charcoal-500">My Tickets</p>
+                <p className="text-sm text-chilled-gray-400">
                   View your assigned tickets
                 </p>
               </div>
@@ -240,87 +262,134 @@ const SupportDashboard = () => {
         </div>
       </div>
 
-      {/* Ticket Distribution */}
+      {/* Ticket Distribution Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* By Category */}
+        {/* By Category - Pie Chart */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center gap-2 mb-4">
-            <BarChart3 className="text-charcoal-900" size={20} />
-            <h2 className="text-xl font-semibold text-charcoal-900">
+            <BarChart3 className="text-charcoal-500" size={20} />
+            <h2 className="text-xl font-semibold text-charcoal-500">
               Tickets by Category
             </h2>
           </div>
-          <div className="space-y-3">
-            {Object.entries(stats.ticketsByCategory).length > 0 ? (
-              Object.entries(stats.ticketsByCategory).map(([category, count]) => (
-                <div key={category} className="flex items-center justify-between">
-                  <span className="text-chilled-gray-700 capitalize">
-                    {category.toLowerCase().replace('_', ' ')}
-                  </span>
-                  <div className="flex items-center gap-3">
-                    <div className="w-32 bg-chilled-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-cyan-600 h-2 rounded-full"
-                        style={{
-                          width: `${(count / stats.totalTickets) * 100}%`
-                        }}
-                      />
-                    </div>
-                    <span className="font-semibold text-charcoal-900 w-8 text-right">
-                      {count}
-                    </span>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-chilled-gray-500 text-center py-4">No tickets yet</p>
-            )}
-          </div>
+          {Object.entries(stats.ticketsByCategory).length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={Object.entries(stats.ticketsByCategory).map(([category, count]) => ({
+                    name: category.toLowerCase().replace('_', ' '),
+                    value: count
+                  }))}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {Object.entries(stats.ticketsByCategory).map((entry, index) => {
+                    const colors = ['#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
+                    return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;
+                  })}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : (
+            <p className="text-chilled-gray-400 text-center py-4">No tickets yet</p>
+          )}
         </div>
 
-        {/* By Priority */}
+        {/* By Priority - Bar Chart */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center gap-2 mb-4">
-            <BarChart3 className="text-charcoal-900" size={20} />
-            <h2 className="text-xl font-semibold text-charcoal-900">
+            <BarChart3 className="text-charcoal-500" size={20} />
+            <h2 className="text-xl font-semibold text-charcoal-500">
               Tickets by Priority
             </h2>
           </div>
-          <div className="space-y-3">
-            {Object.entries(stats.ticketsByPriority).length > 0 ? (
-              Object.entries(stats.ticketsByPriority).map(([priority, count]) => {
-                const priorityColors = {
-                  URGENT: 'bg-red-600',
-                  HIGH: 'bg-orange-600',
-                  MEDIUM: 'bg-yellow-600',
-                  LOW: 'bg-gray-600'
-                };
-                return (
-                  <div key={priority} className="flex items-center justify-between">
-                    <span className="text-chilled-gray-700 capitalize">
-                      {priority.toLowerCase()}
-                    </span>
-                    <div className="flex items-center gap-3">
-                      <div className="w-32 bg-chilled-gray-200 rounded-full h-2">
-                        <div
-                          className={`${priorityColors[priority]} h-2 rounded-full`}
-                          style={{
-                            width: `${(count / stats.totalTickets) * 100}%`
-                          }}
-                        />
-                      </div>
-                      <span className="font-semibold text-charcoal-900 w-8 text-right">
-                        {count}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })
-            ) : (
-              <p className="text-chilled-gray-500 text-center py-4">No tickets yet</p>
-            )}
-          </div>
+          {Object.entries(stats.ticketsByPriority).length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={Object.entries(stats.ticketsByPriority).map(([priority, count]) => ({
+                  name: priority,
+                  value: count
+                }))}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="value">
+                  {Object.entries(stats.ticketsByPriority).map(([priority], index) => {
+                    const priorityColors = {
+                      URGENT: '#ef4444',
+                      HIGH: '#f59e0b',
+                      MEDIUM: '#eab308',
+                      LOW: '#6b7280'
+                    };
+                    return (
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={priorityColors[priority] || '#6b7280'} 
+                      />
+                    );
+                  })}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <p className="text-chilled-gray-400 text-center py-4">No tickets yet</p>
+          )}
         </div>
+      </div>
+
+      {/* Tickets by Status Chart */}
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <BarChart3 className="text-charcoal-500" size={20} />
+          <h2 className="text-xl font-semibold text-charcoal-500">
+            Tickets by Status
+          </h2>
+        </div>
+        {Object.entries(stats.ticketsByStatus).length > 0 ? (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart
+              data={Object.entries(stats.ticketsByStatus).map(([status, count]) => ({
+                name: status,
+                value: count
+              }))}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="value">
+                {Object.entries(stats.ticketsByStatus).map(([status], index) => {
+                  const statusColors = {
+                    OPEN: '#3b82f6',
+                    IN_PROGRESS: '#f59e0b',
+                    RESOLVED: '#10b981',
+                    CLOSED: '#6b7280',
+                    PENDING: '#8b5cf6'
+                  };
+                  return (
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={statusColors[status] || '#6b7280'} 
+                    />
+                  );
+                })}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        ) : (
+          <p className="text-chilled-gray-400 text-center py-4">No tickets yet</p>
+        )}
       </div>
     </div>
   );

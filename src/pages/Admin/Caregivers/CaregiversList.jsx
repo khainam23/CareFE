@@ -205,10 +205,10 @@ const CaregiversList = () => {
       {/* Page Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-charcoal-900">
+          <h1 className="text-3xl font-bold text-charcoal-500">
             Caregivers Management
           </h1>
-          <p className="text-chilled-gray-600 mt-1">
+          <p className="text-chilled-gray-400 mt-1">
             Manage all caregivers in the system
           </p>
         </div>
@@ -231,14 +231,14 @@ const CaregiversList = () => {
               <>
                 <button
                   onClick={() => handleApprove(caregiver)}
-                  className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                  className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700"
                   title="Approve"
                 >
                   <CheckCircle size={18} />
                 </button>
                 <button
                   onClick={() => handleReject(caregiver)}
-                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700"
                   title="Reject"
                 >
                   <XCircle size={18} />

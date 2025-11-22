@@ -91,7 +91,7 @@ const DataTable = ({
               className="w-full pl-10 pr-4 py-2 border border-chilled-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             />
           </div>
-          <p className="text-sm text-chilled-gray-600 mt-2">
+          <p className="text-sm text-chilled-gray-400 mt-2">
             {filteredData.length} results found
           </p>
         </div>
@@ -105,12 +105,12 @@ const DataTable = ({
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-700 uppercase tracking-wider"
+                  className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-400 uppercase tracking-wider"
                 >
                   {column.sortable !== false ? (
                     <button
                       onClick={() => handleSort(column.key)}
-                      className="flex items-center gap-1 hover:text-primary-600"
+                      className="flex items-center gap-1 hover:text-primary-600 transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700 rounded px-2 py-1"
                     >
                       {column.label}
                       {sortConfig.key === column.key && (
@@ -140,7 +140,7 @@ const DataTable = ({
               <tr>
                 <td
                   colSpan={columns.length + 1}
-                  className="px-6 py-12 text-center text-chilled-gray-500"
+                  className="px-6 py-12 text-center text-chilled-gray-400"
                 >
                   No results found
                 </td>
@@ -154,7 +154,7 @@ const DataTable = ({
                   {columns.map((column) => (
                     <td
                       key={column.key}
-                      className="px-6 py-4 whitespace-nowrap text-sm text-charcoal-900"
+                      className="px-6 py-4 whitespace-nowrap text-sm text-charcoal-500"
                     >
                       {column.render
                         ? column.render(row[column.key], row)
@@ -167,7 +167,7 @@ const DataTable = ({
                         {onView && (
                           <button
                             onClick={() => onView(row)}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700"
                             title="View"
                           >
                             <Eye size={18} />
@@ -176,7 +176,7 @@ const DataTable = ({
                         {onEdit && (
                           <button
                             onClick={() => onEdit(row)}
-                            className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                            className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700"
                             title="Edit"
                           >
                             <Edit size={18} />
@@ -185,7 +185,7 @@ const DataTable = ({
                         {onDelete && (
                           <button
                             onClick={() => onDelete(row)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700"
                             title="Delete"
                           >
                             <Trash2 size={18} />

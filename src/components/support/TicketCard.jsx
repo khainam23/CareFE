@@ -20,10 +20,10 @@ const TicketCard = ({ ticket, onAssign, onClick }) => {
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-charcoal-900 mb-1">
+          <h3 className="text-lg font-semibold text-charcoal-500 mb-1">
             #{ticket.ticketNumber}
           </h3>
-          <p className="text-sm text-chilled-gray-600">{ticket.subject}</p>
+          <p className="text-sm text-chilled-gray-400">{ticket.subject}</p>
         </div>
         <div className="flex gap-2 ml-4">
           <TicketPriorityBadge priority={ticket.priority} />
@@ -33,17 +33,17 @@ const TicketCard = ({ ticket, onAssign, onClick }) => {
 
       {/* Customer Info */}
       <div className="mb-3">
-        <p className="text-sm text-chilled-gray-700">
+        <p className="text-sm text-chilled-gray-400">
           <span className="font-medium">Customer:</span> {ticket.customerName}
         </p>
-        <p className="text-sm text-chilled-gray-700">
+        <p className="text-sm text-chilled-gray-400">
           <span className="font-medium">Category:</span> {ticket.category}
         </p>
       </div>
 
       {/* Footer */}
       <div className="flex items-center justify-between pt-3 border-t border-chilled-gray-100">
-        <div className="flex items-center gap-4 text-xs text-chilled-gray-600">
+        <div className="flex items-center gap-4 text-xs text-chilled-gray-400">
           <div className="flex items-center gap-1">
             <Clock size={14} />
             <span>{formatDate(ticket.createdAt)}</span>
@@ -63,7 +63,7 @@ const TicketCard = ({ ticket, onAssign, onClick }) => {
               e.stopPropagation();
               onAssign(ticket.id);
             }}
-            className="px-3 py-1 text-xs font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700 transition-colors"
+            className="px-3 py-1 text-xs font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700 transition-colors active:bg-primary-800"
           >
             Assign to Me
           </button>

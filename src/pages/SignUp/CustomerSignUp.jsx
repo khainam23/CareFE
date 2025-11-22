@@ -10,6 +10,8 @@ import {
   Eye,
   EyeOff,
   Check,
+  Plus,
+  Trash2,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
@@ -70,12 +72,16 @@ export default function CustomerSignUp({
     // Emergency contact
     emergencyContactName: '',
     emergencyContactPhone: '',
-    // Care recipient info
-    careRecipientName: '',
-    careRecipientDob: '',
-    careRecipientGender: '',
-    careRecipientPhone: '',
-    specialNotes: ''
+    // Care recipients (array)
+    careRecipients: [
+      {
+        name: '',
+        dateOfBirth: '',
+        gender: '',
+        phoneNumber: '',
+        specialNotes: ''
+      }
+    ]
   });
 
   const handleInputChange = (field, value) => {
@@ -108,7 +114,17 @@ export default function CustomerSignUp({
       phoneNumber: formData.phoneNumber,
       address: `${formData.address}, ${formData.ward}, ${formData.city}`.trim(),
       emergencyContactName: formData.emergencyContactName || undefined,
-      emergencyContactPhone: formData.emergencyContactPhone || undefined
+      emergencyContactPhone: formData.emergencyContactPhone || undefined,
+      // Care recipients array (filter out empty entries)
+      careRecipients: formData.careRecipients.filter(recipient => 
+        recipient.name.trim() || recipient.phoneNumber.trim()
+      ).map(recipient => ({
+        name: recipient.name.trim(),
+        dateOfBirth: recipient.dateOfBirth || undefined,
+        gender: recipient.gender || undefined,
+        phoneNumber: recipient.phoneNumber.trim() || undefined,
+        specialNotes: recipient.specialNotes.trim() || undefined
+      }))
     };
 
     // Validate form
@@ -218,7 +234,7 @@ export default function CustomerSignUp({
           <Step4Customer 
             formData={formData} 
             onChange={handleInputChange} 
-            errors={errors} 
+            errors={errors}
           />
         </div>
 
@@ -233,7 +249,8 @@ export default function CustomerSignUp({
           <Step5Customer 
             formData={formData} 
             onChange={handleInputChange} 
-            errors={errors} 
+            errors={errors}
+            setFormData={setFormData}
           />
         </div>
 
@@ -472,7 +489,7 @@ function Step3Customer({ formData, onChange, errors }) {
   );
 }
 
-function Step4Customer() {
+function Step4Customer({ formData, onChange, errors }) {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -482,6 +499,8 @@ function Step4Customer() {
             <MapPin className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
             <input
               type="text"
+              value={formData.ward}
+              onChange={(e) => onChange('ward', e.target.value)}
               className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               placeholder="Phường 1"
             />
@@ -495,6 +514,8 @@ function Step4Customer() {
             <MapPin className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
             <input
               type="text"
+              value={formData.city}
+              onChange={(e) => onChange('city', e.target.value)}
               className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               placeholder="Hà Nội"
             />
@@ -507,6 +528,8 @@ function Step4Customer() {
           <MapPin className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
           <input
             type="text"
+            value={formData.address}
+            onChange={(e) => onChange('address', e.target.value)}
             className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
             placeholder="123 Đường ABC"
           />
@@ -516,73 +539,152 @@ function Step4Customer() {
   );
 }
 
-function Step5Customer() {
-  const [careRecipientDob, setCareRecipientDob] = useState('');
+function Step5Customer({ formData, onChange, errors, setFormData }) {
+  const addCareRecipient = () => {
+    setFormData(prev => ({
+      ...prev,
+      careRecipients: [
+        ...prev.careRecipients,
+        {
+          name: '',
+          dateOfBirth: '',
+          gender: '',
+          phoneNumber: '',
+          specialNotes: ''
+        }
+      ]
+    }));
+  };
+
+  const removeCareRecipient = (index) => {
+    if (formData.careRecipients.length > 1) {
+      setFormData(prev => ({
+        ...prev,
+        careRecipients: prev.careRecipients.filter((_, i) => i !== index)
+      }));
+    }
+  };
+
+  const updateCareRecipient = (index, field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      careRecipients: prev.careRecipients.map((recipient, i) =>
+        i === index ? { ...recipient, [field]: value } : recipient
+      )
+    }));
+  };
 
   return (
-    <div className="space-y-4">
-      <div>
-        <label className="block mb-2 text-sm font-medium">
-          Họ và tên người cần chăm sóc
-        </label>
-        <div className="relative">
-          <User className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
-          <input
-            type="text"
-            className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            placeholder="Nguyễn Văn B"
-          />
-        </div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block mb-2 text-sm font-medium">Ngày sinh</label>
-          <div className="relative">
-            <Calendar className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
-            <DatePickerInput
-              value={careRecipientDob}
-              onChange={setCareRecipientDob}
-              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer"
-            />
+    <div className="space-y-6">
+      {formData.careRecipients.map((recipient, index) => (
+        <div
+          key={index}
+          className="p-4 border-2 border-gray-200 rounded-lg bg-gray-50"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-base font-semibold text-gray-700">
+              Người cần chăm sóc {index + 1}
+            </h3>
+            {formData.careRecipients.length > 1 && (
+              <button
+                type="button"
+                onClick={() => removeCareRecipient(index)}
+                className="flex items-center gap-1 px-3 py-1 text-sm text-red-600 transition bg-red-50 border border-red-200 rounded-lg hover:bg-red-100"
+              >
+                <Trash2 className="w-4 h-4" />
+                Xóa
+              </button>
+            )}
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <label className="block mb-2 text-sm font-medium">
+                Họ và tên người cần chăm sóc
+              </label>
+              <div className="relative">
+                <User className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  value={recipient.name}
+                  onChange={(e) => updateCareRecipient(index, 'name', e.target.value)}
+                  className="w-full pl-10 pr-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  placeholder="Nguyễn Văn B"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block mb-2 text-sm font-medium">Ngày sinh</label>
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
+                  <DatePickerInput
+                    value={recipient.dateOfBirth}
+                    onChange={(value) => updateCareRecipient(index, 'dateOfBirth', value)}
+                    className="w-full pl-10 pr-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block mb-2 text-sm font-medium">Giới tính</label>
+                <div className="relative">
+                  <Users className="absolute left-3 top-2.5 w-5 h-5 text-gray-400 pointer-events-none" />
+                  <select
+                    value={recipient.gender}
+                    onChange={(e) => updateCareRecipient(index, 'gender', e.target.value)}
+                    className="w-full pl-10 pr-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none"
+                  >
+                    <option value="">Chọn giới tính</option>
+                    <option value="male">Nam</option>
+                    <option value="female">Nữ</option>
+                    <option value="other">Khác</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block mb-2 text-sm font-medium">Số điện thoại</label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
+                <input
+                  type="tel"
+                  value={recipient.phoneNumber}
+                  onChange={(e) => updateCareRecipient(index, 'phoneNumber', e.target.value)}
+                  className="w-full pl-10 pr-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  placeholder="0123456789"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block mb-2 text-sm font-medium">
+                Chi tiết đặc biệt cần lưu ý
+              </label>
+              <div className="relative">
+                <FileText className="absolute left-3 top-2.5 w-5 h-5 text-gray-400 pointer-events-none" />
+                <textarea
+                  value={recipient.specialNotes}
+                  onChange={(e) => updateCareRecipient(index, 'specialNotes', e.target.value)}
+                  className="w-full pl-10 pr-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  placeholder="Mô tả các thông tin đặc biệt..."
+                  rows="3"
+                />
+              </div>
+            </div>
           </div>
         </div>
-        <div>
-          <label className="block mb-2 text-sm font-medium">Giới tính</label>
-          <div className="relative">
-            <Users className="absolute left-3 top-2.5 w-5 h-5 text-gray-400 pointer-events-none" />
-            <select className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none">
-              <option value="">Chọn giới tính</option>
-              <option value="male">Nam</option>
-              <option value="female">Nữ</option>
-              <option value="other">Khác</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div>
-        <label className="block mb-2 text-sm font-medium">Số điện thoại</label>
-        <div className="relative">
-          <Phone className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
-          <input
-            type="tel"
-            className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            placeholder="0123456789"
-          />
-        </div>
-      </div>
-      <div>
-        <label className="block mb-2 text-sm font-medium">
-          Chi tiết đặc biệt cần lưu ý
-        </label>
-        <div className="relative">
-          <FileText className="absolute left-3 top-2.5 w-5 h-5 text-gray-400 pointer-events-none" />
-          <textarea
-            className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            placeholder="Mô tả các thông tin đặc biệt..."
-            rows="3"
-          ></textarea>
-        </div>
-      </div>
+      ))}
+
+      <button
+        type="button"
+        onClick={addCareRecipient}
+        className="flex items-center justify-center gap-2 w-full px-4 py-3 text-blue-600 transition bg-blue-50 border-2 border-dashed border-blue-300 rounded-lg hover:bg-blue-100 hover:border-blue-400"
+      >
+        <Plus className="w-5 h-5" />
+        <span className="font-medium">Thêm người cần chăm sóc</span>
+      </button>
     </div>
   );
 }

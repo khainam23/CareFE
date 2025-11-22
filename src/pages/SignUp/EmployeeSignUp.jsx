@@ -48,6 +48,11 @@ export default function EmployeeSignUp({ onBack, onComplete }) {
   const [showPassword, setShowPassword] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [errors, setErrors] = useState({});
+  const [imagePreviews, setImagePreviews] = useState({
+    avatar: null,
+    idCard: null,
+    cv: null
+  });
   const [formData, setFormData] = useState({
     // Personal info
     fullName: '',
@@ -84,6 +89,29 @@ export default function EmployeeSignUp({ onBack, onComplete }) {
         ...prev,
         [field]: ''
       }));
+    }
+  };
+
+  const handleImageChange = (field, file) => {
+    if (file) {
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreviews(prev => ({
+          ...prev,
+          [field]: reader.result
+        }));
+      };
+      reader.readAsDataURL(file);
+      
+      // Store file in formData if needed
+      handleInputChange(field, file);
+    } else {
+      setImagePreviews(prev => ({
+        ...prev,
+        [field]: null
+      }));
+      handleInputChange(field, null);
     }
   };
 
@@ -187,7 +215,9 @@ export default function EmployeeSignUp({ onBack, onComplete }) {
           <Step1Employee 
             formData={formData} 
             onChange={handleInputChange} 
-            errors={errors} 
+            errors={errors}
+            imagePreviews={imagePreviews}
+            onImageChange={handleImageChange}
           />
         </div>
 
@@ -249,7 +279,9 @@ export default function EmployeeSignUp({ onBack, onComplete }) {
           <Step5Employee 
             formData={formData} 
             onChange={handleInputChange} 
-            errors={errors} 
+            errors={errors}
+            imagePreviews={imagePreviews}
+            onImageChange={handleImageChange}
           />
         </div>
 
@@ -300,7 +332,7 @@ export default function EmployeeSignUp({ onBack, onComplete }) {
   );
 }
 
-function Step1Employee({ formData, onChange, errors }) {
+function Step1Employee({ formData, onChange, errors, imagePreviews, onImageChange }) {
   return (
     <div className="space-y-4">
       {/* Tên đầy đủ */}
@@ -383,7 +415,7 @@ function Step1Employee({ formData, onChange, errors }) {
         </div>
       </div>
 
-      {/* File uploads - Note: File upload will need separate handling */}
+      {/* File uploads */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block mb-2 text-sm font-medium text-gray-700">
@@ -394,10 +426,29 @@ function Step1Employee({ formData, onChange, errors }) {
             <input
               type="file"
               accept="image/*"
+              onChange={(e) => onImageChange('avatar', e.target.files[0])}
               className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
             />
           </div>
-          <p className="mt-1 text-xs text-gray-500">Tính năng upload sẽ được bổ sung sau</p>
+          {imagePreviews?.avatar && (
+            <div className="mt-3">
+              <p className="mb-2 text-xs text-gray-600">Preview:</p>
+              <div className="relative inline-block">
+                <img
+                  src={imagePreviews.avatar}
+                  alt="Preview avatar"
+                  className="w-32 h-32 object-cover rounded-lg border border-gray-300"
+                />
+                <button
+                  type="button"
+                  onClick={() => onImageChange('avatar', null)}
+                  className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         <div>
@@ -409,10 +460,29 @@ function Step1Employee({ formData, onChange, errors }) {
             <input
               type="file"
               accept="image/*"
+              onChange={(e) => onImageChange('idCard', e.target.files[0])}
               className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
             />
           </div>
-          <p className="mt-1 text-xs text-gray-500">Tính năng upload sẽ được bổ sung sau</p>
+          {imagePreviews?.idCard && (
+            <div className="mt-3">
+              <p className="mb-2 text-xs text-gray-600">Preview:</p>
+              <div className="relative inline-block">
+                <img
+                  src={imagePreviews.idCard}
+                  alt="Preview ID card"
+                  className="w-32 h-32 object-cover rounded-lg border border-gray-300"
+                />
+                <button
+                  type="button"
+                  onClick={() => onImageChange('idCard', null)}
+                  className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -578,7 +648,7 @@ function Step4Employee({ formData, onChange, errors }) {
   );
 }
 
-function Step5Employee({ formData, onChange, errors }) {
+function Step5Employee({ formData, onChange, errors, imagePreviews, onImageChange }) {
   return (
     <div className="space-y-4">
       <div>
@@ -673,11 +743,36 @@ function Step5Employee({ formData, onChange, errors }) {
           <FileText className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
           <input
             type="file"
-            accept=".pdf,.doc,.docx"
+            accept=".pdf,.doc,.docx,image/*"
+            onChange={(e) => onImageChange('cv', e.target.files[0])}
             className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
         </div>
-        <p className="mt-1 text-xs text-gray-500">Tính năng upload sẽ được bổ sung sau</p>
+        {imagePreviews?.cv && (
+          <div className="mt-3">
+            <p className="mb-2 text-xs text-gray-600">Preview:</p>
+            <div className="relative inline-block">
+              {imagePreviews.cv.startsWith('data:image') ? (
+                <img
+                  src={imagePreviews.cv}
+                  alt="Preview CV"
+                  className="w-32 h-32 object-cover rounded-lg border border-gray-300"
+                />
+              ) : (
+                <div className="w-32 h-32 flex items-center justify-center bg-gray-100 rounded-lg border border-gray-300">
+                  <FileText className="w-8 h-8 text-gray-400" />
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={() => onImageChange('cv', null)}
+                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

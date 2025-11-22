@@ -96,8 +96,8 @@ const MyTicketsList = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-charcoal-900">My Tickets</h1>
-          <p className="text-xs sm:text-sm text-chilled-gray-600 mt-1">
+          <h1 className="text-xl sm:text-2xl font-bold text-charcoal-500">My Tickets</h1>
+          <p className="text-xs sm:text-sm text-chilled-gray-400 mt-1">
             Tickets assigned to you
           </p>
         </div>
@@ -113,7 +113,7 @@ const MyTicketsList = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Status Filter Dropdown */}
         <div className="md:col-span-1">
-          <label className="block text-sm font-medium text-charcoal-700 mb-2">
+          <label className="block text-sm font-medium text-charcoal-500 mb-2">
             Filter by Status
           </label>
           <select
@@ -155,10 +155,10 @@ const MyTicketsList = () => {
       {filteredAndSortedTickets.length === 0 ? (
         <div className="bg-white border border-chilled-gray-200 rounded-lg p-12 text-center">
           <AlertCircle className="w-12 h-12 text-chilled-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-charcoal-900 mb-2">
+          <h3 className="text-lg font-semibold text-charcoal-500 mb-2">
             No tickets found
           </h3>
-          <p className="text-chilled-gray-600">
+          <p className="text-chilled-gray-400">
             {statusFilter
               ? `You don't have any ${statusFilter.toLowerCase().replace('_', ' ')} tickets.`
               : 'You don\'t have any assigned tickets yet.'}
@@ -171,25 +171,25 @@ const MyTicketsList = () => {
             <table className="w-full">
               <thead className="bg-chilled-gray-50 border-b border-chilled-gray-200">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-400 uppercase tracking-wider">
                     Ticket #
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-400 uppercase tracking-wider">
                     Customer
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-400 uppercase tracking-wider">
                     Category
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-400 uppercase tracking-wider">
                     Priority
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-400 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-400 uppercase tracking-wider">
                     Created
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-700 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-chilled-gray-400 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -209,21 +209,21 @@ const MyTicketsList = () => {
                           <AlertTriangle className="w-4 h-4 text-red-600 mr-2" />
                         )}
                         <Ticket className="w-4 h-4 text-chilled-gray-400 mr-2" />
-                        <span className="text-sm font-medium text-charcoal-900">
+                        <span className="text-sm font-medium text-charcoal-500">
                           {ticket.ticketNumber}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-charcoal-900">
+                      <div className="text-sm text-charcoal-500">
                         {ticket.customerName}
                       </div>
-                      <div className="text-xs text-chilled-gray-600">
+                      <div className="text-xs text-chilled-gray-400">
                         {ticket.subject}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-chilled-gray-700">
+                      <span className="text-sm text-chilled-gray-400">
                         {ticket.category}
                       </span>
                     </td>
@@ -234,7 +234,7 @@ const MyTicketsList = () => {
                       <TicketStatusBadge status={ticket.status} />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-chilled-gray-600">
+                      <span className="text-sm text-chilled-gray-400">
                         {formatDate(ticket.createdAt)}
                       </span>
                     </td>
@@ -244,7 +244,7 @@ const MyTicketsList = () => {
                           e.stopPropagation();
                           handleTicketClick(ticket.id);
                         }}
-                        className="text-sm font-medium text-primary-600 hover:text-primary-700"
+                        className="text-sm font-medium text-primary-600 hover:text-primary-700 px-3 py-1 rounded-lg transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700"
                       >
                         View
                       </button>
@@ -271,7 +271,7 @@ const MyTicketsList = () => {
                       <AlertTriangle className="w-4 h-4 text-red-600 mr-2" />
                     )}
                     <Ticket className="w-4 h-4 text-chilled-gray-400 mr-2" />
-                    <span className="text-sm font-medium text-charcoal-900">
+                    <span className="text-sm font-medium text-charcoal-500">
                       {ticket.ticketNumber}
                     </span>
                   </div>
@@ -281,12 +281,12 @@ const MyTicketsList = () => {
                   </div>
                 </div>
                 <div className="mb-2">
-                  <p className="text-sm font-medium text-charcoal-900">
+                  <p className="text-sm font-medium text-charcoal-500">
                     {ticket.customerName}
                   </p>
-                  <p className="text-xs text-chilled-gray-600">{ticket.subject}</p>
+                  <p className="text-xs text-chilled-gray-400">{ticket.subject}</p>
                 </div>
-                <div className="flex items-center justify-between text-xs text-chilled-gray-600">
+                <div className="flex items-center justify-between text-xs text-chilled-gray-400">
                   <span>{ticket.category}</span>
                   <span>{formatDate(ticket.createdAt)}</span>
                 </div>

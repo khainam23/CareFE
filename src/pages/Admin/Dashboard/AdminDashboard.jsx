@@ -56,7 +56,7 @@ const AdminDashboard = () => {
   if (!stats) {
     return (
       <div className="text-center py-12">
-        <p className="text-chilled-gray-600">No statistics available</p>
+        <p className="text-chilled-gray-400">No statistics available</p>
       </div>
     );
   }
@@ -65,15 +65,15 @@ const AdminDashboard = () => {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-3xl font-bold text-charcoal-900">Dashboard</h1>
-        <p className="text-chilled-gray-600 mt-1">
+        <h1 className="text-3xl font-bold text-charcoal-500">Dashboard</h1>
+        <p className="text-chilled-gray-400 mt-1">
           Overview of your care service platform
         </p>
       </div>
 
       {/* User Statistics */}
       <div>
-        <h2 className="text-xl font-semibold text-charcoal-900 mb-4">
+        <h2 className="text-xl font-semibold text-charcoal-500 mb-4">
           User Statistics
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
@@ -126,7 +126,7 @@ const AdminDashboard = () => {
 
       {/* Booking Statistics */}
       <div>
-        <h2 className="text-xl font-semibold text-charcoal-900 mb-4">
+        <h2 className="text-xl font-semibold text-charcoal-500 mb-4">
           Booking Statistics
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
@@ -186,7 +186,7 @@ const AdminDashboard = () => {
 
       {/* Financial Statistics */}
       <div>
-        <h2 className="text-xl font-semibold text-charcoal-900 mb-4">
+        <h2 className="text-xl font-semibold text-charcoal-500 mb-4">
           Financial Statistics
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -225,7 +225,7 @@ const AdminDashboard = () => {
 
       {/* Support Statistics */}
       <div>
-        <h2 className="text-xl font-semibold text-charcoal-900 mb-4">
+        <h2 className="text-xl font-semibold text-charcoal-500 mb-4">
           Support Statistics
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -264,7 +264,7 @@ const AdminDashboard = () => {
 
       {/* Caregiver Approval Statistics */}
       <div>
-        <h2 className="text-xl font-semibold text-charcoal-900 mb-4">
+        <h2 className="text-xl font-semibold text-charcoal-500 mb-4">
           Caregiver Approvals
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">

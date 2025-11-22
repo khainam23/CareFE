@@ -99,7 +99,7 @@ const TicketFilters = ({ filters, onFilterChange }) => {
                 category: '',
               })
             }
-            className="w-full sm:w-auto px-4 py-2 text-xs sm:text-sm font-medium text-chilled-gray-700 bg-chilled-gray-100 rounded-lg hover:bg-chilled-gray-200 transition-colors"
+            className="w-full sm:w-auto px-4 py-2 text-xs sm:text-sm font-medium text-chilled-gray-700 bg-chilled-gray-100 rounded-lg hover:bg-chilled-gray-200 transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700"
           >
             Clear Filters
           </button>

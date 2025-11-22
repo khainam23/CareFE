@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Upload, Eye, EyeOff, Edit2, Save, X, AlertCircle, Lock, Bell, Globe, LogOut } from 'lucide-react';
+import { Upload, Eye, EyeOff, Edit2, Save, X, AlertCircle, Lock, Bell, Globe } from 'lucide-react';
 import { caregiverService } from '@/services/caregiverService';
 import DatePickerInput from '@/components/DatePickerInput';
 
@@ -371,10 +371,6 @@ const ProfileSettings = () => {
           Khu vực nguy hiểm
         </h3>
         <p className="text-sm text-gray-600 mb-4">Những hành động dưới đây không thể hoàn tác. Vui lòng cẩn thận.</p>
-        <button className="flex items-center gap-2 bg-red-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-600 transition-colors">
-          <LogOut size={18} />
-          Đăng xuất khỏi tất cả thiết bị
-        </button>
       </div>
 
       {/* Action Buttons */}

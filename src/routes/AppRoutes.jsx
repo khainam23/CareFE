@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Home, NotFound, Login, SignUp, FindCaregiver, CaregiverDetail, About, CustomerInfo, EmployeeProfile } from '@pages';
 import MainLayout from '@components/layout/MainLayout';
 import ProtectedRoute from '@components/common/ProtectedRoute';
+import PublicRoute from '@components/common/PublicRoute';
 import AdminLayout from '@components/admin/AdminLayout';
 import AdminDashboard from '@pages/Admin/Dashboard/AdminDashboard';
 import UsersList from '@pages/Admin/Users/UsersList';
@@ -23,8 +24,16 @@ const AppRoutes = () => {
     <BrowserRouter>
       <ScrollToTop />
       <Routes>
-        <Route path={ROUTES.LOGIN} element={<Login />} />
-        <Route path={ROUTES.REGISTER} element={<SignUp />} />
+        <Route path={ROUTES.LOGIN} element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        } />
+        <Route path={ROUTES.REGISTER} element={
+          <PublicRoute>
+            <SignUp />
+          </PublicRoute>
+        } />
         
         {/* Admin Routes */}
         <Route
@@ -78,8 +87,12 @@ const AppRoutes = () => {
           } 
         />
 
-        {/* Public routes with MainLayout */}
-        <Route path="/" element={<MainLayout />}>
+        {/* Public routes with MainLayout - Chỉ cho phép customer và user chưa đăng nhập */}
+        <Route path="/" element={
+          <PublicRoute>
+            <MainLayout />
+          </PublicRoute>
+        }>
           <Route index element={<Home />} />
           <Route path={ROUTES.FIND_CAREGIVER} element={<FindCaregiver />} />
           <Route path={ROUTES.CAREGIVER_DETAIL} element={<CaregiverDetail />} />

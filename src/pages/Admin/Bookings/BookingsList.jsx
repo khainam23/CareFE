@@ -172,10 +172,10 @@ const BookingsList = () => {
       {/* Page Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-charcoal-900">
+          <h1 className="text-3xl font-bold text-charcoal-500">
             Bookings Management
           </h1>
-          <p className="text-chilled-gray-600 mt-1">
+          <p className="text-chilled-gray-400 mt-1">
             Manage all bookings in the system
           </p>
         </div>
@@ -188,8 +188,8 @@ const BookingsList = () => {
       {/* Status Filter */}
       <div className="bg-white rounded-lg shadow-md p-4">
         <div className="flex items-center gap-4">
-          <Filter size={20} className="text-chilled-gray-600" />
-          <label className="text-sm font-medium text-charcoal-900">
+          <Filter size={20} className="text-chilled-gray-400" />
+          <label className="text-sm font-medium text-charcoal-500">
             Filter by Status:
           </label>
           <select

@@ -19,10 +19,10 @@ const StatCard = ({ title, value, icon, color = 'blue', trend }) => {
     <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
       <div className="flex items-center justify-between">
         <div className="flex-1">
-          <p className="text-sm font-medium text-chilled-gray-600 mb-1">
+          <p className="text-sm font-medium text-chilled-gray-400 mb-1">
             {title}
           </p>
-          <p className="text-3xl font-bold text-charcoal-900">{value}</p>
+          <p className="text-3xl font-bold text-charcoal-500">{value}</p>
 
           {/* Trend Indicator */}
           {trend && (

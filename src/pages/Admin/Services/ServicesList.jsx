@@ -170,10 +170,10 @@ const ServicesList = () => {
       {/* Page Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-charcoal-900">
+          <h1 className="text-3xl font-bold text-charcoal-500">
             Services Management
           </h1>
-          <p className="text-chilled-gray-600 mt-1">
+          <p className="text-chilled-gray-400 mt-1">
             Manage all services offered in the system
           </p>
         </div>
@@ -197,7 +197,7 @@ const ServicesList = () => {
               service.isActive
                 ? 'text-orange-600 hover:bg-orange-50'
                 : 'text-green-600 hover:bg-green-50'
-            }`}
+            } active:bg-primary-600 active:text-white active:hover:bg-primary-700`}
             title={service.isActive ? 'Deactivate' : 'Activate'}
           >
             {service.isActive ? (

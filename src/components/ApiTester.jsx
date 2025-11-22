@@ -100,7 +100,7 @@ export default function ApiTester() {
         <button
           onClick={testAllApis}
           disabled={loading}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400 transition-colors active:bg-primary-600 active:hover:bg-primary-700"
         >
           Test All APIs
         </button>
@@ -108,7 +108,7 @@ export default function ApiTester() {
         <button
           onClick={() => testSpecificLogin('admin@careservice.com', 'admin123', 'Admin')}
           disabled={loading}
-          className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 disabled:bg-gray-400"
+          className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 disabled:bg-gray-400 transition-colors active:bg-primary-600 active:hover:bg-primary-700"
         >
           Test Admin Login
         </button>
@@ -116,7 +116,7 @@ export default function ApiTester() {
         <button
           onClick={() => testSpecificLogin('customer@example.com', 'customer123', 'Customer')}
           disabled={loading}
-          className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:bg-gray-400"
+          className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:bg-gray-400 transition-colors active:bg-primary-600 active:hover:bg-primary-700"
         >
           Test Customer Login
         </button>
@@ -124,7 +124,7 @@ export default function ApiTester() {
         <button
           onClick={() => testSpecificLogin('caregiver@example.com', 'caregiver123', 'Caregiver')}
           disabled={loading}
-          className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 disabled:bg-gray-400"
+          className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 disabled:bg-gray-400 transition-colors active:bg-primary-600 active:hover:bg-primary-700"
         >
           Test Caregiver Login
         </button>
@@ -132,7 +132,7 @@ export default function ApiTester() {
         <button
           onClick={testCustomerRegistration}
           disabled={loading}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 disabled:bg-gray-400"
+          className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 disabled:bg-gray-400 transition-colors active:bg-primary-600 active:hover:bg-primary-700"
         >
           Test Customer Registration
         </button>
@@ -140,7 +140,7 @@ export default function ApiTester() {
         <button
           onClick={testCaregiverRegistration}
           disabled={loading}
-          className="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700 disabled:bg-gray-400"
+          className="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700 disabled:bg-gray-400 transition-colors active:bg-primary-600 active:hover:bg-primary-700"
         >
           Test Caregiver Registration
         </button>
@@ -150,7 +150,7 @@ export default function ApiTester() {
       <div className="mb-4">
         <button
           onClick={clearResults}
-          className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+          className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition-colors active:bg-primary-600 active:hover:bg-primary-700"
         >
           Clear Results
         </button>
