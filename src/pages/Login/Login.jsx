@@ -115,8 +115,6 @@ export default function Login() {
           localStorage.removeItem('rememberedEmail');
           localStorage.removeItem('rememberMe');
         }
-
-        alert('Đăng nhập thành công!');
         
         // Điều hướng theo vai trò
         redirectByRole(response.data);
