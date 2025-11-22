@@ -6,12 +6,20 @@ import rectangle200 from '@/assets/images/Rectangle 200.svg';
 import rectangle201 from '@/assets/images/Rectangle 201.svg';
 import rectangle202 from '@/assets/images/Rectangle 202.svg';
 import DatePickerInput from '@/components/DatePickerInput';
+import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
 
 const Home = () => {
   const [searchForm, setSearchForm] = useState({
     location: '',
     time: '',
     name: '',
+  });
+
+  const [contactForm, setContactForm] = useState({
+    contactName: '',
+    contactPhone: '',
+    contactEmail: '',
+    contactMessage: '',
   });
 
   const handleSearchChange = (e) => {
@@ -26,6 +34,24 @@ const Home = () => {
   const handleSearch = () => {
     console.log('Search:', searchForm);
     // Handle search logic
+  };
+
+  const handleContactChange = (e) => {
+    const { name, value } = e.target;
+    setContactForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleContactSubmit = (e) => {
+    e.preventDefault();
+    console.log('Contact form:', contactForm);
+    // Handle contact form submission
+    alert('Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất có thể.');
+    setContactForm({
+      contactName: '',
+      contactPhone: '',
+      contactEmail: '',
+      contactMessage: '',
+    });
   };
 
   const services = [
@@ -207,6 +233,132 @@ const Home = () => {
                 )}
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* Contact Section */}
+        <section className="py-16 mt-12 mb-8">
+          <div className="bg-green-100 rounded-lg p-8 md:p-12">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-gray-800 mb-4">
+                Liên hệ ngay
+              </h2>
+              <p className="text-gray-600 text-lg">
+                Chúng tôi luôn sẵn sàng hỗ trợ và tư vấn cho bạn
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              {/* Phone */}
+              <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-4 mx-auto">
+                  <Phone className="text-green-600" size={24} />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-800 text-center mb-2">
+                  Hotline
+                </h3>
+                <p className="text-gray-600 text-center mb-3">
+                  24/7 hỗ trợ khách hàng
+                </p>
+                <a 
+                  href="tel:1900123456" 
+                  className="block text-center text-green-600 font-semibold hover:text-green-700"
+                >
+                  1900 123 456
+                </a>
+              </div>
+
+              {/* Email */}
+              <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-4 mx-auto">
+                  <Mail className="text-green-600" size={24} />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-800 text-center mb-2">
+                  Email
+                </h3>
+                <p className="text-gray-600 text-center mb-3">
+                  Gửi email cho chúng tôi
+                </p>
+                <a 
+                  href="mailto:support@careservice.com" 
+                  className="block text-center text-green-600 font-semibold hover:text-green-700 break-all"
+                >
+                  support@careservice.com
+                </a>
+              </div>
+
+              {/* Address */}
+              <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-4 mx-auto">
+                  <MapPin className="text-green-600" size={24} />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-800 text-center mb-2">
+                  Địa chỉ
+                </h3>
+                <p className="text-gray-600 text-center mb-3">
+                  Văn phòng chính
+                </p>
+                <p className="text-center text-gray-700 font-medium">
+                  123 Nguyễn Huệ, Quận 1<br />
+                  TP. Hồ Chí Minh
+                </p>
+              </div>
+            </div>
+
+            {/* Contact Form */}
+            <div className="bg-white rounded-lg p-6 md:p-8 shadow-sm">
+              <h3 className="text-xl font-semibold text-gray-800 mb-6 text-center">
+                Gửi tin nhắn cho chúng tôi
+              </h3>
+              <form className="space-y-4" onSubmit={handleContactSubmit}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input
+                    label="Họ và tên"
+                    name="contactName"
+                    value={contactForm.contactName}
+                    onChange={handleContactChange}
+                    placeholder="Nhập họ và tên của bạn"
+                  />
+                  <Input
+                    label="Số điện thoại"
+                    name="contactPhone"
+                    value={contactForm.contactPhone}
+                    onChange={handleContactChange}
+                    placeholder="Nhập số điện thoại"
+                  />
+                </div>
+                <Input
+                  label="Email"
+                  name="contactEmail"
+                  type="email"
+                  value={contactForm.contactEmail}
+                  onChange={handleContactChange}
+                  placeholder="Nhập email của bạn"
+                />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Tin nhắn
+                  </label>
+                  <textarea
+                    name="contactMessage"
+                    value={contactForm.contactMessage}
+                    onChange={handleContactChange}
+                    rows="4"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="Nhập tin nhắn của bạn..."
+                  />
+                </div>
+                <div className="flex justify-center">
+                  <Button
+                    type="submit"
+                    className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 flex items-center gap-2"
+                  >
+                    <MessageCircle size={20} />
+                    Gửi tin nhắn
+                  </Button>
+                </div>
+              </form>
+            </div>
           </div>
         </section>
       </div>
