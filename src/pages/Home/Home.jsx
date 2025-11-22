@@ -95,7 +95,7 @@ const Home = () => {
         </section>
 
         {/* Search Section */}
-        <section className="py-12 px-6 bg-gray-50 rounded-lg mt-8">
+        <section className="py-12 px-6 bg-green-100 rounded-lg mt-8">
           <h3 className="text-xl font-semibold text-gray-800 mb-6">Tìm nhà chăm sóc phù hợp</h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
             <Input
