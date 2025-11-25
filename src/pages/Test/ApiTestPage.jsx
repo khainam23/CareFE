@@ -73,7 +73,7 @@ export default function ApiTestPage() {
               
               <button
                 onClick={checkBackendStatus}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                className="bg-blue-600  px-4 py-2 rounded-md hover:bg-blue-700"
               >
                 Refresh
               </button>
@@ -138,19 +138,19 @@ export default function ApiTestPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Link
               to="/login"
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-center"
+              className="bg-blue-600  px-4 py-2 rounded-md hover:bg-blue-700 text-center"
             >
               Login Page
             </Link>
             <Link
               to="/signup"
-              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 text-center"
+              className="bg-green-600  px-4 py-2 rounded-md hover:bg-green-700 text-center"
             >
               Signup Page
             </Link>
             <Link
               to="/dashboard"
-              className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 text-center"
+              className="bg-purple-600  px-4 py-2 rounded-md hover:bg-purple-700 text-center"
             >
               Dashboard
             </Link>
@@ -158,7 +158,7 @@ export default function ApiTestPage() {
               href="http://localhost:8080"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 text-center"
+              className="bg-gray-600  px-4 py-2 rounded-md hover:bg-gray-700 text-center"
             >
               Backend API
             </a>

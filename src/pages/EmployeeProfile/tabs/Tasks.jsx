@@ -180,7 +180,7 @@ const Tasks = () => {
           </button>
           <button 
             onClick={fetchTasks}
-            className="flex items-center gap-2 px-4 py-2 bg-teal-500 text-white rounded-lg font-semibold hover:bg-teal-600 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-teal-500  rounded-lg font-semibold hover:bg-teal-600 transition-colors"
           >
             <Plus size={18} />
             Làm mới
@@ -273,7 +273,7 @@ const Tasks = () => {
                   {task.status === 'Chưa hoàn thành' && task.bookingStatus === 'ACCEPTED' && (
                     <button 
                       onClick={() => handleComplete(task.id)}
-                      className="bg-green-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-green-600 transition-colors text-sm"
+                      className="bg-green-500  py-2 px-4 rounded-lg font-semibold hover:bg-green-600 transition-colors text-sm"
                     >
                       Hoàn thành
                     </button>

@@ -138,9 +138,9 @@ export default function ProfessionalSkillsSignUp({ onComplete, onBack }) {
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition ${
                   index < currentStep
-                    ? 'bg-green-500 text-white'
+                    ? 'bg-green-500 '
                     : index === currentStep - 1
-                    ? 'bg-green-500 text-white'
+                    ? 'bg-green-500 '
                     : 'bg-gray-200 text-gray-600'
                 }`}
               >
@@ -344,7 +344,7 @@ export default function ProfessionalSkillsSignUp({ onComplete, onBack }) {
             <button
               type="button"
               onClick={handleNextStep}
-              className="px-6 py-2 text-white transition bg-green-500 rounded-lg hover:bg-green-600"
+              className="px-6 py-2  transition bg-green-500 rounded-lg hover:bg-green-600"
             >
               Tiếp tục
             </button>
@@ -352,7 +352,7 @@ export default function ProfessionalSkillsSignUp({ onComplete, onBack }) {
             <button
               type="submit"
               disabled={!agreedToTraining || !agreedToAssessment}
-              className={`px-6 py-2 text-white transition rounded-lg ${
+              className={`px-6 py-2  transition rounded-lg ${
                 agreedToTraining && agreedToAssessment
                   ? 'bg-green-500 hover:bg-green-600 cursor-pointer'
                   : 'bg-gray-400 cursor-not-allowed'

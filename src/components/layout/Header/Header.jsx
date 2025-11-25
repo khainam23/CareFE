@@ -88,7 +88,7 @@ const Header = () => {
                   onClick={() => setShowDropdown(!showDropdown)}
                   className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
                 >
-                  <div className="w-8 h-8 bg-teal-600 rounded-full flex items-center justify-center text-white font-medium">
+                  <div className="w-8 h-8 bg-teal-600 rounded-full flex items-center justify-center  font-medium">
                     {getUserDisplayName().charAt(0).toUpperCase()}
                   </div>
                   <div className="text-left">
@@ -186,7 +186,7 @@ const Header = () => {
                 </Link>
                 <Link
                   to="/register"
-                  className="px-6 py-2 text-white rounded-lg font-medium bg-[#00A787] hover:bg-opacity-90 transition-opacity flex items-center space-x-2"
+                  className="px-6 py-2  rounded-lg font-medium bg-[#00A787] hover:bg-opacity-90 transition-opacity flex items-center space-x-2"
                 >
                   <span>Đăng ký ngay</span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-right" viewBox="0 0 16 16">

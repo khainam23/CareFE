@@ -197,7 +197,7 @@ const ServicesList = () => {
               service.isActive
                 ? 'text-orange-600 hover:bg-orange-50'
                 : 'text-green-600 hover:bg-green-50'
-            } active:bg-primary-600 active:text-white active:hover:bg-primary-700`}
+            } active:bg-primary-600 active: active:hover:bg-primary-700`}
             title={service.isActive ? 'Deactivate' : 'Activate'}
           >
             {service.isActive ? (

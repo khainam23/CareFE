@@ -57,7 +57,7 @@ const Dashboard = () => {
       {/* Thu nhập cá nhân */}
       <div className="lg:col-span-6 md:col-span-6">
         <div 
-          className="rounded-lg shadow-md p-6 text-white relative overflow-hidden"
+          className="rounded-lg shadow-md p-6  relative overflow-hidden"
           style={{ backgroundImage: `url(${CardBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
         >
           <div className="absolute inset-0 bg-black/10"></div>

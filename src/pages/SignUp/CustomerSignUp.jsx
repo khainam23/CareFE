@@ -156,7 +156,7 @@ export default function CustomerSignUp({
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
                   currentStep >= step.id
-                    ? 'bg-blue-500 text-white'
+                    ? 'bg-blue-500 '
                     : 'bg-gray-200 text-gray-600'
                 }`}
               >
@@ -287,7 +287,7 @@ export default function CustomerSignUp({
           <button
             type="submit"
             disabled={!agreedToTerms || loading}
-            className={`px-6 py-2 text-white transition rounded-lg ${
+            className={`px-6 py-2  transition rounded-lg ${
               agreedToTerms && !loading
                 ? 'bg-blue-500 hover:bg-blue-600 cursor-pointer'
                 : 'bg-gray-400 cursor-not-allowed'

@@ -405,7 +405,7 @@ const TicketDetail = () => {
               {ticket.status !== 'RESOLVED' && ticket.status !== 'CLOSED' && (
                 <button
                   onClick={() => setShowResolveModal(true)}
-                  className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2 active:bg-primary-600 active:hover:bg-primary-700"
+                  className="w-full px-4 py-2 bg-green-600  rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2 active:bg-primary-600 active:hover:bg-primary-700"
                 >
                   <CheckCircle className="w-4 h-4" />
                   <span>Resolve Ticket</span>
@@ -416,7 +416,7 @@ const TicketDetail = () => {
               {ticket.status !== 'ESCALATED' && ticket.status !== 'CLOSED' && (
                 <button
                   onClick={handleEscalateTicket}
-                  className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center space-x-2 active:bg-primary-600 active:hover:bg-primary-700"
+                  className="w-full px-4 py-2 bg-red-600  rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center space-x-2 active:bg-primary-600 active:hover:bg-primary-700"
                 >
                   <AlertCircle className="w-4 h-4" />
                   <span>Escalate to Admin</span>

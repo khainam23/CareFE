@@ -199,7 +199,7 @@ function FindCaregiver() {
 
           <button 
             onClick={handleViewDetail}
-            className="w-full bg-teal-500 text-white py-2 rounded-lg hover:bg-teal-600 transition-colors font-medium text-sm"
+            className="w-full bg-teal-500  py-2 rounded-lg hover:bg-teal-600 transition-colors font-medium text-sm"
           >
             Xem chi tiết
           </button>
@@ -391,7 +391,7 @@ function FindCaregiver() {
                 <p className="text-red-500 text-lg mb-2">Lỗi: {error}</p>
                 <button 
                   onClick={() => window.location.reload()}
-                  className="mt-4 px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600"
+                  className="mt-4 px-4 py-2 bg-teal-500  rounded-lg hover:bg-teal-600"
                 >
                   Thử lại
                 </button>
@@ -452,7 +452,7 @@ function FindCaregiver() {
                             onClick={() => setCurrentPage(pageNum)}
                             className={`px-3 py-2 rounded-lg font-medium transition-colors ${
                               currentPage === pageNum
-                                ? 'bg-teal-500 text-white'
+                                ? 'bg-teal-500 '
                                 : 'border border-gray-300 hover:bg-gray-50'
                             }`}
                           >

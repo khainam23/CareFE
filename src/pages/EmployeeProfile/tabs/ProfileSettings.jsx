@@ -183,7 +183,7 @@ const ProfileSettings = () => {
         {!isEditing && (
           <button
             onClick={() => setIsEditing(true)}
-            className="flex items-center gap-2 bg-teal-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-teal-600 transition-colors"
+            className="flex items-center gap-2 bg-teal-500  py-2 px-4 rounded-lg font-semibold hover:bg-teal-600 transition-colors"
           >
             <Edit2 size={18} />
             Chỉnh sửa
@@ -286,7 +286,7 @@ const ProfileSettings = () => {
             </div>
           </div>
 
-          <button className="w-full bg-teal-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-teal-600 transition-colors">
+          <button className="w-full bg-teal-500  py-2 px-4 rounded-lg font-semibold hover:bg-teal-600 transition-colors">
             Cập nhật mật khẩu
           </button>
         </div>
@@ -385,7 +385,7 @@ const ProfileSettings = () => {
           </button>
           <button
             onClick={handleSave}
-            className="flex items-center gap-2 bg-teal-500 text-white py-2 px-6 rounded-lg font-semibold hover:bg-teal-600 transition-colors"
+            className="flex items-center gap-2 bg-teal-500  py-2 px-6 rounded-lg font-semibold hover:bg-teal-600 transition-colors"
           >
             <Save size={18} />
             Lưu thay đổi

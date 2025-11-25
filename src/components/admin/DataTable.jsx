@@ -110,7 +110,7 @@ const DataTable = ({
                   {column.sortable !== false ? (
                     <button
                       onClick={() => handleSort(column.key)}
-                      className="flex items-center gap-1 hover:text-primary-600 transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700 rounded px-2 py-1"
+                      className="flex items-center gap-1 hover:text-primary-600 transition-colors active:bg-primary-600 active: active:hover:bg-primary-700 rounded px-2 py-1"
                     >
                       {column.label}
                       {sortConfig.key === column.key && (
@@ -167,7 +167,7 @@ const DataTable = ({
                         {onView && (
                           <button
                             onClick={() => onView(row)}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700"
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors active:bg-primary-600 active: active:hover:bg-primary-700"
                             title="View"
                           >
                             <Eye size={18} />
@@ -176,7 +176,7 @@ const DataTable = ({
                         {onEdit && (
                           <button
                             onClick={() => onEdit(row)}
-                            className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700"
+                            className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors active:bg-primary-600 active: active:hover:bg-primary-700"
                             title="Edit"
                           >
                             <Edit size={18} />
@@ -185,7 +185,7 @@ const DataTable = ({
                         {onDelete && (
                           <button
                             onClick={() => onDelete(row)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700"
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors active:bg-primary-600 active: active:hover:bg-primary-700"
                             title="Delete"
                           >
                             <Trash2 size={18} />

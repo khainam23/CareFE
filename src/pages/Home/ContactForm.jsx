@@ -51,7 +51,7 @@ const ContactForm = ({ contactForm, handleContactChange, handleContactSubmit }) 
         <div className="flex justify-center">
           <Button
             type="submit"
-            className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 flex items-center gap-2 transition-all duration-300 hover:animate__animated hover:animate__pulse"
+            className="bg-green-600 hover:bg-green-700  px-8 py-3 flex items-center gap-2 transition-all duration-300 hover:animate__animated hover:animate__pulse"
           >
             <MessageCircle size={20} />
             Gửi tin nhắn

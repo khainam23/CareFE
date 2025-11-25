@@ -209,7 +209,7 @@ const UsersList = () => {
             {user.status === 'ACTIVE' ? (
               <button
                 onClick={() => handleSuspend(user)}
-                className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700"
+                className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors active:bg-primary-600 active: active:hover:bg-primary-700"
                 title="Suspend"
               >
                 <UserX size={18} />
@@ -217,7 +217,7 @@ const UsersList = () => {
             ) : (
               <button
                 onClick={() => handleActivate(user)}
-                className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700"
+                className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors active:bg-primary-600 active: active:hover:bg-primary-700"
                 title="Activate"
               >
                 <UserCheck size={18} />

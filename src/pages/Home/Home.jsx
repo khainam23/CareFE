@@ -118,7 +118,7 @@ const Home = () => {
             alt="Hero Banner" 
             className="absolute inset-0 w-full h-full object-cover"
           />
-          <div className="absolute top-12 right-12 text-white max-w-md">
+          <div className="absolute top-12 right-12  max-w-md">
             <p className="text-2xl font-bold leading-tight">
               Chăm sóc tận tâm - bình an mỗi ngày
             </p>

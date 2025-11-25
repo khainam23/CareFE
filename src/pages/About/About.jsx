@@ -156,7 +156,7 @@ const About = () => {
       {/* CTA Section */}
       <section className="bg-gradient-to-r from-teal-600 to-teal-700 py-20 px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">
+          <h2 className="text-4xl font-bold  mb-6">
             Sẵn Sàng Bắt Đầu?
           </h2>
           <p className="text-xl text-teal-50 mb-8 leading-relaxed">
@@ -171,7 +171,7 @@ const About = () => {
             </Button>
             <Button 
               variant="outline"
-              className="border-white text-white hover:bg-white hover:text-teal-600"
+              className="border-white  hover:bg-white hover:text-teal-600"
             >
               Liên Hệ Với Chúng Tôi
             </Button>

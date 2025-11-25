@@ -1,18 +1,44 @@
-import { useState } from 'react';
-import { X, Calendar, Clock, DollarSign } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, Calendar, Clock, DollarSign, Briefcase } from 'lucide-react';
 import Button from './Button/Button';
 import DatePickerInput from '@/components/DatePickerInput';
+import { publicService } from '@/services/publicService';
 
 function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
   const [formData, setFormData] = useState({
+    serviceId: '',
+    customService: '',
     startDate: '',
     endDate: '',
     startTime: '08:00',
     endTime: '17:00',
+    location: '',
     notes: '',
   });
+  const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchServices();
+    }
+  }, [isOpen]);
+
+  const fetchServices = async () => {
+    try {
+      const response = await publicService.getServices();
+      if (response.success && response.data) {
+        setServices(response.data);
+        // Set default service if available
+        if (response.data.length > 0) {
+          setFormData(prev => ({ ...prev, serviceId: response.data[0].id }));
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching services:', err);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -42,6 +68,16 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
     setError('');
 
     // Validation
+    if (!formData.serviceId) {
+      setError('Vui lòng chọn loại dịch vụ');
+      return;
+    }
+
+    if (!formData.location || formData.location.trim() === '') {
+      setError('Vui lòng nhập địa chỉ dịch vụ');
+      return;
+    }
+
     if (!formData.startDate || !formData.endDate) {
       setError('Vui lòng chọn ngày bắt đầu và kết thúc');
       return;
@@ -63,11 +99,13 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
     setLoading(true);
     try {
       await onSubmit({
+        serviceId: formData.serviceId,
         caregiverId: caregiver.id,
         startDate: formData.startDate,
         endDate: formData.endDate,
         startTime: formData.startTime,
         endTime: formData.endTime,
+        location: formData.location,
         notes: formData.notes,
         totalHours,
         totalPrice,
@@ -75,10 +113,13 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
       
       // Reset form
       setFormData({
+        serviceId: services.length > 0 ? services[0].id : '',
+        customService: '',
         startDate: '',
         endDate: '',
         startTime: '08:00',
         endTime: '17:00',
+        location: '',
         notes: '',
       });
       onClose();
@@ -95,7 +136,7 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
   const minEndDate = formData.startDate ? new Date(formData.startDate) : today;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black flex items-center justify-center z-50 p-4" style={{ background: "rgba(0,0,0,0.4)"}}>
       <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
@@ -133,6 +174,34 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
           )}
 
           <div className="space-y-4">
+            {/* Service Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Briefcase size={16} className="inline mr-1" />
+                Loại dịch vụ
+              </label>
+              <select
+                name="serviceId"
+                value={formData.serviceId}
+                onChange={handleChange}
+                required
+                disabled={loading}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+              >
+                <option value="">-- Chọn dịch vụ --</option>
+                {services.map((service) => (
+                  <option key={service.id} value={service.id}>
+                    {service.name} - {service.basePrice?.toLocaleString()}đ ({service.durationMinutes} phút)
+                  </option>
+                ))}
+              </select>
+              {formData.serviceId && services.length > 0 && (
+                <p className="mt-2 text-sm text-gray-600">
+                  {services.find(s => s.id === parseInt(formData.serviceId))?.description}
+                </p>
+              )}
+            </div>
+
             {/* Date Range */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -201,6 +270,22 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
               </div>
+            </div>
+
+            {/* Location */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Địa chỉ dịch vụ *
+              </label>
+              <input
+                type="text"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+                required
+                placeholder="Nhập địa chỉ nơi cần dịch vụ..."
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+              />
             </div>
 
             {/* Notes */}

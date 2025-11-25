@@ -218,7 +218,7 @@ const PersonalProfile = () => {
           <p className="text-gray-600 mb-4">{error}</p>
           <button
             onClick={fetchProfile}
-            className="px-6 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors"
+            className="px-6 py-2 bg-teal-500  rounded-lg hover:bg-teal-600 transition-colors"
           >
             Thử lại
           </button>
@@ -422,7 +422,7 @@ const PersonalProfile = () => {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-teal-500  rounded-lg hover:bg-teal-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {saving ? (
                 <>
@@ -477,7 +477,7 @@ const PersonalProfile = () => {
             <p className="text-gray-600 mb-4">{bookingsError}</p>
             <button
               onClick={fetchBookings}
-              className="px-6 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors"
+              className="px-6 py-2 bg-teal-500  rounded-lg hover:bg-teal-600 transition-colors"
             >
               Thử lại
             </button>

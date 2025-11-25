@@ -63,7 +63,7 @@ const TicketCard = ({ ticket, onAssign, onClick }) => {
               e.stopPropagation();
               onAssign(ticket.id);
             }}
-            className="px-3 py-1 text-xs font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700 transition-colors active:bg-primary-800"
+            className="px-3 py-1 text-xs font-medium  bg-primary-600 rounded-md hover:bg-primary-700 transition-colors active:bg-primary-800"
           >
             Assign to Me
           </button>

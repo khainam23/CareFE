@@ -5,7 +5,7 @@ import { Send } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-[#1D3C34] text-white">
+    <footer className="bg-[#1D3C34] ">
       <div className="container mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Logo and Newsletter */}
@@ -16,7 +16,7 @@ const Footer = () => {
               <input
                 type="email"
                 placeholder="Nhập địa chỉ Email"
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-l-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-l-lg  placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
               <button
                 type="submit"
@@ -31,8 +31,8 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold text-lg mb-4">Service</h3>
             <ul className="space-y-3 text-gray-300">
-              <li><Link to="/about" className="hover:text-white transition-colors">About us</Link></li>
-              <li><Link to="/contact" className="hover:text-white transition-colors">Contact</Link></li>
+              <li><Link to="/about" className="hover: transition-colors">About us</Link></li>
+              <li><Link to="/contact" className="hover: transition-colors">Contact</Link></li>
             </ul>
           </div>
 

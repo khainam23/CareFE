@@ -47,6 +47,16 @@ export const publicService = {
       throw error.response?.data || error.message;
     }
   },
+
+  // Lấy danh sách services (public - không cần đăng nhập)
+  getServices: async () => {
+    try {
+      const response = await publicAxiosInstance.get('/api/auth/services');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
 };
 
 export default publicService;

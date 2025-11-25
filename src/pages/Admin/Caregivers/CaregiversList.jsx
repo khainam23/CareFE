@@ -231,14 +231,14 @@ const CaregiversList = () => {
               <>
                 <button
                   onClick={() => handleApprove(caregiver)}
-                  className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700"
+                  className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors active:bg-primary-600 active: active:hover:bg-primary-700"
                   title="Approve"
                 >
                   <CheckCircle size={18} />
                 </button>
                 <button
                   onClick={() => handleReject(caregiver)}
-                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700"
+                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors active:bg-primary-600 active: active:hover:bg-primary-700"
                   title="Reject"
                 >
                   <XCircle size={18} />

@@ -109,7 +109,7 @@ const SupportSidebar = ({ isOpen, onClose }) => {
                 <Icon size={20} />
                 <span className="flex-1">{item.label}</span>
                 {item.badge > 0 && (
-                  <span className="px-2 py-1 text-xs font-semibold text-white bg-red-500 rounded-full min-w-[20px] text-center">
+                  <span className="px-2 py-1 text-xs font-semibold  bg-red-500 rounded-full min-w-[20px] text-center">
                     {item.badge}
                   </span>
                 )}

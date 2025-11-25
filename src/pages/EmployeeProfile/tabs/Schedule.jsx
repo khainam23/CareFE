@@ -114,7 +114,7 @@ const Schedule = () => {
       {/* Mục thông tin lịch làm việc cố định */}
       <div className="bg-white rounded-lg flex shadow-md overflow-hidden">
         <div
-          className="relative bg-cover bg-center p-6 text-white"
+          className="relative bg-cover bg-center p-6 "
           style={{ backgroundImage: `url(${Rectangle131})`, backgroundSize: 'cover' }}
         >
           <div className="absolute inset-0 bg-black/30"></div>
@@ -164,7 +164,7 @@ const Schedule = () => {
           </table>
 
           <div className="flex gap-3">
-            <button className="flex-1 bg-teal-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-teal-600 transition-colors">
+            <button className="flex-1 bg-teal-500  py-2 px-4 rounded-lg font-semibold hover:bg-teal-600 transition-colors">
               Đồng ý lịch làm
             </button>
             <button className="flex-1 bg-white border-2 border-teal-500 text-teal-500 py-2 px-4 rounded-lg font-semibold hover:bg-teal-50 transition-colors">
@@ -259,13 +259,13 @@ const Schedule = () => {
                       <>
                         <button 
                           onClick={() => handleAcceptBooking(appointment.id)}
-                          className="bg-green-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-green-600 transition-colors text-sm"
+                          className="bg-green-500  py-2 px-4 rounded-lg font-semibold hover:bg-green-600 transition-colors text-sm"
                         >
                           Xác nhận đơn
                         </button>
                         <button 
                           onClick={() => handleRejectBooking(appointment.id)}
-                          className="bg-red-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-600 transition-colors text-sm"
+                          className="bg-red-500  py-2 px-4 rounded-lg font-semibold hover:bg-red-600 transition-colors text-sm"
                         >
                           Từ chối đơn
                         </button>

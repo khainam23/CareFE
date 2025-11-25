@@ -72,7 +72,7 @@ const EmployeeProfile = () => {
                   className={`py-4 px-1 border-b-2 font-medium text-sm inline-flex items-center gap-2 whitespace-nowrap transition-colors ${
                     activeTab === tab.id
                       ? 'border-primary-600 text-primary-600 bg-primary-50'
-                      : 'border-transparent text-chilled-gray-500 hover:text-chilled-gray-700 hover:border-chilled-gray-300 active:bg-primary-600 active:text-white active:hover:bg-primary-700'
+                      : 'border-transparent text-chilled-gray-500 hover:text-chilled-gray-700 hover:border-chilled-gray-300 active:bg-primary-600 active: active:hover:bg-primary-700'
                   }`}
                 >
                   <Icon size={18} />
@@ -94,7 +94,7 @@ const EmployeeProfile = () => {
         <div className="bg-white rounded-lg shadow-md p-6 border border-red-200">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 bg-red-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-600 transition-colors active:bg-primary-600 active:hover:bg-primary-700"
+            className="flex items-center gap-2 bg-red-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-600 transition-colors"
           >
             <LogOut size={18} />
             Đăng xuất

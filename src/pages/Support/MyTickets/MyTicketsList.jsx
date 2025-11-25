@@ -244,7 +244,7 @@ const MyTicketsList = () => {
                           e.stopPropagation();
                           handleTicketClick(ticket.id);
                         }}
-                        className="text-sm font-medium text-primary-600 hover:text-primary-700 px-3 py-1 rounded-lg transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700"
+                        className="text-sm font-medium text-primary-600 hover:text-primary-700 px-3 py-1 rounded-lg transition-colors active:bg-primary-600 active: active:hover:bg-primary-700"
                       >
                         View
                       </button>

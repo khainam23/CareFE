@@ -238,7 +238,7 @@ export default function Login() {
               className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white transition-colors ${
                 loading
                   ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 active:bg-primary-800'
+                  : 'bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-700 active:bg-black'
               }`}
             >
               {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
@@ -253,7 +253,7 @@ export default function Login() {
             <p>
               <button 
                 onClick={() => fillTestAccount('admin@careservice.com', 'admin123')}
-                className="text-primary-600 hover:text-primary-800 underline transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700 px-2 py-1 rounded"
+                className="text-blue-600 hover:text-blue-800 underline transition-colors hover:bg-blue-50 px-2 py-1 rounded"
               >
                 <strong>Admin:</strong> admin@careservice.com / admin123
               </button>
@@ -261,7 +261,7 @@ export default function Login() {
             <p>
               <button 
                 onClick={() => fillTestAccount('support@careservice.com', 'support123')}
-                className="text-primary-600 hover:text-primary-800 underline transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700 px-2 py-1 rounded"
+                className="text-blue-600 hover:text-blue-800 underline transition-colors hover:bg-blue-50 px-2 py-1 rounded"
               >
                 <strong>Support:</strong> support@careservice.com / support123
               </button>
@@ -269,7 +269,7 @@ export default function Login() {
             <p>
               <button 
                 onClick={() => fillTestAccount('customer@example.com', 'customer123')}
-                className="text-primary-600 hover:text-primary-800 underline transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700 px-2 py-1 rounded"
+                className="text-blue-600 hover:text-blue-800 underline transition-colors hover:bg-blue-50 px-2 py-1 rounded"
               >
                 <strong>Customer:</strong> customer@example.com / customer123
               </button>
@@ -277,7 +277,7 @@ export default function Login() {
             <p>
               <button 
                 onClick={() => fillTestAccount('caregiver@example.com', 'caregiver123')}
-                className="text-primary-600 hover:text-primary-800 underline transition-colors active:bg-primary-600 active:text-white active:hover:bg-primary-700 px-2 py-1 rounded"
+                className="text-blue-600 hover:text-blue-800 underline transition-colors hover:bg-blue-50 px-2 py-1 rounded"
               >
                 <strong>Caregiver:</strong> caregiver@example.com / caregiver123
               </button>

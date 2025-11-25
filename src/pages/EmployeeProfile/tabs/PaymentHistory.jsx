@@ -319,7 +319,7 @@ const PaymentHistory = () => {
       </div>
 
       {/* Payment Summary Card */}
-      <div className="bg-gradient-to-r from-teal-500 to-teal-600 rounded-lg shadow-md p-6 text-white">
+      <div className="bg-gradient-to-r from-teal-500 to-teal-600 rounded-lg shadow-md p-6 ">
         <h3 className="text-lg font-semibold mb-4">Tóm tắt thanh toán</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>

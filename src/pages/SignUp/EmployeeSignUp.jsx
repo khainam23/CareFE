@@ -188,7 +188,7 @@ export default function EmployeeSignUp({ onBack, onComplete }) {
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
                   index === 0
-                    ? 'bg-green-500 text-white'
+                    ? 'bg-green-500 '
                     : 'bg-gray-200 text-gray-600'
                 }`}
               >
@@ -318,7 +318,7 @@ export default function EmployeeSignUp({ onBack, onComplete }) {
           <button
             type="submit"
             disabled={!agreedToTerms || loading}
-            className={`px-6 py-2 text-white transition rounded-lg ${
+            className={`px-6 py-2  transition rounded-lg ${
               agreedToTerms && !loading
                 ? 'bg-green-500 hover:bg-green-600 cursor-pointer'
                 : 'bg-gray-400 cursor-not-allowed'
@@ -442,7 +442,7 @@ function Step1Employee({ formData, onChange, errors, imagePreviews, onImageChang
                 <button
                   type="button"
                   onClick={() => onImageChange('avatar', null)}
-                  className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+                  className="absolute -top-2 -right-2 w-6 h-6 bg-red-500  rounded-full flex items-center justify-center text-xs hover:bg-red-600"
                 >
                   ×
                 </button>
@@ -476,7 +476,7 @@ function Step1Employee({ formData, onChange, errors, imagePreviews, onImageChang
                 <button
                   type="button"
                   onClick={() => onImageChange('idCard', null)}
-                  className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+                  className="absolute -top-2 -right-2 w-6 h-6 bg-red-500  rounded-full flex items-center justify-center text-xs hover:bg-red-600"
                 >
                   ×
                 </button>
@@ -766,7 +766,7 @@ function Step5Employee({ formData, onChange, errors, imagePreviews, onImageChang
               <button
                 type="button"
                 onClick={() => onImageChange('cv', null)}
-                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500  rounded-full flex items-center justify-center text-xs hover:bg-red-600"
               >
                 ×
               </button>
