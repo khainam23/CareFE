@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { X, Calendar, Clock, DollarSign, Briefcase } from 'lucide-react';
+import { X, Calendar, Clock, DollarSign, Briefcase, MapPin, Plus } from 'lucide-react';
 import Button from './Button/Button';
 import DatePickerInput from '@/components/DatePickerInput';
 import { publicService } from '@/services/publicService';
+import { customerService } from '@/services/customerService';
 
 function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
   const [formData, setFormData] = useState({
@@ -13,15 +14,20 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
     startTime: '08:00',
     endTime: '17:00',
     location: '',
+    addressId: '',
     notes: '',
   });
   const [services, setServices] = useState([]);
+  const [addresses, setAddresses] = useState([]);
+  const [showNewAddressInput, setShowNewAddressInput] = useState(false);
+  const [newAddress, setNewAddress] = useState({ address: '', label: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (isOpen) {
       fetchServices();
+      fetchAddresses();
     }
   }, [isOpen]);
 
@@ -37,6 +43,71 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
       }
     } catch (err) {
       console.error('Error fetching services:', err);
+    }
+  };
+
+  const fetchAddresses = async () => {
+    try {
+      const response = await customerService.getAddresses();
+      if (response.success && response.data) {
+        setAddresses(response.data);
+        // Set default address if available
+        const defaultAddr = response.data.find(addr => addr.isDefault);
+        if (defaultAddr) {
+          setFormData(prev => ({ 
+            ...prev, 
+            addressId: defaultAddr.id,
+            location: defaultAddr.address 
+          }));
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching addresses:', err);
+    }
+  };
+
+  const handleAddressChange = (e) => {
+    const addressId = e.target.value;
+    if (addressId === 'new') {
+      setShowNewAddressInput(true);
+      setFormData(prev => ({ ...prev, addressId: '', location: '' }));
+    } else if (addressId) {
+      const selectedAddress = addresses.find(addr => addr.id === parseInt(addressId));
+      setShowNewAddressInput(false);
+      setFormData(prev => ({ 
+        ...prev, 
+        addressId: addressId,
+        location: selectedAddress?.address || '' 
+      }));
+    }
+    setError('');
+  };
+
+  const handleSaveNewAddress = async () => {
+    if (!newAddress.address.trim()) {
+      setError('Vui lòng nhập địa chỉ');
+      return;
+    }
+
+    try {
+      const response = await customerService.createAddress({
+        address: newAddress.address,
+        label: newAddress.label || null,
+        isDefault: addresses.length === 0
+      });
+
+      if (response.success && response.data) {
+        setAddresses(prev => [...prev, response.data]);
+        setFormData(prev => ({ 
+          ...prev, 
+          addressId: response.data.id,
+          location: response.data.address 
+        }));
+        setShowNewAddressInput(false);
+        setNewAddress({ address: '', label: '' });
+      }
+    } catch (err) {
+      setError(err?.message || 'Không thể lưu địa chỉ');
     }
   };
 
@@ -120,8 +191,11 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
         startTime: '08:00',
         endTime: '17:00',
         location: '',
+        addressId: '',
         notes: '',
       });
+      setShowNewAddressInput(false);
+      setNewAddress({ address: '', label: '' });
       onClose();
     } catch (err) {
       setError(err?.message || err?.error || 'Có lỗi xảy ra khi đặt lịch');
@@ -272,20 +346,76 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
               </div>
             </div>
 
-            {/* Location */}
+            {/* Address Selection */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
+                <MapPin size={16} className="inline mr-1" />
                 Địa chỉ dịch vụ *
               </label>
-              <input
-                type="text"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                required
-                placeholder="Nhập địa chỉ nơi cần dịch vụ..."
+              <select
+                value={formData.addressId}
+                onChange={handleAddressChange}
+                required={!showNewAddressInput}
+                disabled={loading}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-              />
+              >
+                <option value="">-- Chọn địa chỉ --</option>
+                {addresses.map((addr) => (
+                  <option key={addr.id} value={addr.id}>
+                    {addr.label ? `${addr.label} - ${addr.address}` : addr.address}
+                    {addr.isDefault ? ' (Mặc định)' : ''}
+                  </option>
+                ))}
+                <option value="new">+ Thêm địa chỉ mới</option>
+              </select>
+
+              {/* New Address Input */}
+              {showNewAddressInput && (
+                <div className="mt-3 p-3 bg-gray-50 border border-gray-200 rounded-lg space-y-3">
+                  <div>
+                    <input
+                      type="text"
+                      value={newAddress.address}
+                      onChange={(e) => setNewAddress(prev => ({ ...prev, address: e.target.value }))}
+                      placeholder="Nhập địa chỉ mới..."
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      value={newAddress.label}
+                      onChange={(e) => setNewAddress(prev => ({ ...prev, label: e.target.value }))}
+                      placeholder="Nhãn (VD: Nhà riêng, Văn phòng...)"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      onClick={handleSaveNewAddress}
+                      variant="primary"
+                      size="sm"
+                      className="flex-1"
+                    >
+                      <Plus size={16} className="inline mr-1" />
+                      Lưu địa chỉ
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        setShowNewAddressInput(false);
+                        setNewAddress({ address: '', label: '' });
+                      }}
+                      variant="secondary"
+                      size="sm"
+                      className="flex-1"
+                    >
+                      Hủy
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Notes */}

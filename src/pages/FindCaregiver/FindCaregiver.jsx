@@ -23,7 +23,7 @@ function FindCaregiver() {
   const [caregivers, setCaregivers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   const [filters, setFilters] = useState({
     type: '',
     gender: '',
@@ -44,9 +44,9 @@ function FindCaregiver() {
         setLoading(true);
         setError(null);
         const response = await publicService.getCaregivers();
-        
+
         console.log('API Response:', response);
-        
+
         // Extract data from ApiResponse structure
         if (response.success && response.data) {
           setCaregivers(response.data);
@@ -169,7 +169,7 @@ function FindCaregiver() {
         <div className="p-4 space-y-3">
           <div className="flex items-center gap-2 text-gray-700">
             <Clock size={16} className="text-teal-500" />
-            <span className="text-sm">{caregiver.caregiverType || 'N/A'}</span>
+            <span className="text-sm">{(caregiver.hourlyRate || 0).toLocaleString()}đ</span>
           </div>
 
           <div className="flex items-center gap-2 text-gray-700">
@@ -178,7 +178,7 @@ function FindCaregiver() {
           </div>
 
           <div className="flex items-center justify-between">
-            <StarRating rating={caregiver.averageRating || 0} />
+            <StarRating rating={caregiver.rating || 0} />
             <span className="text-xs text-gray-500">({caregiver.totalReviews || 0})</span>
           </div>
 
@@ -197,7 +197,7 @@ function FindCaregiver() {
             </div>
           </div>
 
-          <button 
+          <button
             onClick={handleViewDetail}
             className="w-full bg-teal-500  py-2 rounded-lg hover:bg-teal-600 transition-colors font-medium text-sm"
           >
@@ -389,7 +389,7 @@ function FindCaregiver() {
             ) : error ? (
               <div className="bg-white rounded-lg shadow-sm p-12 text-center">
                 <p className="text-red-500 text-lg mb-2">Lỗi: {error}</p>
-                <button 
+                <button
                   onClick={() => window.location.reload()}
                   className="mt-4 px-4 py-2 bg-teal-500  rounded-lg hover:bg-teal-600"
                 >
@@ -419,71 +419,70 @@ function FindCaregiver() {
                     <p className="text-gray-400">Vui lòng thử lại với các bộ lọc khác</p>
                   </div>
                 ) : (
-              <>
-                {/* Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                  {paginatedCaregivers.map(caregiver => (
-                    <CaregiverCard key={caregiver.id} caregiver={caregiver} />
-                  ))}
-                </div>
+                  <>
+                    {/* Cards Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                      {paginatedCaregivers.map(caregiver => (
+                        <CaregiverCard key={caregiver.id} caregiver={caregiver} />
+                      ))}
+                    </div>
 
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-2">
-                    <button
-                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                      disabled={currentPage === 1}
-                      className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Trước
-                    </button>
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                      <div className="flex items-center justify-center gap-2">
+                        <button
+                          onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                          disabled={currentPage === 1}
+                          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          Trước
+                        </button>
 
-                    {[...Array(totalPages)].map((_, i) => {
-                      const pageNum = i + 1;
-                      // Show current, adjacent, and first/last pages
-                      if (
-                        pageNum === 1 ||
-                        pageNum === totalPages ||
-                        (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)
-                      ) {
-                        return (
-                          <button
-                            key={pageNum}
-                            onClick={() => setCurrentPage(pageNum)}
-                            className={`px-3 py-2 rounded-lg font-medium transition-colors ${
-                              currentPage === pageNum
-                                ? 'bg-teal-500 '
-                                : 'border border-gray-300 hover:bg-gray-50'
-                            }`}
-                          >
-                            {pageNum}
-                          </button>
-                        );
-                      } else if (
-                        (pageNum === currentPage - 2 || pageNum === currentPage + 2)
-                      ) {
-                        return (
-                          <span key={pageNum} className="px-2 py-2">
-                            ...
-                          </span>
-                        );
-                      }
-                      return null;
-                    })}
+                        {[...Array(totalPages)].map((_, i) => {
+                          const pageNum = i + 1;
+                          // Show current, adjacent, and first/last pages
+                          if (
+                            pageNum === 1 ||
+                            pageNum === totalPages ||
+                            (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)
+                          ) {
+                            return (
+                              <button
+                                key={pageNum}
+                                onClick={() => setCurrentPage(pageNum)}
+                                className={`px-3 py-2 rounded-lg font-medium transition-colors ${currentPage === pageNum
+                                    ? 'bg-teal-500 '
+                                    : 'border border-gray-300 hover:bg-gray-50'
+                                  }`}
+                              >
+                                {pageNum}
+                              </button>
+                            );
+                          } else if (
+                            (pageNum === currentPage - 2 || pageNum === currentPage + 2)
+                          ) {
+                            return (
+                              <span key={pageNum} className="px-2 py-2">
+                                ...
+                              </span>
+                            );
+                          }
+                          return null;
+                        })}
 
-                    <button
-                      onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                      disabled={currentPage === totalPages}
-                      className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Tiếp
-                    </button>
-                  </div>
+                        <button
+                          onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                          disabled={currentPage === totalPages}
+                          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          Tiếp
+                        </button>
+                      </div>
+                    )}
+                  </>
                 )}
               </>
             )}
-          </>
-        )}
           </div>
         </div>
       </div>

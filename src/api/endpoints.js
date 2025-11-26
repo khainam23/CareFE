@@ -23,6 +23,11 @@ export const API_ENDPOINTS = {
   CUSTOMER: {
     PROFILE: '/api/customers/me',
     UPDATE_PROFILE: '/api/customers/me',
+    ADDRESSES: '/api/customers/addresses',
+    DEFAULT_ADDRESS: '/api/customers/addresses/default',
+    CREATE_ADDRESS: '/api/customers/addresses',
+    SET_DEFAULT_ADDRESS: (id) => `/api/customers/addresses/${id}/default`,
+    DELETE_ADDRESS: (id) => `/api/customers/addresses/${id}`,
     BOOKINGS: '/api/customer/bookings',
     CREATE_BOOKING: '/api/customer/bookings',
     CANCEL_BOOKING: (id) => `/api/customer/bookings/${id}/cancel`,

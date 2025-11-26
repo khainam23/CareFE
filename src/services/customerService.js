@@ -102,6 +102,56 @@ export const customerService = {
     } catch (error) {
       throw error.response?.data || error.message;
     }
+  },
+
+  // Lấy danh sách địa chỉ
+  getAddresses: async () => {
+    try {
+      const response = await axiosInstance.get(API_ENDPOINTS.CUSTOMER.ADDRESSES);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  // Lấy địa chỉ mặc định
+  getDefaultAddress: async () => {
+    try {
+      const response = await axiosInstance.get(API_ENDPOINTS.CUSTOMER.DEFAULT_ADDRESS);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  // Tạo địa chỉ mới
+  createAddress: async (addressData) => {
+    try {
+      const response = await axiosInstance.post(API_ENDPOINTS.CUSTOMER.CREATE_ADDRESS, addressData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  // Đặt địa chỉ mặc định
+  setDefaultAddress: async (addressId) => {
+    try {
+      const response = await axiosInstance.put(API_ENDPOINTS.CUSTOMER.SET_DEFAULT_ADDRESS(addressId));
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  // Xóa địa chỉ
+  deleteAddress: async (addressId) => {
+    try {
+      const response = await axiosInstance.delete(API_ENDPOINTS.CUSTOMER.DELETE_ADDRESS(addressId));
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
   }
 };
 
