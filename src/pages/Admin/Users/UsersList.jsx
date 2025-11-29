@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Plus, UserCheck, UserX } from 'lucide-react';
+import { Plus, UserCheck, UserX, Eye } from 'lucide-react';
 import DataTable from '@components/admin/DataTable';
 import UserForm from './UserForm';
+import UserDetailModal from './UserDetailModal';
 import Button from '@components/common/Button/Button';
 import adminService from '@services/adminService';
 import Swal from 'sweetalert2';
@@ -10,7 +11,9 @@ const UsersList = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   useEffect(() => {
     document.title = 'Users Management - Admin';
@@ -42,6 +45,11 @@ const UsersList = () => {
   const handleCreate = () => {
     setSelectedUser(null);
     setIsFormOpen(true);
+  };
+
+  const handleViewDetails = (user) => {
+    setSelectedUserId(user.id);
+    setIsDetailOpen(true);
   };
 
   const handleEdit = (user) => {
@@ -210,6 +218,13 @@ const UsersList = () => {
         loading={loading}
         customActions={(user) => (
           <>
+            <button
+              onClick={() => handleViewDetails(user)}
+              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+              title="View Details"
+            >
+              <Eye size={18} />
+            </button>
             {user.status === 'ACTIVE' ? (
               <button
                 onClick={() => handleSuspend(user)}
@@ -237,6 +252,13 @@ const UsersList = () => {
         onClose={() => setIsFormOpen(false)}
         onSubmit={handleFormSubmit}
         initialData={selectedUser}
+      />
+
+      {/* User Detail Modal */}
+      <UserDetailModal
+        isOpen={isDetailOpen}
+        onClose={() => setIsDetailOpen(false)}
+        userId={selectedUserId}
       />
     </div>
   );
