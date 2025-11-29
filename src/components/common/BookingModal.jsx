@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Calendar, Clock, DollarSign, Briefcase, MapPin, Plus } from 'lucide-react';
+import { X, Calendar, Clock, DollarSign, Briefcase, MapPin, Plus, CreditCard } from 'lucide-react';
 import Button from './Button/Button';
 import DatePickerInput from '@/components/DatePickerInput';
 import { publicService } from '@/services/publicService';
@@ -23,6 +23,8 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
   const [newAddress, setNewAddress] = useState({ address: '', label: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [bookingCreated, setBookingCreated] = useState(null);
+  const [showPaymentOptions, setShowPaymentOptions] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -172,7 +174,7 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
 
     setLoading(true);
     try {
-      await onSubmit({
+      const bookingData = {
         serviceId: formData.serviceId,
         caregiverId: caregiver.id,
         startDate: formData.startDate,
@@ -185,23 +187,16 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
         subtotal,
         taxAmount,
         totalPrice,
-      });
+      };
+
+      const response = await onSubmit(bookingData);
       
-      // Reset form
-      setFormData({
-        serviceId: services.length > 0 ? services[0].id : '',
-        customService: '',
-        startDate: '',
-        endDate: '',
-        startTime: '08:00',
-        endTime: '17:00',
-        location: '',
-        addressId: '',
-        notes: '',
+      // Set booking data and show payment options
+      setBookingCreated({
+        ...bookingData,
+        ...response
       });
-      setShowNewAddressInput(false);
-      setNewAddress({ address: '', label: '' });
-      onClose();
+      setShowPaymentOptions(true);
     } catch (err) {
       setError(err?.message || err?.error || 'Có lỗi xảy ra khi đặt lịch');
     } finally {
@@ -209,10 +204,150 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
     }
   };
 
+  const handleVNPayPayment = async () => {
+    setLoading(true);
+    try {
+      const response = await customerService.generateVNPayURL(
+        bookingCreated.data?.id || bookingCreated.id,
+        bookingCreated.notes
+      );
+      
+      if (response.data && response.data.paymentUrl) {
+        window.location.href = response.data.paymentUrl;
+      } else {
+        setError('Không thể tạo URL thanh toán VNPay');
+      }
+    } catch (err) {
+      setError(err?.message || 'Có lỗi xảy ra khi tạo thanh toán VNPay');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSkipPayment = () => {
+    // Reset form
+    setFormData({
+      serviceId: services.length > 0 ? services[0].id : '',
+      customService: '',
+      startDate: '',
+      endDate: '',
+      startTime: '08:00',
+      endTime: '17:00',
+      location: '',
+      addressId: '',
+      notes: '',
+    });
+    setShowNewAddressInput(false);
+    setNewAddress({ address: '', label: '' });
+    setBookingCreated(null);
+    setShowPaymentOptions(false);
+    onClose();
+  };
+
   if (!isOpen) return null;
 
   const today = new Date();
   const minEndDate = formData.startDate ? new Date(formData.startDate) : today;
+
+  // Show payment options after booking is created
+  if (showPaymentOptions && bookingCreated) {
+    return (
+      <div className="fixed inset-0 bg-black flex items-center justify-center z-50 p-4" style={{ background: "rgba(0,0,0,0.4)"}}>
+        <div className="bg-white rounded-lg max-w-md w-full">
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b">
+            <h2 className="text-2xl font-bold text-gray-900">Thanh toán</h2>
+            <button
+              onClick={handleSkipPayment}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <X size={24} />
+            </button>
+          </div>
+
+          {/* Content */}
+          <div className="p-6">
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+                {error}
+              </div>
+            )}
+
+            {/* Success Message */}
+            <div className="mb-6 p-4 bg-teal-50 border border-teal-200 rounded-lg">
+              <p className="text-teal-900 font-semibold mb-2">✓ Đặt lịch thành công!</p>
+              <p className="text-sm text-teal-800">
+                Lịch đặt của bạn đã được tạo. Vui lòng thanh toán để xác nhận đặt lịch.
+              </p>
+            </div>
+
+            {/* Payment Summary */}
+            <div className="mb-6 bg-gray-50 rounded-lg p-4">
+              <h3 className="font-semibold text-gray-900 mb-3">Chi tiết thanh toán</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Tổng giờ:</span>
+                  <span className="font-semibold">{bookingCreated.totalHours?.toFixed(1)} giờ</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Tạm tính:</span>
+                  <span className="font-semibold">{bookingCreated.subtotal?.toLocaleString()}đ</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Thuế (15%):</span>
+                  <span className="font-semibold">{bookingCreated.taxAmount?.toLocaleString()}đ</span>
+                </div>
+                <div className="border-t pt-2 mt-2 flex justify-between">
+                  <span className="font-semibold text-gray-900">Tổng cộng:</span>
+                  <span className="font-bold text-teal-600">{bookingCreated.totalPrice?.toLocaleString()}đ</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Payment Methods */}
+            <h3 className="font-semibold text-gray-900 mb-3">Phương thức thanh toán</h3>
+            <div className="space-y-3 mb-6">
+              <button
+                onClick={handleVNPayPayment}
+                disabled={loading}
+                className="w-full p-4 border border-teal-300 rounded-lg hover:bg-teal-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-left"
+              >
+                <div className="flex items-center gap-3">
+                  <CreditCard size={24} className="text-teal-600" />
+                  <div>
+                    <p className="font-semibold text-gray-900">Thanh toán qua VNPay</p>
+                    <p className="text-sm text-gray-600">Thẻ tín dụng, ghi nợ hoặc ví điện tử</p>
+                  </div>
+                </div>
+              </button>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3">
+              <Button
+                type="button"
+                onClick={handleSkipPayment}
+                variant="secondary"
+                className="flex-1"
+                disabled={loading}
+              >
+                Thanh toán sau
+              </Button>
+              <Button
+                type="button"
+                onClick={handleVNPayPayment}
+                variant="primary"
+                className="flex-1"
+                disabled={loading}
+              >
+                {loading ? 'Đang xử lý...' : 'Thanh toán ngay'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black flex items-center justify-center z-50 p-4" style={{ background: "rgba(0,0,0,0.4)"}}>
@@ -495,7 +630,7 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
               className="flex-1"
               disabled={loading || totalHours <= 0}
             >
-              {loading ? 'Đang xử lý...' : 'Xác nhận đặt lịch'}
+              {loading ? 'Đang xử lý...' : 'Đặt lịch và thanh toán qua VNPay'}
             </Button>
           </div>
         </form>

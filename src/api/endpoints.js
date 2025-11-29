@@ -36,6 +36,9 @@ export const API_ENDPOINTS = {
     CAREGIVERS: '/api/customer/caregivers',
     CAREGIVER_DETAIL: (id) => `/api/customer/caregivers/${id}`,
     CAREGIVER_REVIEWS: (id) => `/api/customer/caregivers/${id}/reviews`,
+    CREATE_PAYMENT: '/api/customer/payments',
+    GET_PAYMENT_BY_BOOKING: (id) => `/api/customer/payments/booking/${id}`,
+    VNPAY_GENERATE_URL: '/api/customer/payments/vnpay/generate-url',
   },
 
   // Caregiver

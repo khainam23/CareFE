@@ -152,6 +152,39 @@ export const customerService = {
     } catch (error) {
       throw error.response?.data || error.message;
     }
+  },
+
+  // Tạo payment
+  createPayment: async (paymentData) => {
+    try {
+      const response = await axiosInstance.post(API_ENDPOINTS.CUSTOMER.CREATE_PAYMENT, paymentData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  // Lấy payment theo booking
+  getPaymentByBooking: async (bookingId) => {
+    try {
+      const response = await axiosInstance.get(API_ENDPOINTS.CUSTOMER.GET_PAYMENT_BY_BOOKING(bookingId));
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  // Tạo VNPay payment URL
+  generateVNPayURL: async (bookingId, notes) => {
+    try {
+      const response = await axiosInstance.post(API_ENDPOINTS.CUSTOMER.VNPAY_GENERATE_URL, {
+        bookingId,
+        notes
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
   }
 };
 

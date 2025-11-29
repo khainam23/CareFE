@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Home, NotFound, Login, SignUp, FindCaregiver, CaregiverDetail, About, CustomerInfo, EmployeeProfile, TermsOfService, PrivacyPolicy } from '@pages';
+import { Home, NotFound, Login, SignUp, FindCaregiver, CaregiverDetail, About, CustomerInfo, EmployeeProfile, TermsOfService, PrivacyPolicy, PaymentReturn } from '@pages';
 import MainLayout from '@components/layout/MainLayout';
 import ProtectedRoute from '@components/common/ProtectedRoute';
 import PublicRoute from '@components/common/PublicRoute';
@@ -86,6 +86,9 @@ const AppRoutes = () => {
             </ProtectedRoute>
           } 
         />
+
+        {/* Payment Return Route */}
+        <Route path="/payment-return" element={<PaymentReturn />} />
 
         {/* Public routes with MainLayout - Chỉ cho phép customer và user chưa đăng nhập */}
         <Route path="/" element={
