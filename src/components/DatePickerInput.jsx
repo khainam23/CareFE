@@ -44,7 +44,7 @@ const DatePickerInput = ({
   onChange,
   className = '',
   disabled = false,
-  maxDate = new Date(),
+  maxDate,
   ...props
 }) => {
   const selected = useMemo(() => normalizeValue(value), [value]);

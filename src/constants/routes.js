@@ -11,6 +11,8 @@ export const ROUTES = {
   CUSTOMER_INFO: '/customer-info',
   EMPLOYEE_PROFILE: '/employee-profile',
   SETTINGS: '/settings',
+  TERMS_OF_SERVICE: '/terms-of-service',
+  PRIVACY_POLICY: '/privacy-policy',
   NOT_FOUND: '*',
   // Admin routes
   ADMIN_DASHBOARD: '/admin/dashboard',

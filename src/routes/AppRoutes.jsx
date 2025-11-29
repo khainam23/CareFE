@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Home, NotFound, Login, SignUp, FindCaregiver, CaregiverDetail, About, CustomerInfo, EmployeeProfile } from '@pages';
+import { Home, NotFound, Login, SignUp, FindCaregiver, CaregiverDetail, About, CustomerInfo, EmployeeProfile, TermsOfService, PrivacyPolicy } from '@pages';
 import MainLayout from '@components/layout/MainLayout';
 import ProtectedRoute from '@components/common/ProtectedRoute';
 import PublicRoute from '@components/common/PublicRoute';
@@ -97,6 +97,8 @@ const AppRoutes = () => {
           <Route path={ROUTES.FIND_CAREGIVER} element={<FindCaregiver />} />
           <Route path={ROUTES.CAREGIVER_DETAIL} element={<CaregiverDetail />} />
           <Route path={ROUTES.ABOUT} element={<About />} />
+          <Route path={ROUTES.TERMS_OF_SERVICE} element={<TermsOfService />} />
+          <Route path={ROUTES.PRIVACY_POLICY} element={<PrivacyPolicy />} />
           
           {/* Protected Customer Info - Customer only */}
           <Route 

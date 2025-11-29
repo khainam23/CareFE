@@ -7,3 +7,5 @@ export { default as CaregiverDetail } from './CaregiverDetail';
 export { default as About } from './About';
 export { default as CustomerInfo } from './CustomerInfo';
 export { default as EmployeeProfile } from './EmployeeProfile/EmployeeProfile';
+export { default as TermsOfService } from './TermsOfService/TermsOfService';
+export { default as PrivacyPolicy } from './PrivacyPolicy/PrivacyPolicy';

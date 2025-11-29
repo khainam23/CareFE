@@ -132,7 +132,10 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
   };
 
   const totalHours = calculateTotalHours();
-  const totalPrice = totalHours * (caregiver?.hourlyRate || 0);
+  const subtotal = totalHours * (caregiver?.hourlyRate || 0);
+  const TAX_RATE = 0.15; // 15% tax
+  const taxAmount = subtotal * TAX_RATE;
+  const totalPrice = subtotal + taxAmount;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -179,6 +182,8 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
         location: formData.location,
         notes: formData.notes,
         totalHours,
+        subtotal,
+        taxAmount,
         totalPrice,
       });
       
@@ -444,6 +449,18 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
                   <span className="text-gray-700">Giá / giờ:</span>
                   <span className="font-semibold text-gray-900">
                     {(caregiver?.hourlyRate || 0).toLocaleString()}đ
+                  </span>
+                </div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-gray-700">Tạm tính:</span>
+                  <span className="font-semibold text-gray-900">
+                    {subtotal.toLocaleString()}đ
+                  </span>
+                </div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-gray-700">Thuế (15%):</span>
+                  <span className="font-semibold text-gray-900">
+                    {taxAmount.toLocaleString()}đ
                   </span>
                 </div>
                 <div className="border-t border-teal-300 pt-2 mt-2">

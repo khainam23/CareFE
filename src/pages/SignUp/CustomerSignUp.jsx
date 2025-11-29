@@ -18,6 +18,7 @@ import { useAuthStore } from '../../store/authStore';
 import { validateCustomerForm } from '../../utils/validation';
 import { useNavigate } from 'react-router-dom';
 import DatePickerInput from '@/components/DatePickerInput';
+import { ROUTES } from '@constants';
 
 const CUSTOMER_STEPS = [
   {
@@ -264,13 +265,13 @@ export default function CustomerSignUp({
             className="w-5 h-5 rounded cursor-pointer"
           />
           <label htmlFor="terms" className="cursor-pointer text-sm text-gray-700">
-            Tôi đồng ý với
-            <a href="#" className="text-blue-500 hover:text-blue-600 mx-1">
-              điều khoản dịch vụ
+            Tôi hiểu và đồng ý với Điều khoản dịch vụ của LifeEase, bao gồm
+            <a href={ROUTES.TERMS_OF_SERVICE} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600 mx-1">
+              Thỏa thuân người dùng
             </a>
             và
-            <a href="#" className="text-blue-500 hover:text-blue-600 mx-1">
-              chính sách bảo mật
+            <a href={ROUTES.PRIVACY_POLICY} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600 mx-1">
+              Chính sách quyền riêng tư
             </a>
           </label>
         </div>

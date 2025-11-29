@@ -22,7 +22,11 @@ const UsersList = () => {
       setLoading(true);
       const response = await adminService.getAllUsers(0, 100);
       if (response.success) {
-        setUsers(response.data.content || []);
+        // Filter out users with ROLE_ADMIN
+        const filteredUsers = (response.data.content || []).filter(
+          (user) => !user.roles?.includes('ROLE_ADMIN')
+        );
+        setUsers(filteredUsers);
       }
     } catch (error) {
       Swal.fire({
@@ -154,7 +158,7 @@ const UsersList = () => {
       label: 'Role',
       render: (roles) => (
         <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
-          {roles?.[0]?.replace('ROLE_', '') || 'N/A'}
+          {roles && roles.length > 0 ? roles[0].replace('ROLE_', '') : 'N/A'}
         </span>
       ),
     },
@@ -191,7 +195,7 @@ const UsersList = () => {
             Manage all users in the system
           </p>
         </div>
-        <Button onClick={handleCreate}>
+        <Button onClick={handleCreate} className="w-30 align-cetner flex">
           <Plus size={20} className="mr-2" />
           Create User
         </Button>

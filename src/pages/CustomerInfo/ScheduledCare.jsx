@@ -170,14 +170,14 @@ const ScheduledCare = () => {
 
   const getStatusBadge = (status) => {
     const badges = {
-      confirmed: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Xác nhận' },
-      completed: { bg: 'bg-green-100', text: 'text-green-800', label: 'Hoàn thành' },
-      pending: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Chờ xác nhận' },
-      cancelled: { bg: 'bg-red-100', text: 'text-red-800', label: 'Hủy' },
+      confirmed: { bg: 'bg-blue-600', text: 'text-white', label: 'Xác nhận' },
+      completed: { bg: 'bg-green-600', text: 'text-white', label: 'Hoàn thành' },
+      pending: { bg: 'bg-red-500', text: 'text-white', label: 'Chờ xác nhận' },
+      cancelled: { bg: 'bg-red-800', text: 'text-white', label: 'Hủy' },
     };
     const badge = badges[status] || badges.pending;
     return (
-      <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${badge.bg} ${badge.text}`}>
+      <span className={`inline-block px-4 py-2 rounded-full text-sm font-bold ${badge.bg} ${badge.text}`}>
         {badge.label}
       </span>
     );
@@ -200,14 +200,14 @@ const ScheduledCare = () => {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center max-w-md">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <X className="w-8 h-8 text-red-500" />
+          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <X className="w-10 h-10 text-red-600" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">Không thể tải dữ liệu</h3>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <h3 className="text-2xl font-bold text-gray-900 mb-2">Không thể tải dữ liệu</h3>
+          <p className="text-gray-700 text-base font-medium mb-4">{error}</p>
           <button
             onClick={fetchBookings}
-            className="px-6 py-2 bg-teal-500  rounded-lg hover:bg-teal-600 transition-colors"
+            className="px-8 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-bold text-base"
           >
             Thử lại
           </button>
@@ -220,31 +220,31 @@ const ScheduledCare = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-800">Lịch chăm sóc đã đặt</h2>
-        <p className="text-gray-600 mt-2">Quản lý các buổi chăm sóc của bạn</p>
+        <h2 className="text-4xl font-bold text-teal-700">Lịch chăm sóc đã đặt</h2>
+        <p className="text-gray-700 mt-2 text-lg">Quản lý các buổi chăm sóc của bạn</p>
       </div>
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <p className="text-gray-600 text-sm font-medium">Tổng buổi</p>
-          <p className="text-3xl font-bold text-gray-800 mt-2">{appointments.length}</p>
+        <div className="bg-white rounded-lg border-2 border-gray-300 p-6 shadow-md">
+          <p className="text-gray-700 text-base font-bold">Tổng buổi</p>
+          <p className="text-5xl font-bold text-gray-900 mt-3">{appointments.length}</p>
         </div>
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <p className="text-gray-600 text-sm font-medium">Chờ xác nhận</p>
-          <p className="text-3xl font-bold text-yellow-600 mt-2">
+        <div className="bg-white rounded-lg border-2 border-red-300 p-6 shadow-md">
+          <p className="text-gray-700 text-base font-bold">Chờ xác nhận</p>
+          <p className="text-5xl font-bold text-yellow-600 mt-3">
             {appointments.filter(a => a.status === 'pending').length}
           </p>
         </div>
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <p className="text-gray-600 text-sm font-medium">Đã xác nhận</p>
-          <p className="text-3xl font-bold text-blue-600 mt-2">
+        <div className="bg-white rounded-lg border-2 border-blue-300 p-6 shadow-md">
+          <p className="text-gray-700 text-base font-bold">Đã xác nhận</p>
+          <p className="text-5xl font-bold text-blue-700 mt-3">
             {appointments.filter(a => a.status === 'confirmed').length}
           </p>
         </div>
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <p className="text-gray-600 text-sm font-medium">Hoàn thành</p>
-          <p className="text-3xl font-bold text-green-600 mt-2">
+        <div className="bg-white rounded-lg border-2 border-green-300 p-6 shadow-md">
+          <p className="text-gray-700 text-base font-bold">Hoàn thành</p>
+          <p className="text-5xl font-bold text-green-700 mt-3">
             {appointments.filter(a => a.status === 'completed').length}
           </p>
         </div>
@@ -253,10 +253,10 @@ const ScheduledCare = () => {
       {/* Appointments List */}
       <div className="space-y-4">
         {appointments.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-            <Calendar size={48} className="mx-auto text-gray-300 mb-4" />
-            <p className="text-gray-600 font-medium">Chưa có lịch chăm sóc</p>
-            <p className="text-gray-500 text-sm mt-2">Hãy đặt một buổi chăm sóc ngay</p>
+          <div className="text-center py-12 bg-white rounded-lg border-2 border-gray-300">
+            <Calendar size={64} className="mx-auto text-gray-400 mb-4" />
+            <p className="text-gray-700 font-bold text-xl">Chưa có lịch chăm sóc</p>
+            <p className="text-gray-600 text-lg mt-2 font-medium">Hãy đặt một buổi chăm sóc ngay</p>
           </div>
         ) : (
           appointments.map((appointment) => (
@@ -270,17 +270,17 @@ const ScheduledCare = () => {
                 className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
               >
                 <div className="flex items-center gap-4 flex-1 text-left">
-                  <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <User size={24} className="text-teal-600" />
+                  <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <User size={32} className="text-teal-700" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-800">{appointment.caregiver}</h3>
-                    <p className="text-sm text-gray-600">{appointment.service}</p>
+                    <h3 className="font-bold text-lg text-gray-900">{appointment.caregiver}</h3>
+                    <p className="text-base text-gray-700 font-medium">{appointment.service}</p>
                   </div>
                   <div className="text-right mr-4">
-                    <p className="font-medium text-gray-800">{appointment.date}</p>
-                    <p className="text-sm text-gray-600 flex items-center gap-1 justify-end">
-                      <Clock size={14} />
+                    <p className="font-bold text-lg text-gray-900">{appointment.date}</p>
+                    <p className="text-base text-gray-700 font-medium flex items-center gap-1 justify-end">
+                      <Clock size={16} />
                       {appointment.time}
                     </p>
                   </div>
@@ -302,24 +302,24 @@ const ScheduledCare = () => {
                   <div className="space-y-4">
                     {/* Location */}
                     <div className="flex gap-3">
-                      <MapPin size={18} className="text-gray-500 flex-shrink-0 mt-0.5" />
+                      <MapPin size={22} className="text-teal-600 flex-shrink-0 mt-0.5 font-bold" />
                       <div>
-                        <p className="text-sm text-gray-600 font-medium">Địa chỉ</p>
-                        <p className="text-gray-800">{appointment.address}</p>
+                        <p className="text-base text-gray-700 font-bold">Địa chỉ</p>
+                        <p className="text-gray-900 text-base font-medium">{appointment.address}</p>
                       </div>
                     </div>
 
                     {/* Rating Section - Only show for completed appointments */}
                     {appointment.status === 'completed' && (
                       <div className="border-t border-gray-200 pt-4">
-                        <p className="text-sm text-gray-600 font-medium mb-3">Đánh giá buổi chăm sóc</p>
+                        <p className="text-base text-gray-700 font-bold mb-3">Đánh giá buổi chăm sóc</p>
                         {appointment.rating ? (
                           <div className="flex items-center gap-2">
                             <div className="flex gap-1">
                               {[1, 2, 3, 4, 5].map((star) => (
                                 <Star
                                   key={star}
-                                  size={20}
+                                  size={28}
                                   className={`cursor-pointer transition-colors ${
                                     star <= appointment.rating
                                       ? 'fill-yellow-400 text-yellow-400'
@@ -328,7 +328,7 @@ const ScheduledCare = () => {
                                 />
                               ))}
                             </div>
-                            <span className="text-sm text-gray-600 ml-2">{appointment.rating}/5</span>
+                            <span className="text-lg text-gray-700 ml-2 font-bold">{appointment.rating}/5</span>
                           </div>
                         ) : (
                           <div className="flex gap-1">
@@ -339,7 +339,7 @@ const ScheduledCare = () => {
                                 className="transition-colors"
                               >
                                 <Star
-                                  size={20}
+                                  size={28}
                                   className="text-gray-300 hover:text-yellow-400 cursor-pointer"
                                 />
                               </button>
@@ -354,14 +354,14 @@ const ScheduledCare = () => {
                       {appointment.status === 'confirmed' && (
                         <button
                           onClick={() => handleCancel(appointment.id)}
-                          className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors font-medium"
+                          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-bold text-base"
                         >
-                          <X size={16} />
+                          <X size={18} />
                           Hủy buổi
                         </button>
                       )}
-                      <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-teal-50 text-teal-600 rounded-lg hover:bg-teal-100 transition-colors font-medium">
-                        <Check size={16} />
+                      <button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-bold text-base">
+                        <Check size={18} />
                         Chi tiết
                       </button>
                     </div>
@@ -375,8 +375,8 @@ const ScheduledCare = () => {
 
       {/* Booking Button */}
       <div className="flex justify-end">
-        <button className="px-6 py-3 bg-teal-500  rounded-lg hover:bg-teal-600 transition-colors font-medium flex items-center gap-2">
-          <Calendar size={18} />
+        <button className="px-8 py-4 bg-teal-600 rounded-lg hover:bg-teal-700 transition-colors font-bold text-lg flex items-center gap-2 text-white shadow-lg">
+          <Calendar size={24} />
           Đặt buổi chăm sóc mới
         </button>
       </div>

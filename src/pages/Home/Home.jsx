@@ -10,7 +10,6 @@ import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import ServiceCard from './ServiceCard';
 import ProcessStep from './ProcessStep';
 import ContactCard from './ContactCard';
-import ContactForm from './ContactForm';
 
 const Home = () => {
   const heroRef = useScrollAnimation('animate__fadeInDown');
@@ -25,13 +24,6 @@ const Home = () => {
     name: '',
   });
 
-  const [contactForm, setContactForm] = useState({
-    contactName: '',
-    contactPhone: '',
-    contactEmail: '',
-    contactMessage: '',
-  });
-
   const handleSearchChange = (e) => {
     const { name, value } = e.target;
     setSearchForm(prev => ({ ...prev, [name]: value }));
@@ -44,24 +36,6 @@ const Home = () => {
   const handleSearch = () => {
     console.log('Search:', searchForm);
     // Handle search logic
-  };
-
-  const handleContactChange = (e) => {
-    const { name, value } = e.target;
-    setContactForm(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleContactSubmit = (e) => {
-    e.preventDefault();
-    console.log('Contact form:', contactForm);
-    // Handle contact form submission
-    alert('Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất có thể.');
-    setContactForm({
-      contactName: '',
-      contactPhone: '',
-      contactEmail: '',
-      contactMessage: '',
-    });
   };
 
   const services = [
@@ -207,8 +181,14 @@ const Home = () => {
               <ContactCard icon={MapPin} title="Địa chỉ" text="Văn phòng chính" linkText="123 Nguyễn Huệ, Quận 1<br/>TP. Hồ Chí Minh" isAddress />
             </div>
 
-            {/* Contact Form */}
-            <ContactForm contactForm={contactForm} handleContactChange={handleContactChange} handleContactSubmit={handleContactSubmit} />
+            <div className="text-center">
+              <Button 
+                onClick={() => window.location.href = '/register'}
+                className="px-8 py-3 text-lg"
+              >
+                Đăng ký ngay
+              </Button>
+            </div>
           </div>
         </section>
       </div>

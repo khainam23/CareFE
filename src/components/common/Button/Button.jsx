@@ -10,7 +10,7 @@ const Button = ({
   toggleMode = 'independent', // 'independent' | 'selection'
   ...props 
 }) => {
-  const baseClasses = 'w-full py-3 rounded-lg font-semibold transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseClasses = 'py-3 rounded-lg font-semibold transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed';
   
   // Get button classes based on toggleable state
   const getButtonClasses = () => {

@@ -5,6 +5,7 @@ import { publicService } from '@/services/publicService';
 import { customerService } from '@/services/customerService';
 import { Button, BookingModal } from '@/components/common';
 import { useAuthStore } from '@/store/authStore';
+import Swal from 'sweetalert2';
 
 function CaregiverDetail() {
   const { id } = useParams();
@@ -15,7 +16,6 @@ function CaregiverDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-  const [bookingSuccess, setBookingSuccess] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
@@ -116,13 +116,28 @@ function CaregiverDetail() {
       console.log('Sending booking data:', formattedData);
       const response = await customerService.createBooking(formattedData);
       console.log('Booking created:', response);
-      setBookingSuccess(true);
       
-      // Show success message
-      setTimeout(() => {
-        setBookingSuccess(false);
-        navigate('/customer-info'); // Redirect to customer bookings page
-      }, 2000);
+      // Show success notification with SweetAlert2
+      await Swal.fire({
+        icon: 'success',
+        title: 'Đặt lịch thành công!',
+        html: `
+          <div class="text-left">
+            <p class="mb-2">Bạn đã đặt lịch với <strong>${caregiver?.fullName}</strong></p>
+            <p class="text-sm text-gray-600">Tổng số giờ: <strong>${bookingData.totalHours?.toFixed(1)} giờ</strong></p>
+            <p class="text-sm text-gray-600">Tạm tính: <strong>${bookingData.subtotal?.toLocaleString()}đ</strong></p>
+            <p class="text-sm text-gray-600">Thuế (15%): <strong>${bookingData.taxAmount?.toLocaleString()}đ</strong></p>
+            <p class="text-sm text-gray-900 mt-2">Tổng cộng: <strong class="text-teal-600">${bookingData.totalPrice?.toLocaleString()}đ</strong></p>
+          </div>
+        `,
+        confirmButtonText: 'Xem lịch đặt của tôi',
+        confirmButtonColor: '#14b8a6',
+        showCancelButton: true,
+        cancelButtonText: 'Đóng',
+      });
+      
+      // Navigate to customer bookings page
+      navigate('/customer-info');
     } catch (err) {
       console.error('Booking error:', err);
       // Show detailed error message with validation details
@@ -323,13 +338,6 @@ function CaregiverDetail() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-6">
-        {/* Success Message */}
-        {bookingSuccess && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-center">
-            ✓ Đặt lịch thành công! Đang chuyển hướng...
-          </div>
-        )}
-
         {/* Back Button */}
         <button
           onClick={() => navigate(-1)}

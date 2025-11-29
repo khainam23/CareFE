@@ -14,6 +14,7 @@ import Schedule from './tabs/Schedule';
 import Tasks from './tabs/Tasks';
 import PaymentHistory from './tabs/PaymentHistory';
 import ProfileSettings from './tabs/ProfileSettings';
+import CareNowLogo from '@assets/images/Logo.svg';
 
 const EmployeeProfile = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -54,8 +55,9 @@ const EmployeeProfile = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">Hồ sơ nhân viên</h1>
+        <div className="max-w-7xl flex mx-auto item-center px-4 sm:px-6 lg:px-8 py-6">
+          <img src={CareNowLogo} alt="CareNow" className="h-24" />
+          <h1 className="text-3xl content-center font-bold text-gray-900">Hồ sơ nhân viên</h1>
         </div>
       </div>
 
@@ -69,11 +71,10 @@ const EmployeeProfile = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm inline-flex items-center gap-2 whitespace-nowrap transition-colors ${
-                    activeTab === tab.id
+                  className={`py-4 px-1 border-b-2 font-medium text-sm inline-flex items-center gap-2 whitespace-nowrap transition-colors ${activeTab === tab.id
                       ? 'border-primary-600 text-primary-600 bg-primary-50'
                       : 'border-transparent text-chilled-gray-500 hover:text-chilled-gray-700 hover:border-chilled-gray-300 active:bg-primary-600 active: active:hover:bg-primary-700'
-                  }`}
+                    }`}
                 >
                   <Icon size={18} />
                   {tab.label}

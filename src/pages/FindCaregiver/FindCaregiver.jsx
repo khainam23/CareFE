@@ -167,10 +167,6 @@ function FindCaregiver() {
         </div>
 
         <div className="p-4 space-y-3">
-          <div className="flex items-center gap-2 text-gray-700">
-            <Clock size={16} className="text-teal-500" />
-            <span className="text-sm">{(caregiver.hourlyRate || 0).toLocaleString()}đ</span>
-          </div>
 
           <div className="flex items-center gap-2 text-gray-700">
             <MapPin size={16} className="text-teal-500" />
@@ -184,12 +180,6 @@ function FindCaregiver() {
 
           <div className="pt-2 border-t">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-500">Giá / giờ</p>
-                <p className="text-lg font-bold text-teal-600">
-                  {(caregiver.hourlyRate || 0).toLocaleString()}đ
-                </p>
-              </div>
               <div className="text-right">
                 <p className="text-xs text-gray-500">Kinh nghiệm</p>
                 <p className="text-lg font-bold text-gray-800">{caregiver.yearsOfExperience || 0}+ năm</p>
