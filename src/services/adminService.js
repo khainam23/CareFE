@@ -80,6 +80,26 @@ export const adminService = {
     }
   },
 
+  uploadUserAvatar: async (userId, formData) => {
+    try {
+      const imageSource = formData.get('imageSource') || 'url';
+      const avatarFile = formData.get('avatar') || formData.get('avatarImage');
+      
+      const submitFormData = new FormData();
+      submitFormData.append('avatar', avatarFile);
+      submitFormData.append('imageSource', imageSource);
+      
+      const response = await axiosInstance.post(`${API_ENDPOINTS.ADMIN.USERS}/${userId}/avatar`, submitFormData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
   // ==================== Caregiver Management ====================
   
   getAllCaregivers: async (page = 0, size = 20, sortBy = 'id', sortDir = 'DESC') => {

@@ -58,7 +58,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
       >
         {/* Logo */}
         <div className="flex items-center justify-between h-16 px-6 border-b border-green-200">
-          <img src={CareNowLogo} alt="CareNow" className="h-12" />
+          <img src={CareNowLogo} alt="CareNow" className="h-24" />
           <button
             onClick={onClose}
             className="lg:hidden p-2 rounded-lg hover:bg-chilled-gray-100"

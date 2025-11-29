@@ -119,14 +119,49 @@ const UsersList = () => {
 
   const handleFormSubmit = async (data) => {
     try {
+      let avatarFile = null;
+      let avatarImage = null;
+      let imageSource = null;
+      let submitData = data;
+      
+      if (data instanceof FormData) {
+        avatarFile = data.get('avatar');
+        avatarImage = data.get('avatarImage');
+        imageSource = data.get('imageSource');
+        
+        if (avatarFile && avatarFile.size === 0) {
+          avatarFile = null;
+        }
+        
+        submitData = new FormData();
+        data.forEach((value, key) => {
+          if (key !== 'avatar' && key !== 'avatarImage' && key !== 'imageSource') {
+            submitData.append(key, value);
+          }
+        });
+      }
+      
       let response;
       if (selectedUser) {
-        response = await adminService.updateUser(selectedUser.id, data);
+        response = await adminService.updateUser(selectedUser.id, submitData);
       } else {
-        response = await adminService.createUser(data);
+        response = await adminService.createUser(submitData);
       }
 
       if (response.success) {
+        const userId = response.data.id;
+        
+        if (avatarFile) {
+          const avatarFormData = new FormData();
+          avatarFormData.append('avatar', avatarFile);
+          await adminService.uploadUserAvatar(userId, avatarFormData);
+        } else if (avatarImage) {
+          const avatarFormData = new FormData();
+          avatarFormData.append('avatarImage', avatarImage);
+          avatarFormData.append('imageSource', 'local');
+          await adminService.uploadUserAvatar(userId, avatarFormData);
+        }
+        
         Swal.fire(
           'Success',
           `User has been ${selectedUser ? 'updated' : 'created'} successfully.`,

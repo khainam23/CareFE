@@ -3,6 +3,21 @@ import { X, User, Mail, Phone, Calendar, Shield, Image as ImageIcon } from 'luci
 import Modal from '@components/common/Modal/Modal';
 import adminService from '@services/adminService';
 import Swal from 'sweetalert2';
+import Ellipse18_1 from '@assets/images/Ellipse 18 (1).svg';
+import Ellipse18_2 from '@assets/images/Ellipse 18 (2).svg';
+import Ellipse18_3 from '@assets/images/Ellipse 18 (3).svg';
+import Ellipse18_4 from '@assets/images/Ellipse 18 (4).svg';
+import Ellipse18_5 from '@assets/images/Ellipse 18 (5).svg';
+import Ellipse19 from '@assets/images/Ellipse 19.svg';
+
+const AVATAR_IMAGES = {
+  'Ellipse 18 (1).svg': Ellipse18_1,
+  'Ellipse 18 (2).svg': Ellipse18_2,
+  'Ellipse 18 (3).svg': Ellipse18_3,
+  'Ellipse 18 (4).svg': Ellipse18_4,
+  'Ellipse 18 (5).svg': Ellipse18_5,
+  'Ellipse 19.svg': Ellipse19,
+};
 
 const UserDetailModal = ({ isOpen, onClose, userId }) => {
   const [user, setUser] = useState(null);
@@ -13,6 +28,14 @@ const UserDetailModal = ({ isOpen, onClose, userId }) => {
       fetchUserDetails();
     }
   }, [isOpen, userId]);
+  
+  useEffect(() => {
+    if (user) {
+      console.log('User data:', user);
+      console.log('Avatar URL:', user.avatarUrl);
+      console.log('Caregiver Profile:', user.caregiverProfile);
+    }
+  }, [user]);
 
   const fetchUserDetails = async () => {
     try {
@@ -186,8 +209,10 @@ const UserDetailModal = ({ isOpen, onClose, userId }) => {
                 <h3 className="text-lg font-semibold text-charcoal-500">Uploaded Images</h3>
               </div>
               {(() => {
-                const hasAvatar = user.avatarUrl;
-                const hasIdCard = user.caregiverProfile?.idCardUrl;
+                const hasAvatarUrl = user.avatarUrl && user.avatarUrl.trim() !== '';
+                const hasAvatarImage = user.avatarImage && user.avatarImage.trim() !== '' && user.imageSource === 'local';
+                const hasAvatar = hasAvatarUrl || hasAvatarImage;
+                const hasIdCard = user.caregiverProfile?.idCardUrl && user.caregiverProfile.idCardUrl.trim() !== '';
                 const certificateUrls = user.caregiverProfile?.certificateUrls
                   ? (() => {
                       try {
@@ -198,7 +223,7 @@ const UserDetailModal = ({ isOpen, onClose, userId }) => {
                         return user.caregiverProfile.certificateUrls
                           .split(',')
                           .map((url) => url.trim())
-                          .filter((url) => url);
+                          .filter((url) => url && url !== '');
                       }
                     })()
                   : [];
@@ -211,12 +236,27 @@ const UserDetailModal = ({ isOpen, onClose, userId }) => {
                     {hasAvatar && (
                       <div className="space-y-2">
                         <p className="text-sm text-chilled-gray-400">Avatar</p>
-                        <img
-                          src={user.avatarUrl}
-                          alt="Avatar"
-                          className="w-full h-40 object-cover rounded-lg border-2 border-chilled-gray-200 cursor-pointer hover:border-primary-500 transition-colors"
-                          onClick={() => window.open(user.avatarUrl, '_blank')}
-                        />
+                        <div
+                          className="w-full h-40 object-cover rounded-lg border-2 border-chilled-gray-200 cursor-pointer hover:border-primary-500 transition-colors bg-chilled-gray-100 flex items-center justify-center"
+                          onClick={() => {
+                            if (user.imageSource === 'url' && user.avatarUrl) {
+                              window.open(user.avatarUrl, '_blank');
+                            }
+                          }}
+                        >
+                          <img
+                            src={
+                              user.imageSource === 'local' && user.avatarImage
+                                ? AVATAR_IMAGES[user.avatarImage]
+                                : user.avatarUrl
+                            }
+                            alt="Avatar"
+                            className="w-full h-full object-cover rounded-lg"
+                            onError={(e) => {
+                              e.target.src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%23e5e7eb%22/%3E%3C/svg%3E';
+                            }}
+                          />
+                        </div>
                       </div>
                     )}
                     {/* ID Card Image */}

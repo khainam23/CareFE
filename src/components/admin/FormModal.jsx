@@ -101,6 +101,18 @@ const FormModal = ({
                       rows={4}
                       className="w-full px-4 py-2 border border-chilled-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     />
+                  ) : field.type === 'file' ? (
+                    <input
+                      id={field.name}
+                      type="file"
+                      accept={field.accept || 'image/*'}
+                      {...register(field.name, {
+                        required: field.required
+                          ? `${field.label} is required`
+                          : false,
+                      })}
+                      className="w-full px-4 py-2 border border-chilled-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    />
                   ) : (
                     <input
                       id={field.name}

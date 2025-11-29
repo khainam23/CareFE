@@ -1,5 +1,20 @@
 import { useState } from 'react';
 import FormModal from '@components/admin/FormModal';
+import Ellipse18_1 from '@assets/images/Ellipse 18 (1).svg';
+import Ellipse18_2 from '@assets/images/Ellipse 18 (2).svg';
+import Ellipse18_3 from '@assets/images/Ellipse 18 (3).svg';
+import Ellipse18_4 from '@assets/images/Ellipse 18 (4).svg';
+import Ellipse18_5 from '@assets/images/Ellipse 18 (5).svg';
+import Ellipse19 from '@assets/images/Ellipse 19.svg';
+
+const AVATAR_OPTIONS = [
+  { value: 'Ellipse 18 (1).svg', label: 'Avatar 1', image: Ellipse18_1 },
+  { value: 'Ellipse 18 (2).svg', label: 'Avatar 2', image: Ellipse18_2 },
+  { value: 'Ellipse 18 (3).svg', label: 'Avatar 3', image: Ellipse18_3 },
+  { value: 'Ellipse 18 (4).svg', label: 'Avatar 4', image: Ellipse18_4 },
+  { value: 'Ellipse 18 (5).svg', label: 'Avatar 5', image: Ellipse18_5 },
+  { value: 'Ellipse 19.svg', label: 'Avatar 6', image: Ellipse19 },
+];
 
 const UserForm = ({ isOpen, onClose, onSubmit, initialData }) => {
   const [loading, setLoading] = useState(false);
@@ -7,7 +22,29 @@ const UserForm = ({ isOpen, onClose, onSubmit, initialData }) => {
   const handleSubmit = async (data) => {
     setLoading(true);
     try {
-      await onSubmit(data);
+      const hasAvatarFile = data.avatar && data.avatar[0];
+      const hasAvatarImage = data.avatarImage && data.avatarImage.trim() !== '';
+      
+      if (hasAvatarFile || hasAvatarImage) {
+        const formData = new FormData();
+        Object.keys(data).forEach((key) => {
+          if (key === 'avatar') {
+            if (data.avatar && data.avatar[0]) {
+              formData.append('avatar', data.avatar[0]);
+            }
+          } else {
+            formData.append(key, data[key]);
+          }
+        });
+        if (hasAvatarImage) {
+          formData.append('imageSource', 'local');
+        } else if (hasAvatarFile) {
+          formData.append('imageSource', 'url');
+        }
+        await onSubmit(formData);
+      } else {
+        await onSubmit(data);
+      }
     } finally {
       setLoading(false);
     }
@@ -55,6 +92,23 @@ const UserForm = ({ isOpen, onClose, onSubmit, initialData }) => {
         { value: 'ROLE_SUPPORT', label: 'Support' },
         { value: 'ROLE_ADMIN', label: 'Admin' },
       ],
+    },
+    {
+      name: 'avatarImage',
+      label: 'Select Avatar from Project',
+      type: 'select',
+      required: false,
+      options: [
+        { value: '', label: 'None' },
+        ...AVATAR_OPTIONS.map(opt => ({ value: opt.value, label: opt.label }))
+      ],
+    },
+    {
+      name: 'avatar',
+      label: 'Or Upload Avatar',
+      type: 'file',
+      accept: 'image/*',
+      required: false,
     },
   ];
 
