@@ -2,7 +2,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { 
   Home, NotFound, Login, SignUp, FindCaregiver, CaregiverDetail, About, 
   CustomerInfo, EmployeeProfile, TermsOfService, PrivacyPolicy, PaymentReturn,
-  SupportDashboard, SupportBookings, SupportCustomers, SupportCaregivers, SupportReviews
+  SupportDashboard, SupportBookings, SupportCustomers, SupportCaregivers, SupportReviews,
+  SupportChat
 } from '@pages';
 import MainLayout from '@components/layout/MainLayout';
 import ProtectedRoute from '@components/common/ProtectedRoute';
@@ -80,6 +81,9 @@ const AppRoutes = () => {
 
         {/* Payment Return Route */}
         <Route path="/payment-return" element={<PaymentReturn />} />
+
+        {/* Support Chat Route - Available to all authenticated users */}
+        <Route path="/support-chat" element={<SupportChat />} />
 
         {/* Public routes with MainLayout - Chỉ cho phép customer và user chưa đăng nhập */}
         <Route path="/" element={

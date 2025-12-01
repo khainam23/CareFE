@@ -11,6 +11,7 @@ export const ROUTES = {
   CUSTOMER_INFO: '/customer-info',
   EMPLOYEE_PROFILE: '/employee-profile',
   SETTINGS: '/settings',
+  SUPPORT_CHAT: '/support-chat',
   TERMS_OF_SERVICE: '/terms-of-service',
   PRIVACY_POLICY: '/privacy-policy',
   NOT_FOUND: '*',

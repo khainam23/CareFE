@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
-import { User, LogOut, Settings, ChevronDown } from 'lucide-react';
+import { User, LogOut, Settings, ChevronDown, MessageCircle } from 'lucide-react';
 import CareNowLogo from '@assets/images/Logo.svg';
 import { ROUTES } from '@constants';
 import { useAuthStore } from '../../../store/authStore';
@@ -82,6 +82,18 @@ const Header = () => {
           </nav>
 
           <div className="items-center hidden space-x-4 md:flex">
+            {/* Chat với Care Button */}
+            <button
+              onClick={() => navigate(ROUTES.SUPPORT_CHAT)}
+              className="relative flex items-center space-x-2 px-4 py-2 rounded-lg bg-gradient-to-r from-teal-500 to-teal-600 text-white hover:from-teal-600 hover:to-teal-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+              title="Chat với Care"
+            >
+              <MessageCircle className="w-5 h-5" />
+              <span className="font-medium">Chat với Care</span>
+              {/* Notification badge (optional - can be shown when there are unread messages) */}
+              {/* <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span> */}
+            </button>
+
             {isAuthenticated ? (
               <div className="relative" ref={dropdownRef}>
                 <button
