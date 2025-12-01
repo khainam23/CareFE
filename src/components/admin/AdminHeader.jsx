@@ -5,7 +5,10 @@ const AdminHeader = ({ onMenuClick }) => {
   const { user } = useAuthStore();
 
   return (
-    <header className="sticky top-0 z-10 bg-white border-b border-chilled-gray-200 h-16">
+    <header
+      className="sticky top-0 z-10 bg-white h-16"
+      style={{ borderBottom: "1px solid #e5e7eb" }}
+    >
       <div className="flex items-center justify-between h-full px-6">
         {/* Left: Menu Button (Mobile) */}
         <button

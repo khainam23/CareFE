@@ -1,5 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Home, NotFound, Login, SignUp, FindCaregiver, CaregiverDetail, About, CustomerInfo, EmployeeProfile, TermsOfService, PrivacyPolicy, PaymentReturn } from '@pages';
+import { 
+  Home, NotFound, Login, SignUp, FindCaregiver, CaregiverDetail, About, 
+  CustomerInfo, EmployeeProfile, TermsOfService, PrivacyPolicy, PaymentReturn,
+  SupportDashboard, SupportBookings, SupportCustomers, SupportCaregivers, SupportReviews
+} from '@pages';
 import MainLayout from '@components/layout/MainLayout';
 import ProtectedRoute from '@components/common/ProtectedRoute';
 import PublicRoute from '@components/common/PublicRoute';
@@ -10,11 +14,6 @@ import CaregiversList from '@pages/Admin/Caregivers/CaregiversList';
 import BookingsList from '@pages/Admin/Bookings/BookingsList';
 import ServicesList from '@pages/Admin/Services/ServicesList';
 import SupportLayout from '@components/support/SupportLayout';
-import SupportDashboard from '@pages/Support/Dashboard/SupportDashboard';
-import TicketsList from '@pages/Support/Tickets/TicketsList';
-import TicketDetail from '@pages/Support/Tickets/TicketDetail';
-import UnassignedTickets from '@pages/Support/Tickets/UnassignedTickets';
-import MyTicketsList from '@pages/Support/MyTickets/MyTicketsList';
 import { ROUTES } from '@constants';
 import ScrollToTop from '@/components/ScrollToTop';
 
@@ -24,16 +23,8 @@ const AppRoutes = () => {
     <BrowserRouter>
       <ScrollToTop />
       <Routes>
-        <Route path={ROUTES.LOGIN} element={
-          <PublicRoute>
-            <Login />
-          </PublicRoute>
-        } />
-        <Route path={ROUTES.REGISTER} element={
-          <PublicRoute>
-            <SignUp />
-          </PublicRoute>
-        } />
+        <Route path={ROUTES.LOGIN} element={<Login />} />
+        <Route path={ROUTES.REGISTER} element={<SignUp />} />
         
         {/* Admin Routes */}
         <Route
@@ -61,10 +52,10 @@ const AppRoutes = () => {
           }
         >
           <Route path="dashboard" element={<SupportDashboard />} />
-          <Route path="tickets" element={<TicketsList />} />
-          <Route path="tickets/:id" element={<TicketDetail />} />
-          <Route path="unassigned" element={<UnassignedTickets />} />
-          <Route path="my-tickets" element={<MyTicketsList />} />
+          <Route path="bookings" element={<SupportBookings />} />
+          <Route path="customers" element={<SupportCustomers />} />
+          <Route path="caregivers" element={<SupportCaregivers />} />
+          <Route path="reviews" element={<SupportReviews />} />
         </Route>
         
         {/* Protected Dashboard Route - Admin, Support & Caregiver */}

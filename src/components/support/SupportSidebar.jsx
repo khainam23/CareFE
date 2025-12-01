@@ -1,44 +1,19 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
-  Ticket,
-  AlertCircle,
-  User,
+  Calendar,
+  Users,
+  UserCheck,
+  Star,
   X,
   LogOut,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { supportService } from '@services';
 import { useAuthStore } from '@store/authStore';
 import CareNowLogo from '@assets/images/Logo.svg';
 
 const SupportSidebar = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const { logout } = useAuthStore();
-  const [unassignedCount, setUnassignedCount] = useState(0);
-  const [myTicketsCount, setMyTicketsCount] = useState(0);
-
-  useEffect(() => {
-    fetchTicketCounts();
-  }, []);
-
-  const fetchTicketCounts = async () => {
-    try {
-      // Fetch unassigned tickets count
-      const unassignedResponse = await supportService.getUnassignedTickets();
-      if (unassignedResponse.success) {
-        setUnassignedCount(unassignedResponse.data.length);
-      }
-
-      // Fetch assigned tickets count
-      const assignedResponse = await supportService.getAssignedTickets();
-      if (assignedResponse.success) {
-        setMyTicketsCount(assignedResponse.data.length);
-      }
-    } catch (error) {
-      console.error('Failed to fetch ticket counts:', error);
-    }
-  };
 
   const handleLogout = () => {
     logout();
@@ -52,21 +27,24 @@ const SupportSidebar = ({ isOpen, onClose }) => {
       label: 'Dashboard',
     },
     {
-      path: '/support/tickets',
-      icon: Ticket,
-      label: 'All Tickets',
+      path: '/support/bookings',
+      icon: Calendar,
+      label: 'Quản lý Booking',
     },
     {
-      path: '/support/unassigned',
-      icon: AlertCircle,
-      label: 'Unassigned Tickets',
-      badge: unassignedCount,
+      path: '/support/customers',
+      icon: Users,
+      label: 'Quản lý Customers',
     },
     {
-      path: '/support/my-tickets',
-      icon: User,
-      label: 'My Tickets',
-      badge: myTicketsCount,
+      path: '/support/caregivers',
+      icon: UserCheck,
+      label: 'Quản lý Caregivers',
+    },
+    {
+      path: '/support/reviews',
+      icon: Star,
+      label: 'Quản lý Đánh giá',
     },
   ];
 
@@ -74,12 +52,12 @@ const SupportSidebar = ({ isOpen, onClose }) => {
     <>
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-30 h-screen w-64 bg-green-50 border-r border-green-200 transition-transform duration-300 flex flex-col ${
+        className={`fixed top-0 left-0 z-30 h-screen w-64 bg-green-400 border-r border-green-200 transition-transform duration-300 flex flex-col ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0`}
       >
         {/* Logo */}
-        <div className="flex items-center justify-between h-16 px-6 border-b border-green-200">
+        <div className="flex items-center justify-between h-16 px-6 mb-2 mt-5">
           <img src={CareNowLogo} alt="CareNow" className="h-12" />
           <button
             onClick={onClose}
@@ -108,11 +86,6 @@ const SupportSidebar = ({ isOpen, onClose }) => {
               >
                 <Icon size={20} />
                 <span className="flex-1">{item.label}</span>
-                {item.badge > 0 && (
-                  <span className="px-2 py-1 text-xs font-semibold  bg-red-500 rounded-full min-w-[20px] text-center">
-                    {item.badge}
-                  </span>
-                )}
               </NavLink>
             );
           })}

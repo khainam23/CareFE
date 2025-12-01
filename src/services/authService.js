@@ -6,10 +6,7 @@ export const authService = {
   login: async (credentials) => {
     try {
       const response = await axiosInstance.post(API_ENDPOINTS.AUTH.LOGIN, credentials);
-      if (response.data.success && response.data.data.token) {
-        localStorage.setItem('token', response.data.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.data));
-      }
+      // Không lưu localStorage ở đây nữa, để authStore xử lý
       return response.data;
     } catch (error) {
       console.error('Login error details:', error.response?.data || error);
@@ -25,10 +22,7 @@ export const authService = {
   registerCustomer: async (customerData) => {
     try {
       const response = await axiosInstance.post(API_ENDPOINTS.AUTH.REGISTER_CUSTOMER, customerData);
-      if (response.data.success && response.data.data.token) {
-        localStorage.setItem('token', response.data.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.data));
-      }
+      // Không lưu localStorage ở đây nữa, để authStore xử lý
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -39,10 +33,7 @@ export const authService = {
   registerCaregiver: async (caregiverData) => {
     try {
       const response = await axiosInstance.post(API_ENDPOINTS.AUTH.REGISTER_CAREGIVER, caregiverData);
-      if (response.data.success && response.data.data.token) {
-        localStorage.setItem('token', response.data.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.data));
-      }
+      // Không lưu localStorage ở đây nữa, để authStore xử lý
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;

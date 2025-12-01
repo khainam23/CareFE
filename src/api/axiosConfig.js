@@ -25,15 +25,40 @@ axiosInstance.interceptors.request.use(
 );
 
 // Response interceptor
+let isRedirecting = false;
+
 axiosInstance.interceptors.response.use(
   (response) => {
     return response;
   },
   (error) => {
     if (error.response?.status === 401) {
-      // Handle unauthorized
-      localStorage.removeItem('token');
-      window.location.href = '/login';
+      // Handle unauthorized - chỉ redirect nếu không phải là request login
+      const isLoginRequest = error.config?.url?.includes('/auth/login');
+      const isRegisterRequest = error.config?.url?.includes('/auth/register');
+      
+      console.log('=== 401 INTERCEPTOR ===');
+      console.log('URL:', error.config?.url);
+      console.log('Is login/register:', isLoginRequest || isRegisterRequest);
+      console.log('Current path:', window.location.pathname);
+      
+      // Chỉ logout nếu không phải login/register và chưa đang redirect
+      if (!isLoginRequest && !isRegisterRequest && !isRedirecting) {
+        // Kiểm tra xem có đang ở trang login không
+        if (window.location.pathname !== '/login') {
+          console.log('Clearing localStorage and redirecting to login');
+          isRedirecting = true;
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          
+          // Reset flag sau khi redirect
+          setTimeout(() => {
+            isRedirecting = false;
+          }, 1000);
+          
+          window.location.href = '/login';
+        }
+      }
     }
     return Promise.reject(error);
   }

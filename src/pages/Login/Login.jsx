@@ -21,10 +21,6 @@ export default function Login() {
 
   // Kiểm tra nếu đã đăng nhập thì redirect
   useEffect(() => {
-    if (isAuthenticated && user) {
-      redirectByRole(user);
-    }
-
     // Khôi phục thông tin đăng nhập nếu có remember me
     const savedEmail = localStorage.getItem('rememberedEmail');
     const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
@@ -32,41 +28,45 @@ export default function Login() {
       setFormData(prev => ({ ...prev, email: savedEmail }));
       setRememberMe(true);
     }
-  }, [isAuthenticated, user, navigate]);
+  }, []);
 
   // Hàm điều hướng theo vai trò
   const redirectByRole = (userData) => {
-    console.log('Redirecting user with data:', userData);
+    console.log('=== REDIRECT BY ROLE ===');
+    console.log('User data:', userData);
+    
     // Backend trả về roles là array với format ROLE_XXX, lấy role đầu tiên
     const roleWithPrefix = userData.roles?.[0] || userData.role;
     console.log('User role with prefix:', roleWithPrefix);
 
     if (!roleWithPrefix) {
       console.error('No role found for user');
-      navigate('/');
+      navigate('/', { replace: true });
       return;
     }
 
     // Loại bỏ prefix "ROLE_" nếu có
     const role = roleWithPrefix.replace('ROLE_', '').toLowerCase();
     console.log('Processed role:', role);
+    console.log('Will redirect to role:', role);
 
+    // Sử dụng navigate với replace để không tạo history entry
     switch (role) {
       case 'admin':
-        navigate('/admin/dashboard');
+        navigate('/admin/dashboard', { replace: true });
         break;
       case 'support':
-        navigate('/support/dashboard');
+        navigate('/support/dashboard', { replace: true });
         break;
       case 'caregiver':
-        navigate('/employee-profile');
+        navigate('/employee-profile', { replace: true });
         break;
       case 'customer':
-        navigate('/');
+        navigate('/', { replace: true });
         break;
       default:
         console.warn('Unknown role, redirecting to home:', role);
-        navigate('/');
+        navigate('/', { replace: true });
     }
   };
 
@@ -107,8 +107,22 @@ export default function Login() {
     }
 
     try {
+      console.log('=== LOGIN ATTEMPT ===');
+      console.log('Credentials:', formData.email);
+      
       const response = await login(formData);
-      console.log('Login response:', response);
+      
+      console.log('=== LOGIN RESPONSE ===');
+      console.log('Full response:', JSON.stringify(response, null, 2));
+      console.log('Success:', response.success);
+      console.log('Data:', response.data);
+      console.log('User roles:', response.data?.roles);
+      
+      // Kiểm tra localStorage sau khi login
+      console.log('=== LOCALSTORAGE CHECK ===');
+      console.log('Token exists:', !!localStorage.getItem('token'));
+      console.log('User exists:', !!localStorage.getItem('user'));
+      console.log('User data:', localStorage.getItem('user'));
 
       if (response.success) {
         // Xử lý ghi nhớ đăng nhập
@@ -120,14 +134,35 @@ export default function Login() {
           localStorage.removeItem('rememberMe');
         }
 
-        // Điều hướng theo vai trò
+        // Verify localStorage was saved
+        console.log('=== VERIFY LOCALSTORAGE BEFORE REDIRECT ===');
+        const savedToken = localStorage.getItem('token');
+        const savedUser = localStorage.getItem('user');
+        console.log('Saved token:', savedToken ? savedToken.substring(0, 20) + '...' : 'NULL');
+        console.log('Saved user:', savedUser);
+        
+        if (!savedToken || !savedUser) {
+          console.error('=== CRITICAL: LocalStorage not saved! ===');
+          alert('Lỗi: Không thể lưu thông tin đăng nhập. Vui lòng thử lại.');
+          return;
+        }
+
+        // Đợi một chút để đảm bảo localStorage được flush
+        console.log('=== WAITING BEFORE REDIRECT ===');
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        console.log('=== REDIRECTING ===');
+        console.log('About to redirect with data:', response.data);
         redirectByRole(response.data);
       } else {
         // Trường hợp response không success
+        console.error('Login failed:', response.message);
         alert(response.message || 'Đăng nhập thất bại');
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('=== LOGIN ERROR ===');
+      console.error('Error:', error);
+      console.error('Error message:', error.message);
       alert(error.message || 'Có lỗi xảy ra khi đăng nhập. Vui lòng thử lại.');
     }
   };
@@ -137,7 +172,9 @@ export default function Login() {
       <div className="hidden lg:flex lg:w-1/2 items-center justify-center p-12">
         <div className="max-w-lg text-center">
           <div className="mb-8">
-            <img src={CareNowLogo} alt="CareNow" className="h-48" />
+            <a href="/">
+              <img src={CareNowLogo} alt="CareNow" className="h-48" />
+            </a>
           </div>
           <div className="relative w-full max-w-lg mx-auto">
             <img

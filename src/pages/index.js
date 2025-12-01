@@ -10,3 +10,9 @@ export { default as EmployeeProfile } from './EmployeeProfile/EmployeeProfile';
 export { default as TermsOfService } from './TermsOfService/TermsOfService';
 export { default as PrivacyPolicy } from './PrivacyPolicy/PrivacyPolicy';
 export { default as PaymentReturn } from './PaymentReturn/PaymentReturn';
+// Support Pages
+export { default as SupportDashboard } from './Support/Dashboard/SupportDashboard';
+export { default as SupportBookings } from './Support/Bookings/BookingsList';
+export { default as SupportCustomers } from './Support/Customers/CustomersList';
+export { default as SupportCaregivers } from './Support/Caregivers/CaregiversList';
+export { default as SupportReviews } from './Support/Reviews/ReviewsList';

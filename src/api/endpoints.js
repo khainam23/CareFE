@@ -17,6 +17,9 @@ export const API_ENDPOINTS = {
     USERS: '/api/admin/users',
     LOCK_USER: (id) => `/api/admin/users/${id}/lock`,
     UNLOCK_USER: (id) => `/api/admin/users/${id}/unlock`,
+    BOOKINGS: '/api/admin/bookings',
+    REVIEWS: '/api/admin/reviews',
+    DELETE_REVIEW: (id) => `/api/admin/reviews/${id}`,
   },
 
   // Customer

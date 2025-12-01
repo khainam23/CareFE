@@ -52,12 +52,12 @@ const AdminSidebar = ({ isOpen, onClose }) => {
     <>
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-30 h-screen w-64 bg-green-50 border-r border-green-200 transition-transform duration-300 flex flex-col ${
+        className={`fixed top-0 left-0 z-30 h-screen w-64 bg-green-400 transform border-r border-green-200 transition-transform duration-300 flex flex-col ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0`}
       >
         {/* Logo */}
-        <div className="flex items-center justify-between h-16 px-6 border-b border-green-200">
+        <div className="flex items-center justify-between h-16 px-6 mb-2 mt-5">
           <img src={CareNowLogo} alt="CareNow" className="h-24" />
           <button
             onClick={onClose}
