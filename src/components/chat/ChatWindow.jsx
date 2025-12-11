@@ -1,14 +1,18 @@
 import { useState, useEffect } from 'react';
-import { X, Wifi, WifiOff } from 'lucide-react';
+import { X, Wifi, WifiOff, MapPin, Calendar, Clock, Briefcase } from 'lucide-react';
 import MessageList from './MessageList';
 import MessageInput from './MessageInput';
 import OnlineStatusBadge from './OnlineStatusBadge';
 import ChatErrorBoundary from './ChatErrorBoundary';
+import BookingDetails from './BookingDetails';
+import RatingModal from './RatingModal';
 import chatService from '@/services/chatService';
 
 const ChatWindow = ({ chatRoom, onClose, currentUserId }) => {
   const [connected, setConnected] = useState(false);
   const [otherUser, setOtherUser] = useState(null);
+  const [showBookingDetails, setShowBookingDetails] = useState(false);
+  const [showRatingModal, setShowRatingModal] = useState(false);
 
   useEffect(() => {
     // Determine the other user in the chat
@@ -30,6 +34,12 @@ const ChatWindow = ({ chatRoom, onClose, currentUserId }) => {
     };
   }, [chatRoom, currentUserId]);
 
+  useEffect(() => {
+    if (chatRoom.bookingStatus === 'COMPLETED' && chatRoom.customerId === currentUserId) {
+      setShowRatingModal(true);
+    }
+  }, [chatRoom.bookingStatus, chatRoom.customerId, currentUserId]);
+
   return (
     <ChatErrorBoundary
       errorMessage="Failed to load chat. Please try again."
@@ -38,14 +48,14 @@ const ChatWindow = ({ chatRoom, onClose, currentUserId }) => {
       <div className="fixed bottom-4 right-4 w-96 h-[600px] bg-white rounded-lg shadow-2xl flex flex-col z-50">
         {/* Header */}
         <div className="bg-primary-600 text-white p-4 rounded-t-lg flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-1">
             <div className="relative">
               <div className="w-10 h-10 bg-primary-400 rounded-full flex items-center justify-center font-semibold">
                 {otherUser?.name?.charAt(0).toUpperCase()}
               </div>
               {otherUser && <OnlineStatusBadge userId={otherUser.id} />}
             </div>
-            <div>
+            <div className="flex-1">
               <h3 className="font-semibold">{otherUser?.name}</h3>
               <div className="flex items-center gap-1 text-xs">
                 {connected ? (
@@ -62,13 +72,27 @@ const ChatWindow = ({ chatRoom, onClose, currentUserId }) => {
               </div>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="hover:bg-primary-700 p-1 rounded transition-colors"
-          >
-            <X size={20} />
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowBookingDetails(!showBookingDetails)}
+              className="hover:bg-primary-700 p-1 rounded transition-colors"
+              title="Booking Details"
+            >
+              <Briefcase size={20} />
+            </button>
+            <button
+              onClick={onClose}
+              className="hover:bg-primary-700 p-1 rounded transition-colors"
+            >
+              <X size={20} />
+            </button>
+          </div>
         </div>
+
+        {/* Booking Details Panel */}
+        {showBookingDetails && (
+          <BookingDetails chatRoom={chatRoom} />
+        )}
 
         {/* Messages */}
         <ChatErrorBoundary errorMessage="Failed to load messages.">
@@ -80,6 +104,16 @@ const ChatWindow = ({ chatRoom, onClose, currentUserId }) => {
           <MessageInput chatRoomId={chatRoom.id} />
         </ChatErrorBoundary>
       </div>
+
+      {/* Rating Modal */}
+      {showRatingModal && (
+        <RatingModal
+          chatRoom={chatRoom}
+          currentUserId={currentUserId}
+          onClose={() => setShowRatingModal(false)}
+          onSubmit={() => setShowRatingModal(false)}
+        />
+      )}
     </ChatErrorBoundary>
   );
 };

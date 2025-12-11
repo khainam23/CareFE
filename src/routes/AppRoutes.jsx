@@ -82,9 +82,6 @@ const AppRoutes = () => {
         {/* Payment Return Route */}
         <Route path="/payment-return" element={<PaymentReturn />} />
 
-        {/* Support Chat Route - Available to all authenticated users */}
-        <Route path="/support-chat" element={<SupportChat />} />
-
         {/* Public routes with MainLayout - Chỉ cho phép customer và user chưa đăng nhập */}
         <Route path="/" element={
           <PublicRoute>

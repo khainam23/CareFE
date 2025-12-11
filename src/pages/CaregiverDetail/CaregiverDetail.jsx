@@ -103,7 +103,6 @@ function CaregiverDetail() {
 
   const handleBookingSubmit = async (bookingData) => {
     try {
-      // Format data theo yêu cầu của backend API
       const formattedData = {
         serviceId: bookingData.serviceId,
         caregiverId: bookingData.caregiverId,
@@ -115,35 +114,33 @@ function CaregiverDetail() {
 
       console.log('Sending booking data:', formattedData);
       const response = await customerService.createBooking(formattedData);
-      console.log('Booking created:', response);
+      console.log('Booking created response:', response);
       
-      // Show success notification with SweetAlert2
-      await Swal.fire({
-        icon: 'success',
-        title: 'Đặt lịch thành công!',
-        html: `
-          <div class="text-left">
-            <p class="mb-2">Bạn đã đặt lịch với <strong>${caregiver?.fullName}</strong></p>
-            <p class="text-sm text-gray-600">Tổng số giờ: <strong>${bookingData.totalHours?.toFixed(1)} giờ</strong></p>
-            <p class="text-sm text-gray-600">Tạm tính: <strong>${bookingData.subtotal?.toLocaleString()}đ</strong></p>
-            <p class="text-sm text-gray-600">Thuế (15%): <strong>${bookingData.taxAmount?.toLocaleString()}đ</strong></p>
-            <p class="text-sm text-gray-900 mt-2">Tổng cộng: <strong class="text-teal-600">${bookingData.totalPrice?.toLocaleString()}đ</strong></p>
-          </div>
-        `,
-        confirmButtonText: 'Xem lịch đặt của tôi',
-        confirmButtonColor: '#14b8a6',
-        showCancelButton: true,
-        cancelButtonText: 'Đóng',
-      });
+      const bookingId = response.data?.id || response.id;
+      console.log('Extracted bookingId:', bookingId);
+
+      if (!bookingId) {
+        throw new Error('Không tìm được ID booking từ response. Response: ' + JSON.stringify(response));
+      }
+
+      console.log('Generating VNPay URL for booking ID:', bookingId);
+      const paymentUrlResponse = await customerService.generateVNPayURL(bookingId, bookingData.notes);
+      console.log('Payment URL response:', paymentUrlResponse.data);
       
-      // Navigate to customer bookings page
-      navigate('/customer-info');
+      const paymentUrl = paymentUrlResponse.data?.paymentUrl || paymentUrlResponse.paymentUrl;
+      console.log('Extracted paymentUrl:', paymentUrl);
+
+      if (paymentUrl) {
+        console.log('Redirecting to VNPay:', paymentUrl.substring(0, 100) + '...');
+        window.location.href = paymentUrl;
+      } else {
+        console.error('paymentUrl is null. Full response:', paymentUrlResponse);
+        throw new Error(`Không nhận được URL thanh toán từ server. Response: ${JSON.stringify(paymentUrlResponse)}`);
+      }
     } catch (err) {
       console.error('Booking error:', err);
-      // Show detailed error message with validation details
       let errorMessage = err?.message || 'Có lỗi xảy ra khi đặt lịch';
       
-      // Extract validation errors if available
       if (err?.data && typeof err.data === 'object') {
         const validationErrors = Object.entries(err.data)
           .map(([field, message]) => `${field}: ${message}`)
@@ -154,7 +151,12 @@ function CaregiverDetail() {
       }
       
       console.error('Error details:', err);
-      throw new Error(errorMessage);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Lỗi',
+        text: errorMessage,
+        confirmButtonColor: '#ef4444'
+      });
     }
   };
 

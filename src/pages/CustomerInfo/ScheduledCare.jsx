@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, MapPin, User, Star, Check, X, ChevronDown, Loader2 } from 'lucide-react';
+import { Calendar, Clock, MapPin, User, Star, Check, X, ChevronDown, Loader2, MessageCircle } from 'lucide-react';
 import { customerService } from '@/services/customerService';
+import chatService from '@/services/chatService';
+import ChatWindow from '@/components/chat/ChatWindow';
+import { useAuthStore } from '@/store/authStore';
 import Swal from 'sweetalert2';
 
 const ScheduledCare = () => {
@@ -8,6 +11,8 @@ const ScheduledCare = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedChatRoom, setSelectedChatRoom] = useState(null);
+  const { user } = useAuthStore();
 
   // Fetch bookings on mount
   useEffect(() => {
@@ -165,6 +170,22 @@ const ScheduledCare = () => {
           text: error.message || 'Không thể hủy buổi chăm sóc',
         });
       }
+    }
+  };
+
+  const handleOpenChat = async (appointmentId) => {
+    try {
+      const chatRoom = await chatService.getChatRoomByBooking(appointmentId);
+      if (chatRoom && chatRoom.data) {
+        setSelectedChatRoom(chatRoom.data);
+      }
+    } catch (err) {
+      console.error('Error opening chat:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi',
+        text: 'Không thể mở chat với caregiver',
+      });
     }
   };
 
@@ -360,6 +381,15 @@ const ScheduledCare = () => {
                           Hủy buổi
                         </button>
                       )}
+                      {(appointment.status === 'confirmed' || appointment.status === 'completed') && (
+                        <button
+                          onClick={() => handleOpenChat(appointment.id)}
+                          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-bold text-base"
+                        >
+                          <MessageCircle size={18} />
+                          Chat
+                        </button>
+                      )}
                       <button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-bold text-base">
                         <Check size={18} />
                         Chi tiết
@@ -380,6 +410,15 @@ const ScheduledCare = () => {
           Đặt buổi chăm sóc mới
         </button>
       </div>
+
+      {/* Chat Window */}
+      {selectedChatRoom && user && (
+        <ChatWindow
+          chatRoom={selectedChatRoom}
+          onClose={() => setSelectedChatRoom(null)}
+          currentUserId={user.id}
+        />
+      )}
     </div>
   );
 };
