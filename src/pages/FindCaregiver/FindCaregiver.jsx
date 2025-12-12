@@ -1,11 +1,9 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/common';
-import { Star, MapPin, Clock } from 'lucide-react';
+import { Star, MapPin } from 'lucide-react';
 import { publicService } from '@/services/publicService';
 import { useNavigate } from 'react-router-dom';
 
-const CAREGIVER_TYPES = ['Bảo mẫu toàn thời gian', 'Bảo mẫu theo giờ', 'Người giúp việc nhà'];
-const GENDERS = ['Nữ', 'Nam', 'Không quan trọng'];
 const DISTRICTS = ['Quận 1', 'Quận 2', 'Quận 3', 'Quận 4', 'Quận 5'];
 const RATING_OPTIONS = [5, 4, 3, 2, 1];
 const EXPERIENCE_RANGES = [
@@ -25,13 +23,11 @@ function FindCaregiver() {
   const [error, setError] = useState(null);
 
   const [filters, setFilters] = useState({
-    type: '',
-    gender: '',
     district: '',
     rating: 0,
     experience: '',
     priceMin: 0,
-    priceMax: 200000,
+    priceMax: 1000000,
     search: '',
   });
 
@@ -48,17 +44,9 @@ function FindCaregiver() {
         console.log('API Response:', response);
 
         // Extract data from ApiResponse structure
-        if (response.success && response.data) {
-          setCaregivers(response.data);
-        } else if (Array.isArray(response)) {
-          // If response is directly an array
-          setCaregivers(response);
-        } else if (response.data && Array.isArray(response.data)) {
-          // If data is nested
-          setCaregivers(response.data);
-        } else {
-          setCaregivers([]);
-        }
+        const caregiversList = response?.data || response || [];
+        console.log('Caregivers list:', caregiversList);
+        setCaregivers(Array.isArray(caregiversList) ? caregiversList : []);
       } catch (err) {
         console.error('Error fetching caregivers:', err);
         const errorMsg = err?.message || err?.error || JSON.stringify(err) || 'Không thể tải danh sách bảo mẫu';
@@ -83,13 +71,11 @@ function FindCaregiver() {
 
   const handleReset = () => {
     setFilters({
-      type: '',
-      gender: '',
       district: '',
       rating: 0,
       experience: '',
       priceMin: 0,
-      priceMax: 200000,
+      priceMax: 1000000,
       search: '',
     });
     setCurrentPage(1);
@@ -98,19 +84,16 @@ function FindCaregiver() {
   // Filter caregivers based on current filters
   const filteredCaregivers = useMemo(() => {
     return caregivers.filter(caregiver => {
-      // Filter by type (caregiverType from backend)
-      if (filters.type && caregiver.caregiverType !== filters.type) return false;
-
       // Filter by district (address from backend)
       if (filters.district && !caregiver.address?.includes(filters.district)) return false;
 
-      // Filter by rating (averageRating from backend)
-      if (filters.rating > 0 && (caregiver.averageRating || 0) < filters.rating) return false;
+      // Filter by rating (rating from backend)
+      if (filters.rating > 0 && (caregiver.rating || 0) < filters.rating) return false;
 
-      // Filter by experience (yearsOfExperience from backend)
+      // Filter by experience (experienceYears from backend)
       if (filters.experience) {
         const range = EXPERIENCE_RANGES.find(r => r.label === filters.experience);
-        const experience = caregiver.yearsOfExperience || 0;
+        const experience = caregiver.experienceYears || 0;
         if (range && (experience < range.min || experience > range.max)) {
           return false;
         }
@@ -182,14 +165,14 @@ function FindCaregiver() {
             <div className="flex items-center justify-between">
               <div className="text-right">
                 <p className="text-xs text-gray-500">Kinh nghiệm</p>
-                <p className="text-lg font-bold text-gray-800">{caregiver.yearsOfExperience || 0}+ năm</p>
+                <p className="text-lg font-bold text-gray-800">{caregiver.experienceYears || 0}+ năm</p>
               </div>
             </div>
           </div>
 
           <button
             onClick={handleViewDetail}
-            className="w-full bg-teal-500  py-2 rounded-lg hover:bg-teal-600 transition-colors font-medium text-sm"
+            className="w-full bg-teal-500 text-white py-2 rounded-lg hover:bg-teal-600 transition-colors font-medium text-sm"
           >
             Xem chi tiết
           </button>
@@ -227,39 +210,7 @@ function FindCaregiver() {
                 />
               </div>
 
-              {/* Caregiver Type */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Loại bảo mẫu
-                </label>
-                <select
-                  value={filters.type}
-                  onChange={(e) => handleFilterChange('type', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
-                >
-                  <option value="">Tất cả loại</option>
-                  {CAREGIVER_TYPES.map(type => (
-                    <option key={type} value={type}>{type}</option>
-                  ))}
-                </select>
-              </div>
 
-              {/* Gender */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Giới tính
-                </label>
-                <select
-                  value={filters.gender}
-                  onChange={(e) => handleFilterChange('gender', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
-                >
-                  <option value="">Tất cả</option>
-                  {GENDERS.map(gender => (
-                    <option key={gender} value={gender}>{gender}</option>
-                  ))}
-                </select>
-              </div>
 
               {/* District */}
               <div className="mb-6">
@@ -334,10 +285,10 @@ function FindCaregiver() {
                   <span className="text-gray-400 text-sm">-</span>
                   <input
                     type="number"
-                    max="200000"
+                    max="1000000"
                     value={filters.priceMax}
                     onChange={(e) => {
-                      const newMax = parseInt(e.target.value) || 200000;
+                      const newMax = parseInt(e.target.value) || 1000000;
                       if (newMax >= filters.priceMin) {
                         handleFilterChange('priceMax', newMax);
                       }
