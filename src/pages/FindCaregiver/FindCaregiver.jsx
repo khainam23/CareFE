@@ -4,7 +4,7 @@ import { Star, MapPin } from 'lucide-react';
 import { publicService } from '@/services/publicService';
 import { useNavigate } from 'react-router-dom';
 
-const DISTRICTS = ['Quận 1', 'Quận 2', 'Quận 3', 'Quận 4', 'Quận 5'];
+const DISTRICTS = ['Quận Hải Châu', 'Quận Thanh Khê', 'Quận Sơn Trà', 'Quận Ngũ Hành Sơn', 'Quận Liên Chiểu'];
 const RATING_OPTIONS = [5, 4, 3, 2, 1];
 const EXPERIENCE_RANGES = [
   { label: 'Dưới 1 năm', min: 0, max: 1 },
