@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { DollarSign, TrendingUp, Clock, AlertCircle, Download, Search, Filter, Calendar } from 'lucide-react';
 import { caregiverService } from '@/services/caregiverService';
 
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
 const PaymentHistory = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -43,6 +46,8 @@ const PaymentHistory = () => {
           paidAt: booking.actualEndTime || booking.updatedAt,
           notes: `Thanh toán cho ${booking.serviceName || 'dịch vụ chăm sóc'}`,
           createdAt: booking.createdAt,
+          customerName: booking.customerName || 'Khách hàng',
+          serviceName: booking.serviceName || 'Dịch vụ chăm sóc',
         }));
         setPayments(mappedPayments);
       }
@@ -53,6 +58,67 @@ const PaymentHistory = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDownloadInvoice = (payment) => {
+    const doc = new jsPDF();
+
+    // Helper to remove accents for PDF compatibility (since we don't have custom fonts loaded)
+    const removeAccents = (str) => {
+      if (!str) return '';
+      return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D");
+    };
+
+    // Header
+    doc.setFontSize(22);
+    doc.setTextColor(0, 128, 128); // Teal color
+    doc.text("HOA DON THANH TOAN", 105, 20, { align: "center" });
+    
+    // Company Info (Mock)
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text("Care Service Platform", 105, 28, { align: "center" });
+    doc.text("Website: www.care-service.com", 105, 33, { align: "center" });
+
+    // Invoice Details
+    doc.setFontSize(12);
+    doc.setTextColor(0);
+    
+    const startY = 50;
+    doc.text(`Ma giao dich: ${payment.transactionId || payment.id}`, 20, startY);
+    doc.text(`Ngay: ${formatDate(payment.paidAt || payment.createdAt)}`, 20, startY + 10);
+    // doc.text(`Khach hang: ${removeAccents(payment.customerName)}`, 20, startY + 20);
+    doc.text(`Trang thai: ${payment.status === 'COMPLETED' ? 'DA THANH TOAN' : removeAccents(payment.status)}`, 20, startY + 30);
+
+    // Table
+    autoTable(doc, {
+      startY: startY + 45,
+      head: [['Dich vu', 'So luong', 'Don gia', 'Thanh tien']],
+      body: [
+        [
+          removeAccents(payment.serviceName || payment.notes), 
+          '1', 
+          formatCurrency(payment.amount).replace(/[^0-9.,]/g, '') + ' VND', 
+          formatCurrency(payment.amount).replace(/[^0-9.,]/g, '') + ' VND'
+        ]
+      ],
+      theme: 'grid',
+      headStyles: { fillColor: [0, 128, 128] },
+    });
+
+    // Total
+    const finalY = doc.lastAutoTable.finalY + 10;
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text(`Tong cong: ${formatCurrency(payment.amount).replace(/[^0-9.,]/g, '')} VND`, 140, finalY, { align: "right" }); // Align right doesn't work well with x coordinate as end, need to adjust
+
+    // Footer
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(150);
+    doc.text("Cam on quy khach da su dung dich vu!", 105, 280, { align: "center" });
+
+    doc.save(`invoice_${payment.transactionId || payment.id}.pdf`);
   };
 
   // Calculate statistics
@@ -298,12 +364,12 @@ const PaymentHistory = () => {
                   </div>
                   
                   <div className="flex gap-2">
-                    <button className="flex items-center gap-2 bg-white border-2 border-gray-300 text-gray-600 py-2 px-4 rounded-lg font-semibold hover:bg-gray-50 transition-colors text-sm">
+                    <button 
+                      onClick={() => handleDownloadInvoice(payment)}
+                      className="flex items-center gap-2 bg-white border-2 border-gray-300 text-gray-600 py-2 px-4 rounded-lg font-semibold hover:bg-gray-50 transition-colors text-sm"
+                    >
                       <Download size={16} />
                       Tải hóa đơn
-                    </button>
-                    <button className="flex items-center gap-2 bg-white border-2 border-teal-500 text-teal-500 py-2 px-4 rounded-lg font-semibold hover:bg-teal-50 transition-colors text-sm">
-                      Chi tiết
                     </button>
                   </div>
                 </div>

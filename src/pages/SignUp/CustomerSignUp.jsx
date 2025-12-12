@@ -152,26 +152,7 @@ export default function CustomerSignUp({
       {/* Progress Indicator */}
       <div className="flex justify-center mb-8 align-center">
         <div className="flex items-center gap-2">
-          {CUSTOMER_STEPS.map((step, index) => (
-            <div key={step.id} className="flex items-center">
-              <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-                  currentStep >= step.id
-                    ? 'bg-blue-500 '
-                    : 'bg-gray-200 text-gray-600'
-                }`}
-              >
-                {step.id}
-              </div>
-              {index < CUSTOMER_STEPS.length - 1 && (
-                <div
-                  className={`w-12 h-1 mx-2 ${
-                    currentStep > step.id ? 'bg-blue-500' : 'bg-gray-300'
-                  }`}
-                />
-              )}
-            </div>
-          ))}
+          
         </div>
       </div>
 

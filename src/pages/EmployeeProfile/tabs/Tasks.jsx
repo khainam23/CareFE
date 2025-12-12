@@ -7,6 +7,15 @@ const Tasks = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedTask, setSelectedTask] = useState(null);
+
+  const handleViewDetails = (task) => {
+    setSelectedTask(task);
+  };
+
+  const closeDetailsModal = () => {
+    setSelectedTask(null);
+  };
 
   useEffect(() => {
     fetchTasks();
@@ -121,6 +130,8 @@ const Tasks = () => {
   };
 
   const filteredTasks = getFilteredTasks();
+
+
 
   return (
     <div className="space-y-6">
@@ -278,7 +289,10 @@ const Tasks = () => {
                       Hoàn thành
                     </button>
                   )}
-                  <button className="bg-white border-2 border-teal-500 text-teal-500 py-2 px-4 rounded-lg font-semibold hover:bg-teal-50 transition-colors text-sm">
+                  <button 
+                    onClick={() => handleViewDetails(task)}
+                    className="bg-white border-2 border-teal-500 text-teal-500 py-2 px-4 rounded-lg font-semibold hover:bg-teal-50 transition-colors text-sm"
+                  >
                     Chi tiết
                   </button>
                 </div>
@@ -292,6 +306,86 @@ const Tasks = () => {
           )}
         </div>
       </div>
+
+      {/* Task Details Modal */}
+      {selectedTask && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="bg-teal-600 p-4 flex justify-between items-center text-white">
+              <h3 className="text-lg font-bold">Chi tiết nhiệm vụ</h3>
+              <button onClick={closeDetailsModal} className="hover:bg-teal-700 p-1 rounded">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+              {/* Task Header */}
+              <div className="pb-4 border-b border-gray-100">
+                <p className="text-sm text-gray-500 mb-1">Loại nhiệm vụ</p>
+                <p className="text-lg font-semibold text-gray-900">{selectedTask.taskType}</p>
+                <div className="flex gap-2 mt-2">
+                  <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(selectedTask.status)}`}>
+                    {selectedTask.status}
+                  </span>
+                  <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getPriorityColor(selectedTask.priority)}`}>
+                    Ưu tiên: {selectedTask.priority}
+                  </span>
+                </div>
+              </div>
+
+              {/* Customer Info */}
+              <div>
+                <p className="text-sm text-gray-500 mb-1">Khách hàng</p>
+                <p className="font-medium text-gray-900">{selectedTask.customerName}</p>
+              </div>
+
+              {/* Description */}
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <p className="text-sm text-gray-500 mb-2">Mô tả / Ghi chú</p>
+                <p className="text-gray-800">{selectedTask.description}</p>
+              </div>
+
+              {/* Time Info */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Ngày hạn</p>
+                  <div className="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-600"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    <span className="font-medium">{formatDate(selectedTask.dueDate)}</span>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Giờ hạn</p>
+                  <div className="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-600"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <span className="font-medium">{formatTime(selectedTask.dueTime)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
+              <button 
+                onClick={closeDetailsModal}
+                className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+              >
+                Đóng
+              </button>
+              {selectedTask.status === 'Chưa hoàn thành' && selectedTask.bookingStatus === 'ACCEPTED' ? (
+                <button 
+                  onClick={() => {
+                    handleComplete(selectedTask.id);
+                    closeDetailsModal();
+                  }}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors"
+                >
+                  Hoàn thành nhiệm vụ
+                </button>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

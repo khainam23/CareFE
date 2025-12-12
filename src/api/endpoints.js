@@ -6,8 +6,9 @@ export const API_ENDPOINTS = {
     REGISTER_CUSTOMER: '/api/auth/register/customer',
     REGISTER_CAREGIVER: '/api/auth/register/caregiver',
     LOGOUT: '/api/auth/logout',
+    EKYC: '/api/auth/ekyc/extract-id',
   },
-  
+
   // Admin
   ADMIN: {
     DASHBOARD_STATS: '/api/admin/dashboard/stats',

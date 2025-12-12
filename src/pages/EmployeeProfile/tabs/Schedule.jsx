@@ -14,7 +14,16 @@ const Schedule = () => {
   const [error, setError] = useState(null);
   const [chatRooms, setChatRooms] = useState({}); // Map appointmentId to chatRoom
   const [openChatIds, setOpenChatIds] = useState(new Set()); // Track which appointments have chat open
+  const [selectedBooking, setSelectedBooking] = useState(null);
   const { user } = useAuthStore();
+
+  const handleViewDetails = (booking) => {
+    setSelectedBooking(booking);
+  };
+
+  const closeDetailsModal = () => {
+    setSelectedBooking(null);
+  };
 
   useEffect(() => {
     fetchBookings();
@@ -194,6 +203,8 @@ const Schedule = () => {
 
   const filteredBookings = getFilteredBookings();
 
+
+
   return (
     <div className="space-y-6">
       {/* Lịch làm việc của nhân viên */}
@@ -345,22 +356,25 @@ const Schedule = () => {
                       <>
                         <button 
                           onClick={() => handleAcceptBooking(appointment.id)}
-                          className="bg-green-500  py-2 px-4 rounded-lg font-semibold hover:bg-green-600 transition-colors text-sm"
+                          className="text-white bg-green-500  py-2 px-4 rounded-lg font-semibold hover:bg-green-600 transition-colors text-sm"
                         >
                           Xác nhận đơn
                         </button>
                         <button 
                           onClick={() => handleRejectBooking(appointment.id)}
-                          className="bg-red-500  py-2 px-4 rounded-lg font-semibold hover:bg-red-600 transition-colors text-sm"
+                          className="text-white bg-red-500  py-2 px-4 rounded-lg font-semibold hover:bg-red-600 transition-colors text-sm"
                         >
                           Từ chối đơn
                         </button>
                       </>
                     )}
-                    <button className="bg-white border-2 border-teal-500 text-teal-500 py-2 px-4 rounded-lg font-semibold hover:bg-teal-50 transition-colors text-sm">
+                    <button 
+                      onClick={() => handleViewDetails(appointment)}
+                      className="bg-white border-2 border-teal-500 text-teal-500 py-2 px-4 rounded-lg font-semibold hover:bg-teal-50 transition-colors text-sm"
+                    >
                       Xem chi tiết
                     </button>
-                    <button 
+                    {/* <button 
                       onClick={() => handleOpenChat(appointment.id)}
                       className={`flex items-center gap-2 py-2 px-4 rounded-lg font-semibold transition-colors text-sm ${
                         openChatIds.has(appointment.id)
@@ -370,7 +384,7 @@ const Schedule = () => {
                     >
                       <MessageCircle size={16} />
                       {openChatIds.has(appointment.id) ? 'Đóng chat' : 'Chat'}
-                    </button>
+                    </button> */}
                   </div>
                 </div>
                 
@@ -402,6 +416,104 @@ const Schedule = () => {
           )}
         </div>
       </div>
+
+      {/* Booking Details Modal */}
+      {selectedBooking && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="bg-teal-600 p-4 flex justify-between items-center text-white">
+              <h3 className="text-lg font-bold">Chi tiết đơn đặt lịch</h3>
+              <button onClick={closeDetailsModal} className="hover:bg-teal-700 p-1 rounded">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+              {/* Service Info */}
+              <div className="pb-4 border-b border-gray-100">
+                <p className="text-sm text-gray-500 mb-1">Dịch vụ</p>
+                <p className="text-lg font-semibold text-gray-900">{selectedBooking.serviceName || 'Dịch vụ chăm sóc'}</p>
+                <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium ${
+                  selectedBooking.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
+                  selectedBooking.status === 'ASSIGNED' ? 'bg-blue-100 text-blue-800' :
+                  selectedBooking.status === 'ACCEPTED' ? 'bg-green-100 text-green-800' :
+                  selectedBooking.status === 'CONFIRMED' ? 'bg-green-100 text-green-800' :
+                  selectedBooking.status === 'IN_PROGRESS' ? 'bg-purple-100 text-purple-800' :
+                  selectedBooking.status === 'COMPLETED' ? 'bg-gray-100 text-gray-800' :
+                  'bg-red-100 text-red-800'
+                }`}>
+                  {selectedBooking.status === 'PENDING' ? 'Chờ xác nhận' :
+                   selectedBooking.status === 'ASSIGNED' ? 'Đã phân công' :
+                   selectedBooking.status === 'ACCEPTED' ? 'Đã chấp nhận' :
+                   selectedBooking.status === 'CONFIRMED' ? 'Đã xác nhận' :
+                   selectedBooking.status === 'IN_PROGRESS' ? 'Đang thực hiện' :
+                   selectedBooking.status === 'COMPLETED' ? 'Hoàn thành' :
+                   selectedBooking.status === 'CANCELLED' ? 'Đã hủy' :
+                   selectedBooking.status === 'REJECTED' ? 'Đã từ chối' : selectedBooking.status}
+                </span>
+              </div>
+
+              {/* Customer Info */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Khách hàng</p>
+                  <p className="font-medium">{selectedBooking.customerName}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Số điện thoại</p>
+                  <p className="font-medium">{selectedBooking.customerPhone || '---'}</p>
+                </div>
+              </div>
+
+              {/* Time */}
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="flex items-center gap-3 mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-600"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                  <span className="font-medium">{formatDate(selectedBooking.scheduledStartTime)}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-600"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  <span>{formatTime(selectedBooking.scheduledStartTime, selectedBooking.scheduledEndTime)}</span>
+                </div>
+              </div>
+
+              {/* Location */}
+              <div>
+                <p className="text-sm text-gray-500 mb-1">Địa điểm</p>
+                <div className="flex items-start gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-600 mt-0.5 flex-shrink-0"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                  <p className="text-gray-900">{selectedBooking.location || 'Chưa cập nhật'}</p>
+                </div>
+              </div>
+
+              {/* Note */}
+              {selectedBooking.customerNote && (
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Ghi chú từ khách hàng</p>
+                  <div className="bg-yellow-50 border border-yellow-100 p-3 rounded text-sm text-gray-800">
+                    {selectedBooking.customerNote}
+                  </div>
+                </div>
+              )}
+
+              {/* Price */}
+              <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
+                <span className="font-semibold text-gray-700">Tổng tiền</span>
+                <span className="text-xl font-bold text-teal-600">{formatPrice(selectedBooking.totalPrice)}</span>
+              </div>
+            </div>
+
+            <div className="p-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
+              <button 
+                onClick={closeDetailsModal}
+                className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+              >
+                Đóng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

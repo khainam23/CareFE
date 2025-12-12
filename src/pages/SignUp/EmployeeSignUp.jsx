@@ -17,6 +17,7 @@ import Swal from 'sweetalert2';
 import { useAuthStore } from '../../store/authStore';
 import { validateCaregiverForm } from '../../utils/validation';
 import DatePickerInput from '@/components/DatePickerInput';
+import { authService } from '../../services/authService';
 
 const EMPLOYEE_STEPS = [
   {
@@ -92,7 +93,9 @@ export default function EmployeeSignUp({ onBack, onComplete }) {
     }
   };
 
-  const handleImageChange = (field, file) => {
+  const [isExtracting, setIsExtracting] = useState(false);
+
+  const handleImageChange = async (field, file) => {
     if (file) {
       // Create preview URL
       const reader = new FileReader();
@@ -106,6 +109,55 @@ export default function EmployeeSignUp({ onBack, onComplete }) {
       
       // Store file in formData if needed
       handleInputChange(field, file);
+
+      // If ID Card, trigger EKYC
+      if (field === 'idCard') {
+        try {
+          setIsExtracting(true);
+          Swal.fire({
+            title: 'Đang xử lý...',
+            text: 'Đang trích xuất thông tin từ CCCD',
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+            }
+          });
+
+          const response = await authService.extractIdCard(file);
+          
+          if (response.success && response.data) {
+            const data = response.data;
+            
+            // Map EKYC data to form fields
+            setFormData(prev => ({
+              ...prev,
+              fullName: data.name || prev.fullName,
+              idCardNumber: data.idNumber || prev.idCardNumber,
+              dateOfBirth: data.dob ? convertDateFormat(data.dob) : prev.dateOfBirth,
+              gender: mapGender(data.sex) || prev.gender,
+              address: data.residenceAddress || prev.address,
+              // Try to extract city/ward from address if possible, or leave for user
+            }));
+
+            Swal.fire({
+              icon: 'success',
+              title: 'Thành công',
+              text: 'Đã trích xuất thông tin từ CCCD',
+              timer: 1500,
+              showConfirmButton: false
+            });
+          }
+        } catch (error) {
+          console.error('EKYC error:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: 'Không thể trích xuất thông tin. Vui lòng nhập thủ công.',
+          });
+        } finally {
+          setIsExtracting(false);
+        }
+      }
     } else {
       setImagePreviews(prev => ({
         ...prev,
@@ -113,6 +165,24 @@ export default function EmployeeSignUp({ onBack, onComplete }) {
       }));
       handleInputChange(field, null);
     }
+  };
+
+  const convertDateFormat = (dateStr) => {
+    // Convert DD/MM/YYYY to YYYY-MM-DD for input type="date"
+    if (!dateStr) return '';
+    const parts = dateStr.split('/');
+    if (parts.length === 3) {
+      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+    return dateStr;
+  };
+
+  const mapGender = (sexStr) => {
+    if (!sexStr) return '';
+    const lower = sexStr.toLowerCase();
+    if (lower.includes('nam')) return 'male';
+    if (lower.includes('nữ') || lower.includes('nu')) return 'female';
+    return 'other';
   };
 
   const handleSubmit = async (e) => {

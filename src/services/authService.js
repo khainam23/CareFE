@@ -40,6 +40,23 @@ export const authService = {
     }
   },
 
+  // EKYC - Trích xuất thông tin từ CCCD
+  extractIdCard: async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await axiosInstance.post(API_ENDPOINTS.AUTH.EKYC, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
   // Đăng xuất
   logout: () => {
     localStorage.removeItem('token');
