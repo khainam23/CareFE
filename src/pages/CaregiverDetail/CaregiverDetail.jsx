@@ -123,19 +123,23 @@ function CaregiverDetail() {
         throw new Error('Không tìm được ID booking từ response. Response: ' + JSON.stringify(response));
       }
 
-      console.log('Generating VNPay URL for booking ID:', bookingId);
-      const paymentUrlResponse = await customerService.generateVNPayURL(bookingId, bookingData.notes);
-      console.log('Payment URL response:', paymentUrlResponse.data);
-      
-      const paymentUrl = paymentUrlResponse.data?.paymentUrl || paymentUrlResponse.paymentUrl;
-      console.log('Extracted paymentUrl:', paymentUrl);
+      console.log('Creating payment for booking ID:', bookingId);
+      const paymentResponse = await customerService.createPayment({
+        bookingId,
+        paymentMethod: 'SYSTEM'
+      });
+      console.log('Payment response:', paymentResponse);
 
-      if (paymentUrl) {
-        console.log('Redirecting to VNPay:', paymentUrl.substring(0, 100) + '...');
-        window.location.href = paymentUrl;
+      if (paymentResponse.success || paymentResponse.data) {
+        await Swal.fire({
+          icon: 'success',
+          title: 'Thành công',
+          text: 'Đặt lịch và thanh toán thành công!',
+          confirmButtonColor: '#14b8a6'
+        });
+        setIsBookingModalOpen(false);
       } else {
-        console.error('paymentUrl is null. Full response:', paymentUrlResponse);
-        throw new Error(`Không nhận được URL thanh toán từ server. Response: ${JSON.stringify(paymentUrlResponse)}`);
+        throw new Error('Thanh toán không thành công');
       }
     } catch (err) {
       console.error('Booking error:', err);

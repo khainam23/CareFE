@@ -5,7 +5,7 @@ import { authService } from '../services/authService';
 const initializeState = () => {
   const token = localStorage.getItem('token');
   const userStr = localStorage.getItem('user');
-  
+
   if (token && userStr) {
     try {
       const user = JSON.parse(userStr);
@@ -19,7 +19,7 @@ const initializeState = () => {
       localStorage.removeItem('user');
     }
   }
-  
+
   return { user: null, isAuthenticated: false };
 };
 
@@ -27,6 +27,7 @@ const initialState = initializeState();
 
 export const useAuthStore = create((set, get) => ({
   user: initialState.user,
+  token: localStorage.getItem('token'),
   isAuthenticated: initialState.isAuthenticated,
   loading: false,
 
@@ -35,23 +36,23 @@ export const useAuthStore = create((set, get) => ({
     console.log('=== INIT AUTH CALLED ===');
     console.log('LocalStorage token:', localStorage.getItem('token'));
     console.log('LocalStorage user:', localStorage.getItem('user'));
-    
+
     const token = authService.getToken();
     const user = authService.getCurrentUser();
     const isAuthenticated = !!token && !!user;
-    
+
     console.log('InitAuth - Token exists:', !!token);
     console.log('InitAuth - User:', user);
     console.log('InitAuth - IsAuth:', isAuthenticated);
-    
+
     if (token && !user) {
       console.error('WARNING: Token exists but user is null!');
     }
     if (!token && user) {
       console.error('WARNING: User exists but token is null!');
     }
-    
-    set({ user, isAuthenticated });
+
+    set({ user, isAuthenticated, token });
   },
 
   // Login
@@ -61,23 +62,23 @@ export const useAuthStore = create((set, get) => ({
       const response = await authService.login(credentials);
       if (response.success && response.data) {
         console.log('Login success, setting user:', response.data);
-        
+
         // Đảm bảo data được lưu vào localStorage trước
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data));
-        
+
         // Sau đó mới update state
-        set({ 
-          user: response.data, 
-          isAuthenticated: true, 
-          loading: false 
+        set({
+          user: response.data,
+          isAuthenticated: true,
+          loading: false
         });
-        
-        console.log('Auth state updated:', { 
-          user: response.data.email, 
-          isAuthenticated: true 
+
+        console.log('Auth state updated:', {
+          user: response.data.email,
+          isAuthenticated: true
         });
-        
+
         return response;
       }
       set({ loading: false });
@@ -97,12 +98,12 @@ export const useAuthStore = create((set, get) => ({
         // Lưu vào localStorage trước
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data));
-        
+
         // Sau đó update state
-        set({ 
-          user: response.data, 
-          isAuthenticated: true, 
-          loading: false 
+        set({
+          user: response.data,
+          isAuthenticated: true,
+          loading: false
         });
         return response;
       }
@@ -122,12 +123,12 @@ export const useAuthStore = create((set, get) => ({
         // Lưu vào localStorage trước
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data));
-        
+
         // Sau đó update state
-        set({ 
-          user: response.data, 
-          isAuthenticated: true, 
-          loading: false 
+        set({
+          user: response.data,
+          isAuthenticated: true,
+          loading: false
         });
         return response;
       }
@@ -141,17 +142,17 @@ export const useAuthStore = create((set, get) => ({
   // Logout
   logout: () => {
     authService.logout();
-    set({ user: null, isAuthenticated: false });
+    set({ user: null, token: null, isAuthenticated: false });
   },
 
   // Check if user has specific role
   hasRole: (role) => {
     const { user } = get();
     if (!user?.roles) return false;
-    
+
     // Xử lý cả trường hợp có và không có prefix ROLE_
     const roleToCheck = role.startsWith('ROLE_') ? role : `ROLE_${role.toUpperCase()}`;
-    return user.roles.some(r => 
+    return user.roles.some(r =>
       r === roleToCheck || r === role || r.replace('ROLE_', '') === role.toUpperCase()
     );
   },

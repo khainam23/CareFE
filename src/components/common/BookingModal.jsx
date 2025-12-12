@@ -204,21 +204,37 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
     }
   };
 
-  const handleVNPayPayment = async () => {
+  const handleSystemPayment = async () => {
     setLoading(true);
     try {
-      const response = await customerService.generateVNPayURL(
-        bookingCreated.data?.id || bookingCreated.id,
-        bookingCreated.notes
-      );
+      const bookingId = bookingCreated.data?.id || bookingCreated.id;
+      const response = await customerService.createPayment({
+        bookingId,
+        paymentMethod: 'SYSTEM'
+      });
       
-      if (response.data && response.data.paymentUrl) {
-        window.location.href = response.data.paymentUrl;
+      if (response.success || response.data) {
+        setBookingCreated(null);
+        setShowPaymentOptions(false);
+        setFormData({
+          serviceId: services.length > 0 ? services[0].id : '',
+          customService: '',
+          startDate: '',
+          endDate: '',
+          startTime: '08:00',
+          endTime: '17:00',
+          location: '',
+          addressId: '',
+          notes: '',
+        });
+        setShowNewAddressInput(false);
+        setNewAddress({ address: '', label: '' });
+        onClose();
       } else {
-        setError('Không thể tạo URL thanh toán VNPay');
+        setError('Thanh toán không thành công');
       }
     } catch (err) {
-      setError(err?.message || 'Có lỗi xảy ra khi tạo thanh toán VNPay');
+      setError(err?.message || 'Có lỗi xảy ra khi thanh toán');
     } finally {
       setLoading(false);
     }
@@ -308,15 +324,15 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
             <h3 className="font-semibold text-gray-900 mb-3">Phương thức thanh toán</h3>
             <div className="space-y-3 mb-6">
               <button
-                onClick={handleVNPayPayment}
+                onClick={handleSystemPayment}
                 disabled={loading}
                 className="w-full p-4 border border-teal-300 rounded-lg hover:bg-teal-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-left"
               >
                 <div className="flex items-center gap-3">
                   <CreditCard size={24} className="text-teal-600" />
                   <div>
-                    <p className="font-semibold text-gray-900">Thanh toán qua VNPay</p>
-                    <p className="text-sm text-gray-600">Thẻ tín dụng, ghi nợ hoặc ví điện tử</p>
+                    <p className="font-semibold text-gray-900">Thanh toán trong hệ thống</p>
+                    <p className="text-sm text-gray-600">Sử dụng ví hoặc tài khoản của bạn</p>
                   </div>
                 </div>
               </button>
@@ -335,7 +351,7 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
               </Button>
               <Button
                 type="button"
-                onClick={handleVNPayPayment}
+                onClick={handleSystemPayment}
                 variant="primary"
                 className="flex-1"
                 disabled={loading}
@@ -630,7 +646,7 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
               className="flex-1"
               disabled={loading || totalHours <= 0}
             >
-              {loading ? 'Đang xử lý...' : 'Đặt lịch và thanh toán qua VNPay'}
+              {loading ? 'Đang xử lý...' : 'Đặt lịch và thanh toán'}
             </Button>
           </div>
         </form>

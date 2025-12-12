@@ -108,7 +108,7 @@ class ChatErrorBoundary extends React.Component {
             <div className="flex gap-3">
               <button
                 onClick={this.handleReset}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-primary-600  rounded-lg hover:bg-primary-700 transition-colors"
               >
                 <RefreshCw size={18} />
                 Try Again

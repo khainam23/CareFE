@@ -46,12 +46,12 @@ const MessageInput = ({ chatRoomId, readOnly = false, readOnlyMessage = null }) 
         chatService.sendTypingIndicator(chatRoomId, false);
       }
 
-      // Send message
-      chatService.sendMessage(chatRoomId, message.trim());
+      // Send message (will use WebSocket or REST API fallback)
+      await chatService.sendMessage(chatRoomId, message.trim());
       setMessage('');
     } catch (error) {
       console.error('Error sending message:', error);
-      setError(error.message || 'Failed to send message. Please try again.');
+      setError(error.response?.data?.message || error.message || 'Failed to send message. Please try again.');
     } finally {
       setSending(false);
     }
@@ -107,7 +107,7 @@ const MessageInput = ({ chatRoomId, readOnly = false, readOnlyMessage = null }) 
         <button
           onClick={handleSend}
           disabled={!message.trim() || sending}
-          className="bg-primary-600 text-white p-2 rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="bg-primary-600  p-2 rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           <Send size={20} />
         </button>

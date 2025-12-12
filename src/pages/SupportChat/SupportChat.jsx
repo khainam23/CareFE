@@ -97,7 +97,7 @@ const SupportChat = () => {
                 </button>
                 <div className="flex items-center space-x-3">
                   <div className="w-12 h-12 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full flex items-center justify-center shadow-lg">
-                    <MessageCircle className="w-6 h-6 text-white" />
+                    <MessageCircle className="w-6 h-6 " />
                   </div>
                   <div>
                     <h1 className="text-xl font-bold text-gray-900">Chat với Care</h1>
@@ -126,7 +126,7 @@ const SupportChat = () => {
               <div
                 className={`max-w-[70%] ${
                   message.type === 'user'
-                    ? 'bg-gradient-to-r from-teal-500 to-teal-600 text-white'
+                    ? 'bg-gradient-to-r from-teal-500 to-teal-600 '
                     : message.type === 'system'
                     ? 'bg-blue-50 border border-blue-200 text-gray-800'
                     : 'bg-white shadow-md text-gray-800'
@@ -178,7 +178,7 @@ const SupportChat = () => {
             <button
               type="submit"
               disabled={!inputMessage.trim()}
-              className="p-3 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-xl hover:from-teal-600 hover:to-teal-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg transform hover:scale-105"
+              className="p-3 bg-gradient-to-r from-teal-500 to-teal-600  rounded-xl hover:from-teal-600 hover:to-teal-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg transform hover:scale-105"
             >
               <Send className="w-5 h-5" />
             </button>

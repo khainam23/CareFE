@@ -9,7 +9,7 @@ const UnreadChatBadge = ({ className = '' }) => {
   return (
     <div className={`relative inline-flex ${className}`}>
       <MessageCircle size={20} />
-      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1">
+      <span className="absolute -top-2 -right-2 bg-red-500  text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1">
         {unreadCount > 99 ? '99+' : unreadCount}
       </span>
     </div>

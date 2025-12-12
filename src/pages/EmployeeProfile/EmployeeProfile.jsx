@@ -15,6 +15,7 @@ import Tasks from './tabs/Tasks';
 import PaymentHistory from './tabs/PaymentHistory';
 import ProfileSettings from './tabs/ProfileSettings';
 import CareNowLogo from '@assets/images/Logo.svg';
+import GlobalChat from '@/components/chat/GlobalChat';
 
 const EmployeeProfile = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -95,13 +96,15 @@ const EmployeeProfile = () => {
         <div className="bg-white rounded-lg shadow-md p-6 border border-red-200">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 bg-red-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-600 transition-colors"
+            className="flex items-center gap-2 bg-red-500  py-2 px-4 rounded-lg font-semibold hover:bg-red-600 transition-colors"
           >
             <LogOut size={18} />
             Đăng xuất
           </button>
         </div>
       </div>
+      
+      <GlobalChat />
     </div>
   );
 };

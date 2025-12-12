@@ -3,6 +3,9 @@ import chatWebSocketService from './chatWebSocketService';
 
 const API_BASE = '/api/chat';
 
+// Event emitter for REST API messages
+const messageEventListeners = new Set();
+
 export const chatService = {
   // REST API methods
   getChatRooms: async () => {
@@ -12,6 +15,11 @@ export const chatService = {
 
   getChatRoomByBooking: async (bookingId) => {
     const response = await axiosInstance.get(`${API_BASE}/rooms/booking/${bookingId}`);
+    return response.data;
+  },
+
+  createChatRoomForBooking: async (bookingId) => {
+    const response = await axiosInstance.post(`${API_BASE}/rooms/create-for-booking/${bookingId}`);
     return response.data;
   },
 
@@ -41,11 +49,39 @@ export const chatService = {
     chatWebSocketService.disconnect();
   },
 
-  sendMessage: (chatRoomId, content) => {
-    chatWebSocketService.send('/app/chat/send', {
-      chatRoomId,
-      content,
-    });
+  sendMessage: async (chatRoomId, content) => {
+    // Always use REST API for sending messages to ensure reliability and persistence
+    // The backend will broadcast the message via WebSocket to all subscribers
+    try {
+      const response = await axiosInstance.post(`${API_BASE}/rooms/${chatRoomId}/messages`, {
+        content,
+      });
+
+      // Emit event for local message handling
+      const message = response.data.data;
+      messageEventListeners.forEach(listener => {
+        try {
+          listener({ chatRoomId, message });
+        } catch (err) {
+          console.error('Error in message event listener:', err);
+        }
+      });
+
+      return { success: true, method: 'rest', data: response.data };
+    } catch (error) {
+      console.error('Failed to send message via REST API:', error);
+      throw error;
+    }
+  },
+
+  // Deprecated: Internal use only if needed
+  sendMessageWS: (chatRoomId, content) => {
+    if (chatWebSocketService.isConnected()) {
+      chatWebSocketService.send('/app/chat/send', {
+        chatRoomId,
+        content,
+      });
+    }
   },
 
   sendTypingIndicator: (chatRoomId, isTyping) => {
@@ -81,6 +117,14 @@ export const chatService = {
 
   onConnectionChange: (callback) => {
     return chatWebSocketService.onConnectionChange(callback);
+  },
+
+  // Subscribe to REST API messages
+  onRestMessage: (callback) => {
+    messageEventListeners.add(callback);
+    return () => {
+      messageEventListeners.delete(callback);
+    };
   },
 };
 

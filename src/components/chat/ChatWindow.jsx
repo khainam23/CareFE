@@ -8,7 +8,7 @@ import BookingDetails from './BookingDetails';
 import RatingModal from './RatingModal';
 import chatService from '@/services/chatService';
 
-const ChatWindow = ({ chatRoom, onClose, currentUserId }) => {
+const ChatWindow = ({ chatRoom, onClose, currentUserId, inline = false }) => {
   const [connected, setConnected] = useState(false);
   const [otherUser, setOtherUser] = useState(null);
   const [showBookingDetails, setShowBookingDetails] = useState(false);
@@ -40,14 +40,18 @@ const ChatWindow = ({ chatRoom, onClose, currentUserId }) => {
     }
   }, [chatRoom.bookingStatus, chatRoom.customerId, currentUserId]);
 
+  const containerClasses = inline
+    ? "w-full h-full bg-white flex flex-col"
+    : "fixed bottom-4 right-4 w-96 h-[600px] bg-white rounded-lg shadow-2xl flex flex-col z-50";
+
   return (
     <ChatErrorBoundary
       errorMessage="Failed to load chat. Please try again."
       onReset={() => window.location.reload()}
     >
-      <div className="fixed bottom-4 right-4 w-96 h-[600px] bg-white rounded-lg shadow-2xl flex flex-col z-50">
+      <div className={containerClasses}>
         {/* Header */}
-        <div className="bg-primary-600 text-white p-4 rounded-t-lg flex items-center justify-between">
+        <div className="bg-primary-600 p-4 rounded-t-lg flex items-center justify-between">
           <div className="flex items-center gap-3 flex-1">
             <div className="relative">
               <div className="w-10 h-10 bg-primary-400 rounded-full flex items-center justify-center font-semibold">
@@ -101,7 +105,11 @@ const ChatWindow = ({ chatRoom, onClose, currentUserId }) => {
 
         {/* Input */}
         <ChatErrorBoundary errorMessage="Failed to load message input.">
-          <MessageInput chatRoomId={chatRoom.id} />
+          <MessageInput 
+            chatRoomId={chatRoom.id}
+            readOnly={chatRoom.id && chatRoom.id.toString().startsWith('temp_')}
+            readOnlyMessage="Phòng chat đang được khởi tạo. Vui lòng chờ để bắt đầu trò chuyện."
+          />
         </ChatErrorBoundary>
       </div>
 

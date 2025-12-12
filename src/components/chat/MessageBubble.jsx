@@ -30,7 +30,7 @@ const MessageBubble = ({ message, isOwn }) => {
       <div
         className={`max-w-[70%] rounded-lg px-4 py-2 ${
           isOwn
-            ? 'bg-primary-600 text-white'
+            ? 'bg-primary-600 '
             : 'bg-white text-gray-800 border border-gray-200'
         }`}
       >

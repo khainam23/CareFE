@@ -188,7 +188,7 @@ export default function Login() {
             </div>
 
             <div className="absolute h-fit flex bg-green-200 items-center justify-center p-6 pb-12 rotate-12" style={{ top: "88%", right: "-88%" }}>
-              <p className="text-center bottom-0 bg-gray-500 text-white font-medium text-lg rounded-md p-4 pb-8">
+              <p className="text-center bottom-0 bg-gray-500  font-medium text-lg rounded-md p-4 pb-8">
                 Theo dõi sức khỏe hỗ trỡ điều dưỡng
               </p>
             </div>
@@ -289,7 +289,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-2.5 px-4 border border-transparent text-sm font-semibold rounded-lg text-white transition-colors ${loading
+              className={`w-full py-2.5 px-4 border border-transparent text-sm font-semibold rounded-lg  transition-colors ${loading
                 ? 'bg-gray-400 cursor-not-allowed'
                 : 'bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500'
                 }`}

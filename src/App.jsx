@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import AppRoutes from './routes/AppRoutes';
 import { useAuthStore } from './store/authStore';
+import ChatProvider from './components/chat/ChatProvider';
 import './styles/index.css';
 
 function App() {
@@ -11,7 +12,11 @@ function App() {
     initAuth();
   }, [initAuth]);
 
-  return <AppRoutes />;
+  return (
+    <ChatProvider>
+      <AppRoutes />
+    </ChatProvider>
+  );
 }
 
 export default App;

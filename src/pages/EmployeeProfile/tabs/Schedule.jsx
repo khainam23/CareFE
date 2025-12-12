@@ -1,12 +1,20 @@
 import { useState, useEffect } from 'react';
 import Rectangle131 from '@/assets/images/Rectangle 131.svg';
 import { caregiverService } from '@/services/caregiverService';
+import { MessageCircle } from 'lucide-react';
+import chatService from '@/services/chatService';
+import ChatWindow from '@/components/chat/ChatWindow';
+import { useAuthStore } from '@/store/authStore';
+import Swal from 'sweetalert2';
 
 const Schedule = () => {
   const [activeTab, setActiveTab] = useState('pending');
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [chatRooms, setChatRooms] = useState({}); // Map appointmentId to chatRoom
+  const [openChatIds, setOpenChatIds] = useState(new Set()); // Track which appointments have chat open
+  const { user } = useAuthStore();
 
   useEffect(() => {
     fetchBookings();
@@ -53,6 +61,84 @@ const Schedule = () => {
     }
   };
 
+  const handleOpenChat = async (appointmentId) => {
+    try {
+      // If chat is already loaded, just toggle it
+      if (chatRooms[appointmentId]) {
+        setOpenChatIds(prev => {
+          const newSet = new Set(prev);
+          if (newSet.has(appointmentId)) {
+            newSet.delete(appointmentId);
+          } else {
+            newSet.add(appointmentId);
+          }
+          return newSet;
+        });
+        return;
+      }
+
+      console.log('Opening chat for booking ID:', appointmentId);
+      
+      // Try to create chat room first (will create if not exists)
+      try {
+        console.log('Creating chat room for booking:', appointmentId);
+        const createResponse = await chatService.createChatRoomForBooking(appointmentId);
+        
+        if (createResponse?.data && createResponse.data.id) {
+          const chatRoom = createResponse.data;
+          setChatRooms(prev => ({
+            ...prev,
+            [appointmentId]: chatRoom
+          }));
+          setOpenChatIds(prev => new Set(prev).add(appointmentId));
+          return;
+        }
+      } catch (createErr) {
+        console.warn('Failed to create chat room, trying to fetch existing:', createErr);
+      }
+      
+      // Fallback: Try to fetch existing chat room
+      const chatRoomResponse = await chatService.getChatRoomByBooking(appointmentId);
+      
+      const chatRoom = chatRoomResponse?.data;
+      
+      if (chatRoom && chatRoom.id) {
+        setChatRooms(prev => ({
+          ...prev,
+          [appointmentId]: chatRoom
+        }));
+        setOpenChatIds(prev => new Set(prev).add(appointmentId));
+      } else {
+        // Still no chat room, open with temporary object for pending bookings
+        console.log('Chat room still not available, opening pending chat');
+        const appointment = bookings.find(a => a.id === appointmentId);
+        const tempChatRoom = {
+          id: `temp_${appointmentId}`,
+          bookingId: appointmentId,
+          customerId: appointment?.customerId,
+          caregiverId: user?.id,
+          caregiverName: user?.fullName || 'Bạn',
+          customerName: appointment?.customerName,
+          status: 'PENDING',
+          createdAt: new Date().toISOString()
+        };
+        setChatRooms(prev => ({
+          ...prev,
+          [appointmentId]: tempChatRoom
+        }));
+        setOpenChatIds(prev => new Set(prev).add(appointmentId));
+      }
+    } catch (err) {
+      console.error('Error opening chat:', err);
+      const errorMessage = err.response?.data?.message || 'Không thể mở chat với khách hàng';
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi',
+        text: errorMessage,
+      });
+    }
+  };
+
   // Mock data for fixed schedule
   const fixedSchedule = [
     { day: 'Thứ 2', hours: '08:00 - 17:00', status: 'Hoạt động' },
@@ -72,7 +158,7 @@ const Schedule = () => {
       case 'pending':
         return bookings.filter(b => b.status === 'ASSIGNED' || b.status === 'PENDING');
       case 'approved':
-        return bookings.filter(b => b.status === 'ACCEPTED' || b.status === 'IN_PROGRESS');
+        return bookings.filter(b => b.status === 'ACCEPTED' || b.status === 'CONFIRMED' || b.status === 'IN_PROGRESS');
       case 'cancelled':
         return bookings.filter(b => b.status === 'CANCELLED' || b.status === 'REJECTED');
       default:
@@ -274,8 +360,39 @@ const Schedule = () => {
                     <button className="bg-white border-2 border-teal-500 text-teal-500 py-2 px-4 rounded-lg font-semibold hover:bg-teal-50 transition-colors text-sm">
                       Xem chi tiết
                     </button>
+                    <button 
+                      onClick={() => handleOpenChat(appointment.id)}
+                      className={`flex items-center gap-2 py-2 px-4 rounded-lg font-semibold transition-colors text-sm ${
+                        openChatIds.has(appointment.id)
+                          ? 'bg-blue-700 '
+                          : 'bg-blue-600  hover:bg-blue-700'
+                      }`}
+                    >
+                      <MessageCircle size={16} />
+                      {openChatIds.has(appointment.id) ? 'Đóng chat' : 'Chat'}
+                    </button>
                   </div>
                 </div>
+                
+                {/* Chat Window - Inline */}
+                {openChatIds.has(appointment.id) && chatRooms[appointment.id] && user && (
+                  <div className="border-t border-gray-200 pt-4 mt-4">
+                    <div className="bg-gray-100 rounded-lg overflow-hidden h-[500px] relative">
+                      <ChatWindow
+                        chatRoom={chatRooms[appointment.id]}
+                        onClose={() => {
+                          setOpenChatIds(prev => {
+                            const newSet = new Set(prev);
+                            newSet.delete(appointment.id);
+                            return newSet;
+                          });
+                        }}
+                        currentUserId={user.id}
+                        inline={true}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             ))
           ) : (

@@ -11,7 +11,9 @@ const ScheduledCare = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedChatRoom, setSelectedChatRoom] = useState(null);
+  const [chatRooms, setChatRooms] = useState({}); // Map appointmentId to chatRoom
+  const [openChatIds, setOpenChatIds] = useState(new Set()); // Track which appointments have chat open
+  const [chatRetries, setChatRetries] = useState({}); // Track retry counts
   const { user } = useAuthStore();
 
   // Fetch bookings on mount
@@ -175,26 +177,95 @@ const ScheduledCare = () => {
 
   const handleOpenChat = async (appointmentId) => {
     try {
-      const chatRoom = await chatService.getChatRoomByBooking(appointmentId);
-      if (chatRoom && chatRoom.data) {
-        setSelectedChatRoom(chatRoom.data);
+      // If chat is already loaded, just toggle it
+      if (chatRooms[appointmentId]) {
+        setOpenChatIds(prev => {
+          const newSet = new Set(prev);
+          if (newSet.has(appointmentId)) {
+            newSet.delete(appointmentId);
+          } else {
+            newSet.add(appointmentId);
+          }
+          return newSet;
+        });
+        return;
+      }
+
+      console.log('Opening chat for booking ID:', appointmentId);
+      
+      // Try to create chat room first (will create if not exists)
+      try {
+        console.log('Creating chat room for booking:', appointmentId);
+        const createResponse = await chatService.createChatRoomForBooking(appointmentId);
+        console.log('Create chat room response:', createResponse);
+        
+        if (createResponse?.data && createResponse.data.id) {
+          const chatRoom = createResponse.data;
+          console.log('Chat room created/retrieved successfully, ID:', chatRoom.id);
+          setChatRooms(prev => ({
+            ...prev,
+            [appointmentId]: chatRoom
+          }));
+          setOpenChatIds(prev => new Set(prev).add(appointmentId));
+          return;
+        }
+      } catch (createErr) {
+        console.warn('Failed to create chat room, trying to fetch existing:', createErr);
+      }
+      
+      // Fallback: Try to fetch existing chat room
+      const chatRoomResponse = await chatService.getChatRoomByBooking(appointmentId);
+      console.log('Chat room response:', chatRoomResponse);
+      
+      const chatRoom = chatRoomResponse?.data;
+      
+      if (chatRoom && chatRoom.id) {
+        console.log('Chat room loaded, ID:', chatRoom.id);
+        setChatRooms(prev => ({
+          ...prev,
+          [appointmentId]: chatRoom
+        }));
+        setOpenChatIds(prev => new Set(prev).add(appointmentId));
+      } else {
+        // Still no chat room, open with temporary object for pending bookings
+        console.log('Chat room still not available, opening pending chat');
+        const appointment = appointments.find(a => a.id === appointmentId);
+        const tempChatRoom = {
+          id: `temp_${appointmentId}`,
+          bookingId: appointmentId,
+          customerId: user?.id,
+          caregiverId: appointment?.rawData?.caregiverId,
+          caregiverName: appointment?.caregiver,
+          customerName: user?.fullName || 'Bạn',
+          status: 'PENDING',
+          createdAt: new Date().toISOString()
+        };
+        setChatRooms(prev => ({
+          ...prev,
+          [appointmentId]: tempChatRoom
+        }));
+        setOpenChatIds(prev => new Set(prev).add(appointmentId));
       }
     } catch (err) {
       console.error('Error opening chat:', err);
+      console.error('Error response:', err.response?.data);
+      console.error('Error message:', err.message);
+      
+      const errorMessage = err.response?.data?.message || 'Không thể mở chat với caregiver';
       Swal.fire({
         icon: 'error',
         title: 'Lỗi',
-        text: 'Không thể mở chat với caregiver',
+        text: errorMessage,
       });
     }
   };
 
   const getStatusBadge = (status) => {
     const badges = {
-      confirmed: { bg: 'bg-blue-600', text: 'text-white', label: 'Xác nhận' },
-      completed: { bg: 'bg-green-600', text: 'text-white', label: 'Hoàn thành' },
-      pending: { bg: 'bg-red-500', text: 'text-white', label: 'Chờ xác nhận' },
-      cancelled: { bg: 'bg-red-800', text: 'text-white', label: 'Hủy' },
+      confirmed: { bg: 'bg-blue-600', text: '', label: 'Xác nhận' },
+      completed: { bg: 'bg-green-600', text: '', label: 'Hoàn thành' },
+      pending: { bg: 'bg-red-500', text: '', label: 'Chờ xác nhận' },
+      cancelled: { bg: 'bg-red-800', text: '', label: 'Hủy' },
     };
     const badge = badges[status] || badges.pending;
     return (
@@ -228,7 +299,7 @@ const ScheduledCare = () => {
           <p className="text-gray-700 text-base font-medium mb-4">{error}</p>
           <button
             onClick={fetchBookings}
-            className="px-8 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-bold text-base"
+            className="px-8 py-3 bg-teal-600  rounded-lg hover:bg-teal-700 transition-colors font-bold text-base"
           >
             Thử lại
           </button>
@@ -375,26 +446,48 @@ const ScheduledCare = () => {
                       {appointment.status === 'confirmed' && (
                         <button
                           onClick={() => handleCancel(appointment.id)}
-                          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-bold text-base"
+                          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-red-600  rounded-lg hover:bg-red-700 transition-colors font-bold text-base"
                         >
                           <X size={18} />
                           Hủy buổi
                         </button>
                       )}
-                      {(appointment.status === 'confirmed' || appointment.status === 'completed') && (
-                        <button
-                          onClick={() => handleOpenChat(appointment.id)}
-                          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-bold text-base"
-                        >
-                          <MessageCircle size={18} />
-                          Chat
-                        </button>
-                      )}
-                      <button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-bold text-base">
+                      <button
+                        onClick={() => handleOpenChat(appointment.id)}
+                        className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors font-bold text-base ${
+                          openChatIds.has(appointment.id)
+                            ? 'bg-blue-700 '
+                            : 'bg-blue-600  hover:bg-blue-700'
+                        }`}
+                      >
+                        <MessageCircle size={18} />
+                        {openChatIds.has(appointment.id) ? 'Đóng chat' : 'Chat'}
+                      </button>
+                      <button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-teal-600  rounded-lg hover:bg-teal-700 transition-colors font-bold text-base">
                         <Check size={18} />
                         Chi tiết
                       </button>
                     </div>
+
+                    {/* Chat Window - Inline */}
+                    {openChatIds.has(appointment.id) && chatRooms[appointment.id] && user && (
+                      <div className="border-t border-gray-200 pt-4 mt-4">
+                        <div className="bg-gray-100 rounded-lg overflow-hidden">
+                          <ChatWindow
+                            chatRoom={chatRooms[appointment.id]}
+                            onClose={() => {
+                              setOpenChatIds(prev => {
+                                const newSet = new Set(prev);
+                                newSet.delete(appointment.id);
+                                return newSet;
+                              });
+                            }}
+                            currentUserId={user.id}
+                            inline={true}
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -405,20 +498,11 @@ const ScheduledCare = () => {
 
       {/* Booking Button */}
       <div className="flex justify-end">
-        <button className="px-8 py-4 bg-teal-600 rounded-lg hover:bg-teal-700 transition-colors font-bold text-lg flex items-center gap-2 text-white shadow-lg">
+        <button className="px-8 py-4 bg-teal-600 rounded-lg hover:bg-teal-700 transition-colors font-bold text-lg flex items-center gap-2  shadow-lg">
           <Calendar size={24} />
           Đặt buổi chăm sóc mới
         </button>
       </div>
-
-      {/* Chat Window */}
-      {selectedChatRoom && user && (
-        <ChatWindow
-          chatRoom={selectedChatRoom}
-          onClose={() => setSelectedChatRoom(null)}
-          currentUserId={user.id}
-        />
-      )}
     </div>
   );
 };

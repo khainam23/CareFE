@@ -45,12 +45,12 @@ const ChatButtonWithWindow = ({ bookingId, booking }) => {
       <button
         onClick={handleOpenChat}
         disabled={loading}
-        className="relative inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="relative inline-flex items-center gap-2 px-4 py-2 bg-primary-600  rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <MessageCircle size={20} />
         <span>Chat</span>
         {unreadCount > 0 && (
-          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+          <span className="absolute -top-2 -right-2 bg-red-500  text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}

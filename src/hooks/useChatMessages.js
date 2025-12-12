@@ -10,6 +10,15 @@ export const useChatMessages = (chatRoomId, currentUserId) => {
 
   const loadMessages = useCallback(async (pageNum = 0) => {
     try {
+      // Check if this is a temporary chat room (pending booking)
+      if (chatRoomId && chatRoomId.toString().startsWith('temp_')) {
+        console.log('Temporary chat room detected, not loading messages');
+        setMessages([]);
+        setHasMore(false);
+        setLoading(false);
+        return;
+      }
+
       const response = await chatService.getMessages(chatRoomId, pageNum, 50);
       const newMessages = response.data.content;
 
@@ -38,7 +47,11 @@ export const useChatMessages = (chatRoomId, currentUserId) => {
 
     // Subscribe to new messages
     const messageSubscription = chatService.subscribeToRoom(chatRoomId, (message) => {
-      setMessages((prev) => [...prev, message]);
+      setMessages((prev) => {
+        // Prevent duplicates
+        if (prev.some(m => m.id === message.id)) return prev;
+        return [...prev, message];
+      });
 
       // Mark as read if not sent by current user
       if (message.senderId !== currentUserId) {
@@ -54,6 +67,16 @@ export const useChatMessages = (chatRoomId, currentUserId) => {
             window.focus();
           }
         );
+      }
+    });
+
+    // Subscribe to REST API messages (when WebSocket is not connected)
+    const restMessageUnsubscribe = chatService.onRestMessage(({ chatRoomId: msgRoomId, message }) => {
+      if (msgRoomId === chatRoomId) {
+        setMessages((prev) => {
+          if (prev.some(m => m.id === message.id)) return prev;
+          return [...prev, message];
+        });
       }
     });
 
@@ -76,6 +99,7 @@ export const useChatMessages = (chatRoomId, currentUserId) => {
     return () => {
       if (messageSubscription) messageSubscription.unsubscribe();
       if (readSubscription) readSubscription.unsubscribe();
+      if (restMessageUnsubscribe) restMessageUnsubscribe();
     };
   }, [chatRoomId, currentUserId, loadMessages]);
 

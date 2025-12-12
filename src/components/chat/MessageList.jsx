@@ -40,6 +40,9 @@ const MessageList = ({ chatRoomId, currentUserId }) => {
     );
   }
 
+  // Check if this is a pending/temporary chat room
+  const isPendingChat = chatRoomId && chatRoomId.toString().startsWith('temp_');
+
   return (
     <div
       ref={messagesContainerRef}
@@ -48,8 +51,17 @@ const MessageList = ({ chatRoomId, currentUserId }) => {
     >
       {messages.length === 0 ? (
         <div className="text-center text-gray-500 mt-8">
-          <p>No messages yet</p>
-          <p className="text-sm">Start the conversation!</p>
+          {isPendingChat ? (
+            <>
+              <p className="font-semibold">Phòng chat đang được khởi tạo</p>
+              <p className="text-sm mt-2">Bạn sẽ có thể trò chuyện ngay khi phòng chat được sẵn sàng.</p>
+            </>
+          ) : (
+            <>
+              <p>No messages yet</p>
+              <p className="text-sm">Start the conversation!</p>
+            </>
+          )}
         </div>
       ) : (
         <>

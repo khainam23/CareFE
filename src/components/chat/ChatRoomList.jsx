@@ -6,7 +6,7 @@ import ChatErrorBoundary from './ChatErrorBoundary';
 import { useAuthStore } from '@/store/authStore';
 import { formatDistanceToNow } from 'date-fns';
 
-const ChatRoomList = () => {
+const ChatRoomList = ({ onSelectRoom }) => {
   const [chatRooms, setChatRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -25,6 +25,14 @@ const ChatRoomList = () => {
       console.error('Error loading chat rooms:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRoomClick = (room) => {
+    if (onSelectRoom) {
+      onSelectRoom(room);
+    } else {
+      setSelectedRoom(room);
     }
   };
 
@@ -69,7 +77,7 @@ const ChatRoomList = () => {
             return (
               <button
                 key={room.id}
-                onClick={() => setSelectedRoom(room)}
+                onClick={() => handleRoomClick(room)}
                 className="w-full text-left p-4 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors"
               >
                 <div className="flex items-start justify-between">
@@ -79,7 +87,7 @@ const ChatRoomList = () => {
                         {otherUserName}
                       </h3>
                       {room.unreadCount > 0 && (
-                        <span className="bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
+                        <span className="bg-red-500  text-xs font-bold rounded-full px-2 py-0.5">
                           {room.unreadCount}
                         </span>
                       )}
@@ -100,7 +108,7 @@ const ChatRoomList = () => {
           })}
         </div>
 
-        {selectedRoom && (
+        {!onSelectRoom && selectedRoom && (
           <ChatWindow
             chatRoom={selectedRoom}
             onClose={() => setSelectedRoom(null)}
