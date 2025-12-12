@@ -17,6 +17,7 @@ function CaregiverDetail() {
   const [error, setError] = useState(null);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     const fetchCaregiverData = async () => {
@@ -218,8 +219,17 @@ function CaregiverDetail() {
             <div className="flex flex-col md:flex-row gap-6">
               {/* Avatar */}
               <div className="flex-shrink-0">
-                <div className="w-48 h-48 bg-gradient-to-br from-teal-100 to-blue-100 rounded-lg flex items-center justify-center">
-                  <span className="text-8xl text-gray-400">👤</span>
+                <div className="w-48 h-48 bg-gradient-to-br from-teal-100 to-blue-100 rounded-lg flex items-center justify-center overflow-hidden">
+                  {caregiver.avatarUrl && !imageError ? (
+                    <img
+                      src={caregiver.avatarUrl}
+                      alt={caregiver.fullName}
+                      className="w-full h-full object-cover"
+                      onError={() => setImageError(true)}
+                    />
+                  ) : (
+                    <span className="text-8xl text-gray-400">👤</span>
+                  )}
                 </div>
               </div>
 
@@ -230,7 +240,7 @@ function CaregiverDetail() {
                 </h1>
                 
                 <div className="flex items-center gap-2 mb-4">
-                  <StarRating rating={caregiver.averageRating || 0} />
+                  <StarRating rating={caregiver.rating || 0} />
                   <span className="text-gray-500">({caregiver.totalReviews || 0} đánh giá)</span>
                 </div>
 
@@ -242,7 +252,7 @@ function CaregiverDetail() {
 
                   <div className="flex items-center gap-3 text-gray-700">
                     <Award size={20} className="text-teal-500" />
-                    <span>{caregiver.yearsOfExperience || 0}+ năm kinh nghiệm</span>
+                    <span>{caregiver.experienceYears || 0}+ năm kinh nghiệm</span>
                   </div>
 
                   {caregiver.phoneNumber && (
@@ -409,7 +419,7 @@ function CaregiverDetail() {
               </div>
 
               <div className="space-y-3">
-                <Button variant="primary" className="w-full" onClick={handleBooking}>
+                <Button variant="primary" className="w-full text-white" onClick={handleBooking}>
                   Đặt lịch ngay
                 </Button>
               </div>

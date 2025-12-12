@@ -12,6 +12,7 @@ const PersonalProfile = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+  const [imageError, setImageError] = useState(false);
   const [profile, setProfile] = useState({
     name: '',
     email: '',
@@ -20,6 +21,7 @@ const PersonalProfile = () => {
     dateOfBirth: '',
     gender: '',
     notes: '',
+    avatarUrl: '',
   });
 
   const [editForm, setEditForm] = useState(profile);
@@ -60,6 +62,7 @@ const PersonalProfile = () => {
           dateOfBirth: response.data.dateOfBirth || '',
           gender: response.data.gender || '',
           notes: response.data.notes || '',
+          avatarUrl: response.data.avatarUrl || '',
         };
         setProfile(profileData);
         setEditForm(profileData);
@@ -246,8 +249,17 @@ const PersonalProfile = () => {
 
       {/* Profile Avatar Section */}
       <div className="bg-gradient-to-r from-teal-50 to-blue-50 rounded-lg p-8 flex items-center gap-6">
-        <div className="w-24 h-24 bg-teal-200 rounded-full flex items-center justify-center flex-shrink-0">
-          <User size={48} className="text-teal-600" />
+        <div className="w-24 h-24 bg-teal-200 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+          {profile.avatarUrl && !imageError ? (
+            <img
+              src={profile.avatarUrl}
+              alt={profile.name}
+              className="w-full h-full object-cover"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <User size={48} className="text-teal-600" />
+          )}
         </div>
         <div className="flex-1">
           <h3 className="text-2xl font-bold text-gray-800">{profile.name}</h3>

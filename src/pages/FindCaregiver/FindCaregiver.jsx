@@ -135,6 +135,8 @@ function FindCaregiver() {
   );
 
   const CaregiverCard = ({ caregiver }) => {
+    const [imageError, setImageError] = useState(false);
+
     const handleViewDetail = () => {
       navigate(`/caregivers/${caregiver.id}`);
     };
@@ -142,8 +144,17 @@ function FindCaregiver() {
     return (
       <div className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
         <div className="bg-gradient-to-r from-teal-50 to-blue-50 p-4">
-          <div className="w-full h-40 bg-gray-200 rounded-lg mb-3 flex items-center justify-center">
-            <span className="text-4xl text-gray-400">👤</span>
+          <div className="w-full h-40 bg-gray-200 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+            {caregiver.avatarUrl && !imageError ? (
+              <img
+                src={caregiver.avatarUrl}
+                alt={caregiver.fullName}
+                className="w-full h-full object-cover"
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <span className="text-4xl text-gray-400">👤</span>
+            )}
           </div>
           <h3 className="text-lg font-bold text-gray-800">{caregiver.fullName || 'N/A'}</h3>
           <p className="text-sm text-gray-600 line-clamp-2">{caregiver.bio || 'Chưa có mô tả'}</p>
