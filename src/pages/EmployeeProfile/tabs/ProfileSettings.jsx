@@ -57,6 +57,7 @@ const ProfileSettings = () => {
           certifications: data.skills || '',
           experienceYears: data.experience || '',
           language: 'vi',
+          hourlyRate: data.hourlyRate || 120000,
         };
         setProfileData(mappedData);
         setFormData(mappedData);
@@ -240,6 +241,7 @@ const ProfileSettings = () => {
           </div>
           <FormInput label="Chứng chỉ/Bằng cấp" name="certifications" value={formData.certifications} />
           <FormInput label="Năm kinh nghiệm" name="experienceYears" value={formData.experienceYears} type="number" />
+          <FormInput label="Số tiền trên giờ" name="hourly_rate" value={formData.hourlyRate} type="number" />
         </div>
       </div>
 

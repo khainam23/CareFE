@@ -212,8 +212,8 @@ const CaregiversList = () => {
             Manage all caregivers in the system
           </p>
         </div>
-        <Button onClick={handleCreate}>
-          <Plus size={20} className="mr-2" />
+        <Button className="text-white flex" onClick={handleCreate}>
+          <Plus size={20} className="mr-2 text-white" />
           Create Caregiver
         </Button>
       </div>
