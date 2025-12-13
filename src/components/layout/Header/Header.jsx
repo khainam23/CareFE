@@ -186,7 +186,7 @@ const Header = () => {
                 </Link>
                 <Link
                   to="/register"
-                  className="px-6 py-2  rounded-lg font-medium bg-[#00A787] hover:bg-opacity-90 transition-opacity flex items-center space-x-2"
+                  className="px-6 py-2 text-white  rounded-lg font-medium bg-[#00A787] hover:bg-opacity-90 transition-opacity flex items-center space-x-2"
                 >
                   <span>Đăng ký ngay</span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-right" viewBox="0 0 16 16">

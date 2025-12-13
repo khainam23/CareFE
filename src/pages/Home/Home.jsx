@@ -132,7 +132,7 @@ const Home = () => {
             />
             <Button 
               onClick={handleSearch}
-              className="h-10 transition-all duration-300 hover:animate__animated hover:animate__pulse"
+              className="h-10 text-white transition-all duration-300 hover:animate__animated hover:animate__pulse"
             >
               Tìm kiếm
             </Button>

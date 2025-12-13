@@ -289,7 +289,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-2.5 px-4 border border-transparent text-sm font-semibold rounded-lg  transition-colors ${loading
+              className={`w-full py-2.5 text-white px-4 border border-transparent text-sm font-semibold rounded-lg  transition-colors ${loading
                 ? 'bg-gray-400 cursor-not-allowed'
                 : 'bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500'
                 }`}
