@@ -90,7 +90,7 @@ const Home = () => {
           <img 
             src={image41} 
             alt="Hero Banner" 
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute w-full h-full object-cover object-top"
           />
           <div className="absolute top-12 right-12  max-w-md">
             <p className="text-2xl font-bold leading-tight">

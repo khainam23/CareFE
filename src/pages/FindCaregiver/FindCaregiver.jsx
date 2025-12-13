@@ -144,12 +144,12 @@ function FindCaregiver() {
     return (
       <div className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
         <div className="bg-gradient-to-r from-teal-50 to-blue-50 p-4">
-          <div className="w-full h-40 bg-gray-200 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+          <div className="w-full h-60 bg-gray-200 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
             {caregiver.avatarUrl && !imageError ? (
               <img
                 src={caregiver.avatarUrl}
                 alt={caregiver.fullName}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover" style={{ objectPosition: '30% 30%' }}
                 onError={() => setImageError(true)}
               />
             ) : (
