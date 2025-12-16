@@ -201,39 +201,29 @@ function FindCaregiver() {
           <p className="text-gray-600">Tìm bảo mẫu phù hợp nhất cho gia đình bạn</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Filters Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-sm p-6 sticky top-6">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Bộ lọc</h2>
-
+        <div className="space-y-6">
+          {/* Filters */}
+          <div className="bg-white rounded-lg shadow-sm p-4">
+            <div className="flex gap-3 flex-wrap items-end">
               {/* Search Input */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tìm kiếm
-                </label>
+              <div className="flex-1 min-w-48">
                 <input
                   type="text"
                   value={filters.search}
                   onChange={(e) => handleFilterChange('search', e.target.value)}
-                  placeholder="Tên bảo mẫu..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  placeholder="Tìm kiếm..."
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
               </div>
 
-
-
               {/* District */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Quận
-                </label>
+              <div className="flex-1 min-w-40">
                 <select
                   value={filters.district}
                   onChange={(e) => handleFilterChange('district', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
                 >
-                  <option value="">Tất cả quận</option>
+                  <option value="">Quận</option>
                   {DISTRICTS.map(district => (
                     <option key={district} value={district}>{district}</option>
                   ))}
@@ -241,16 +231,13 @@ function FindCaregiver() {
               </div>
 
               {/* Rating */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Đánh giá tối thiểu
-                </label>
+              <div className="flex-1 min-w-36">
                 <select
                   value={filters.rating}
                   onChange={(e) => handleFilterChange('rating', parseInt(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
                 >
-                  <option value="0">Tất cả</option>
+                  <option value="0">Đánh giá</option>
                   {RATING_OPTIONS.map(rating => (
                     <option key={rating} value={rating}>{rating}⭐ trở lên</option>
                   ))}
@@ -258,16 +245,13 @@ function FindCaregiver() {
               </div>
 
               {/* Experience */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Năm kinh nghiệm
-                </label>
+              <div className="flex-1 min-w-40">
                 <select
                   value={filters.experience}
                   onChange={(e) => handleFilterChange('experience', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
                 >
-                  <option value="">Tất cả</option>
+                  <option value="">Kinh nghiệm</option>
                   {EXPERIENCE_RANGES.map(range => (
                     <option key={range.label} value={range.label}>{range.label}</option>
                   ))}
@@ -275,63 +259,55 @@ function FindCaregiver() {
               </div>
 
               {/* Price Range */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Giá / giờ
-                </label>
-                <div className="flex flex-col gap-2">
-                  <input
-                    type="number"
-                    min="0"
-                    value={filters.priceMin}
-                    onChange={(e) => {
-                      const newMin = parseInt(e.target.value) || 0;
-                      if (newMin <= filters.priceMax) {
-                        handleFilterChange('priceMin', newMin);
-                      }
-                    }}
-                    placeholder="Từ"
-                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-                  />
-                  <span className="text-gray-400 text-sm">-</span>
-                  <input
-                    type="number"
-                    max="1000000"
-                    value={filters.priceMax}
-                    onChange={(e) => {
-                      const newMax = parseInt(e.target.value) || 1000000;
-                      if (newMax >= filters.priceMin) {
-                        handleFilterChange('priceMax', newMax);
-                      }
-                    }}
-                    placeholder="Đến"
-                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-                  />
-                </div>
+              <div className="flex gap-2 min-w-48">
+                <input
+                  type="number"
+                  min="0"
+                  value={filters.priceMin}
+                  onChange={(e) => {
+                    const newMin = parseInt(e.target.value) || 0;
+                    if (newMin <= filters.priceMax) {
+                      handleFilterChange('priceMin', newMin);
+                    }
+                  }}
+                  placeholder="Từ"
+                  className="flex-1 px-2 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                />
+                <input
+                  type="number"
+                  max="1000000"
+                  value={filters.priceMax}
+                  onChange={(e) => {
+                    const newMax = parseInt(e.target.value) || 1000000;
+                    if (newMax >= filters.priceMin) {
+                      handleFilterChange('priceMax', newMax);
+                    }
+                  }}
+                  placeholder="Đến"
+                  className="flex-1 px-2 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                />
               </div>
 
               {/* Action Buttons */}
-              <div className="space-y-2">
-                <Button
-                  onClick={handleSearch}
-                  variant="primary"
-                  className="w-full"
-                >
-                  Tìm kiếm
-                </Button>
-                <Button
-                  onClick={handleReset}
-                  variant="secondary"
-                  className="w-full"
-                >
-                  Đặt lại
-                </Button>
-              </div>
+              <Button
+                onClick={handleSearch}
+                variant="primary"
+                className="px-4 py-2 text-sm text-white"
+              >
+                Tìm
+              </Button>
+              <Button
+                onClick={handleReset}
+                variant="secondary"
+                className="px-4 py-2 text-sm"
+              >
+                Đặt lại
+              </Button>
             </div>
           </div>
 
           {/* Results */}
-          <div className="lg:col-span-3">
+          <div>
             {/* Loading State */}
             {loading ? (
               <div className="bg-white rounded-lg shadow-sm p-12 text-center">

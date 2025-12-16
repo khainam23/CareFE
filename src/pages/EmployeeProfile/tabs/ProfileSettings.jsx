@@ -30,6 +30,7 @@ const ProfileSettings = () => {
     certifications: '',
     experienceYears: '',
     language: 'vi',
+    hourlyRate: 120000
   });
 
   const [formData, setFormData] = useState(profileData);
