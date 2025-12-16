@@ -179,7 +179,7 @@ const BookingsList = () => {
             Manage all bookings in the system
           </p>
         </div>
-        <Button onClick={handleCreate}>
+        <Button onClick={handleCreate} className="text-white flex">
           <Plus size={20} className="mr-2" />
           Create Booking
         </Button>

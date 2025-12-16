@@ -142,10 +142,11 @@ const FormModal = ({
                 variant="secondary"
                 onClick={onClose}
                 disabled={loading}
+                className='px-5'
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={loading}>
+              <Button type="submit" disabled={loading} className='text-white px-5'>
                 {loading ? 'Saving...' : 'Save'}
               </Button>
             </div>

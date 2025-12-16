@@ -238,7 +238,7 @@ const UsersList = () => {
             Manage all users in the system
           </p>
         </div>
-        <Button onClick={handleCreate} className="w-30 align-cetner flex">
+        <Button onClick={handleCreate} className="w-30 text-white align-cetner flex">
           <Plus size={20} className="mr-2" />
           Create User
         </Button>
