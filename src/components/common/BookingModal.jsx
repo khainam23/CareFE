@@ -353,7 +353,7 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
                 type="button"
                 onClick={handleSystemPayment}
                 variant="primary"
-                className="flex-1"
+                className="flex-1 text-white"
                 disabled={loading}
               >
                 {loading ? 'Đang xử lý...' : 'Thanh toán ngay'}
@@ -643,7 +643,7 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
             <Button
               type="submit"
               variant="primary"
-              className="flex-1"
+              className="flex-1 text-white"
               disabled={loading || totalHours <= 0}
             >
               {loading ? 'Đang xử lý...' : 'Đặt lịch và thanh toán'}
