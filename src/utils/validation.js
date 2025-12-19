@@ -88,6 +88,53 @@ export const validateCaregiverForm = (formData) => {
   };
 };
 
+export const validateCaregiverStep = (step, formData) => {
+  const errors = {};
+
+  switch (step) {
+    case 1:
+      if (!validateFullName(formData.fullName)) {
+        errors.fullName = 'Họ tên phải từ 2-100 ký tự';
+      }
+      if (!validateIdCard(formData.idCardNumber)) {
+        errors.idCardNumber = 'Số CMND/CCCD phải có 9-12 chữ số';
+      }
+      break;
+
+    case 2:
+      if (!validatePassword(formData.password)) {
+        errors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
+      }
+      break;
+
+    case 3:
+      if (!validateEmail(formData.email)) {
+        errors.email = 'Email không hợp lệ';
+      }
+      if (!validatePhone(formData.phoneNumber)) {
+        errors.phoneNumber = 'Số điện thoại không hợp lệ';
+      }
+      break;
+
+    case 4:
+      if (!validateRequired(formData.address)) {
+        errors.address = 'Địa chỉ không được để trống';
+      }
+      break;
+
+    case 5:
+      break;
+
+    default:
+      break;
+  }
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors
+  };
+};
+
 export default {
   validateEmail,
   validatePhone,
@@ -96,5 +143,6 @@ export default {
   validateIdCard,
   validateRequired,
   validateCustomerForm,
-  validateCaregiverForm
+  validateCaregiverForm,
+  validateCaregiverStep
 };

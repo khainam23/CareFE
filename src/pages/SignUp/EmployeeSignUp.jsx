@@ -15,7 +15,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useAuthStore } from '../../store/authStore';
-import { validateCaregiverForm } from '../../utils/validation';
+import { validateCaregiverForm, validateCaregiverStep } from '../../utils/validation';
 import DatePickerInput from '@/components/DatePickerInput';
 import { authService } from '../../services/authService';
 
@@ -46,6 +46,7 @@ const EMPLOYEE_STEPS = [
 export default function EmployeeSignUp({ onBack, onComplete }) {
   const navigate = useNavigate();
   const { registerCaregiver, loading } = useAuthStore();
+  const [currentStep, setCurrentStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [errors, setErrors] = useState({});
@@ -94,6 +95,7 @@ export default function EmployeeSignUp({ onBack, onComplete }) {
   };
 
   const [isExtracting, setIsExtracting] = useState(false);
+  const [extractedFields, setExtractedFields] = useState(new Set());
 
   const handleImageChange = async (field, file) => {
     if (file) {
@@ -128,7 +130,26 @@ export default function EmployeeSignUp({ onBack, onComplete }) {
           if (response.success && response.data) {
             const data = response.data;
             
-            // Map EKYC data to form fields
+            const fieldsToMark = new Set(extractedFields);
+            
+            if (data.name) {
+              fieldsToMark.add('fullName');
+            }
+            if (data.idNumber) {
+              fieldsToMark.add('idCardNumber');
+            }
+            if (data.dob) {
+              fieldsToMark.add('dateOfBirth');
+            }
+            if (data.sex) {
+              fieldsToMark.add('gender');
+            }
+            if (data.residenceAddress) {
+              fieldsToMark.add('address');
+            }
+            
+            setExtractedFields(fieldsToMark);
+            
             setFormData(prev => ({
               ...prev,
               fullName: data.name || prev.fullName,
@@ -136,7 +157,6 @@ export default function EmployeeSignUp({ onBack, onComplete }) {
               dateOfBirth: data.dob ? convertDateFormat(data.dob) : prev.dateOfBirth,
               gender: mapGender(data.sex) || prev.gender,
               address: data.residenceAddress || prev.address,
-              // Try to extract city/ward from address if possible, or leave for user
             }));
 
             Swal.fire({
@@ -185,9 +205,45 @@ export default function EmployeeSignUp({ onBack, onComplete }) {
     return 'other';
   };
 
+  const handleNext = () => {
+    const validation = validateCaregiverStep(currentStep, formData);
+    if (!validation.isValid) {
+      setErrors(validation.errors);
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi validation',
+        text: 'Vui lòng kiểm tra lại thông tin đã nhập',
+        confirmButtonColor: '#22c55e',
+      });
+      return;
+    }
+
+    setErrors({});
+    setCurrentStep(currentStep + 1);
+  };
+
+  const handleBack = () => {
+    if (currentStep > 1) {
+      setErrors({});
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    const validation = validateCaregiverStep(currentStep, formData);
+    if (!validation.isValid) {
+      setErrors(validation.errors);
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi validation',
+        text: 'Vui lòng kiểm tra lại thông tin đã nhập',
+        confirmButtonColor: '#22c55e',
+      });
+      return;
+    }
+
     if (!agreedToTerms) {
       Swal.fire({
         icon: 'warning',
@@ -212,10 +268,10 @@ export default function EmployeeSignUp({ onBack, onComplete }) {
       certifications: formData.certifications || undefined
     };
 
-    // Validate form
-    const validation = validateCaregiverForm(caregiverData);
-    if (!validation.isValid) {
-      setErrors(validation.errors);
+    // Validate full form
+    const fullValidation = validateCaregiverForm(caregiverData);
+    if (!fullValidation.isValid) {
+      setErrors(fullValidation.errors);
       Swal.fire({
         icon: 'error',
         title: 'Lỗi validation',
@@ -234,7 +290,7 @@ export default function EmployeeSignUp({ onBack, onComplete }) {
           text: 'Hồ sơ của bạn đang được xem xét. Chúng tôi sẽ liên hệ sớm.',
           confirmButtonColor: '#22c55e',
         }).then(() => {
-          navigate('/dashboard'); // Redirect to dashboard
+          navigate('/dashboard');
         });
       }
     } catch (error) {
@@ -248,6 +304,61 @@ export default function EmployeeSignUp({ onBack, onComplete }) {
     }
   };
 
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <Step1Employee 
+            formData={formData} 
+            onChange={handleInputChange} 
+            errors={errors}
+            imagePreviews={imagePreviews}
+            onImageChange={handleImageChange}
+            extractedFields={extractedFields}
+          />
+        );
+      case 2:
+        return (
+          <Step2Employee 
+            formData={formData} 
+            onChange={handleInputChange} 
+            errors={errors}
+            showPassword={showPassword} 
+            setShowPassword={setShowPassword} 
+          />
+        );
+      case 3:
+        return (
+          <Step3Employee 
+            formData={formData} 
+            onChange={handleInputChange} 
+            errors={errors} 
+          />
+        );
+      case 4:
+        return (
+          <Step4Employee 
+            formData={formData} 
+            onChange={handleInputChange} 
+            errors={errors}
+            extractedFields={extractedFields}
+          />
+        );
+      case 5:
+        return (
+          <Step5Employee 
+            formData={formData} 
+            onChange={handleInputChange} 
+            errors={errors}
+            imagePreviews={imagePreviews}
+            onImageChange={handleImageChange}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto">
       {/* Progress Indicator */}
@@ -256,16 +367,18 @@ export default function EmployeeSignUp({ onBack, onComplete }) {
           {EMPLOYEE_STEPS.map((step, index) => (
             <div key={step.id} className="flex items-center">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-                  index === 0
-                    ? 'bg-green-500 '
+                className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition ${
+                  step.id <= currentStep
+                    ? 'bg-green-500 text-white'
                     : 'bg-gray-200 text-gray-600'
                 }`}
               >
                 {step.id}
               </div>
               {index < EMPLOYEE_STEPS.length - 1 && (
-                <div className="w-12 h-1 mx-2 bg-gray-300" />
+                <div className={`w-12 h-1 mx-2 transition ${
+                  step.id < currentStep ? 'bg-green-500' : 'bg-gray-300'
+                }`} />
               )}
             </div>
           ))}
@@ -273,142 +386,83 @@ export default function EmployeeSignUp({ onBack, onComplete }) {
       </div>
 
       {/* Form Content */}
-      <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Section 1: Personal Information */}
+      <form onSubmit={currentStep === 5 ? handleSubmit : (e) => { e.preventDefault(); handleNext(); }} className="space-y-8">
+        {/* Current Step Content */}
         <div className="p-6 bg-white border-2 border-gray-200 rounded-lg">
           <h2 className="pb-2 mb-4 text-lg font-semibold border-b border-gray-300">
-            {EMPLOYEE_STEPS[0].title}
+            {EMPLOYEE_STEPS[currentStep - 1].title}
           </h2>
           <p className="mb-4 text-sm text-gray-600">
-            {EMPLOYEE_STEPS[0].description}
+            {EMPLOYEE_STEPS[currentStep - 1].description}
           </p>
-          <Step1Employee 
-            formData={formData} 
-            onChange={handleInputChange} 
-            errors={errors}
-            imagePreviews={imagePreviews}
-            onImageChange={handleImageChange}
-          />
+          {renderStepContent()}
         </div>
 
-        {/* Section 2: Account Information */}
-        <div className="p-6 bg-white border-2 border-gray-200 rounded-lg">
-          <h2 className="pb-2 mb-4 text-lg font-semibold border-b border-gray-300">
-            {EMPLOYEE_STEPS[1].title}
-          </h2>
-          <p className="mb-4 text-sm text-gray-600">
-            {EMPLOYEE_STEPS[1].description}
-          </p>
-          <Step2Employee 
-            formData={formData} 
-            onChange={handleInputChange} 
-            errors={errors}
-            showPassword={showPassword} 
-            setShowPassword={setShowPassword} 
-          />
-        </div>
-
-        {/* Section 3: Contact Information */}
-        <div className="p-6 bg-white border-2 border-gray-200 rounded-lg">
-          <h2 className="pb-2 mb-4 text-lg font-semibold border-b border-gray-300">
-            {EMPLOYEE_STEPS[2].title}
-          </h2>
-          <p className="mb-4 text-sm text-gray-600">
-            {EMPLOYEE_STEPS[2].description}
-          </p>
-          <Step3Employee 
-            formData={formData} 
-            onChange={handleInputChange} 
-            errors={errors} 
-          />
-        </div>
-
-        {/* Section 4: Address */}
-        <div className="p-6 bg-white border-2 border-gray-200 rounded-lg">
-          <h2 className="pb-2 mb-4 text-lg font-semibold border-b border-gray-300">
-            {EMPLOYEE_STEPS[3].title}
-          </h2>
-          <p className="mb-4 text-sm text-gray-600">
-            {EMPLOYEE_STEPS[3].description}
-          </p>
-          <Step4Employee 
-            formData={formData} 
-            onChange={handleInputChange} 
-            errors={errors} 
-          />
-        </div>
-
-        {/* Section 5: Job Options */}
-        <div className="p-6 bg-white border-2 border-gray-200 rounded-lg">
-          <h2 className="pb-2 mb-4 text-lg font-semibold border-b border-gray-300">
-            {EMPLOYEE_STEPS[4].title}
-          </h2>
-          <p className="mb-4 text-sm text-gray-600">
-            {EMPLOYEE_STEPS[4].description}
-          </p>
-          <Step5Employee 
-            formData={formData} 
-            onChange={handleInputChange} 
-            errors={errors}
-            imagePreviews={imagePreviews}
-            onImageChange={handleImageChange}
-          />
-        </div>
-
-        {/* Terms Agreement */}
-        <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
-          <input
-            type="checkbox"
-            id="terms"
-            checked={agreedToTerms}
-            onChange={(e) => setAgreedToTerms(e.target.checked)}
-            className="w-5 h-5 rounded cursor-pointer"
-          />
-          <label htmlFor="terms" className="cursor-pointer text-sm text-gray-700">
-            Tôi đồng ý với
-            <a href="#" className="text-green-500 hover:text-green-600 mx-1">
-              điều khoản dịch vụ
-            </a>
-            và
-            <a href="#" className="text-green-500 hover:text-green-600 mx-1">
-              chính sách bảo mật
-            </a>
-          </label>
-        </div>
+        {/* Terms Agreement - Show only on last step */}
+        {currentStep === 5 && (
+          <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <input
+              type="checkbox"
+              id="terms"
+              checked={agreedToTerms}
+              onChange={(e) => setAgreedToTerms(e.target.checked)}
+              className="w-5 h-5 rounded cursor-pointer"
+            />
+            <label htmlFor="terms" className="cursor-pointer text-sm text-gray-700">
+              Tôi đồng ý với
+              <a href="#" className="text-green-500 hover:text-green-600 mx-1">
+                điều khoản dịch vụ
+              </a>
+              và
+              <a href="#" className="text-green-500 hover:text-green-600 mx-1">
+                chính sách bảo mật
+              </a>
+            </label>
+          </div>
+        )}
 
         {/* Buttons */}
         <div className="flex justify-end gap-4 pt-4">
           <button
             type="button"
-            onClick={onBack}
+            onClick={currentStep === 1 ? onBack : handleBack}
             className="px-6 py-2 transition bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
           >
-            Quay lại
+            {currentStep === 1 ? 'Quay lại' : 'Quay lại'}
           </button>
-          <button
-            type="submit"
-            disabled={!agreedToTerms || loading}
-            className={`px-6 py-2  transition rounded-lg ${
-              agreedToTerms && !loading
-                ? 'bg-green-500 hover:bg-green-600 cursor-pointer'
-                : 'bg-gray-400 cursor-not-allowed'
-            }`}
-          >
-            {loading ? 'Đang xử lý...' : 'Hoàn tất'}
-          </button>
+          {currentStep < 5 ? (
+            <button
+              type="submit"
+              className="px-6 py-2 transition bg-green-500 hover:bg-green-600 text-white rounded-lg cursor-pointer"
+            >
+              Tiếp theo
+            </button>
+          ) : (
+            <button
+              type="submit"
+              disabled={!agreedToTerms || loading}
+              className={`px-6 py-2 transition rounded-lg ${
+                agreedToTerms && !loading
+                  ? 'bg-green-500 hover:bg-green-600 cursor-pointer text-white'
+                  : 'bg-gray-400 cursor-not-allowed text-white'
+              }`}
+            >
+              {loading ? 'Đang xử lý...' : 'Hoàn tất'}
+            </button>
+          )}
         </div>
       </form>
     </div>
   );
 }
 
-function Step1Employee({ formData, onChange, errors, imagePreviews, onImageChange }) {
+function Step1Employee({ formData, onChange, errors, imagePreviews, onImageChange, extractedFields = new Set() }) {
   return (
     <div className="space-y-4">
       {/* Tên đầy đủ */}
       <div>
         <label className="block mb-2 text-sm font-medium text-gray-700">
-          Tên đầy đủ *
+          Tên đầy đủ * {extractedFields.has('fullName') && <span className="text-xs text-green-600">(từ CCCD)</span>}
         </label>
         <div className="relative">
           <User className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
@@ -416,8 +470,11 @@ function Step1Employee({ formData, onChange, errors, imagePreviews, onImageChang
             type="text"
             value={formData.fullName}
             onChange={(e) => onChange('fullName', e.target.value)}
+            disabled={extractedFields.has('fullName')}
             className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none ${
-              errors.fullName ? 'border-red-500' : 'border-gray-300'
+              extractedFields.has('fullName')
+                ? 'bg-gray-100 cursor-not-allowed border-gray-300'
+                : errors.fullName ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="Nguyễn Văn A"
           />
@@ -430,7 +487,7 @@ function Step1Employee({ formData, onChange, errors, imagePreviews, onImageChang
       {/* Số CCCD/CMND */}
       <div>
         <label className="block mb-2 text-sm font-medium text-gray-700">
-          Số CCCD/CMND *
+          Số CCCD/CMND * {extractedFields.has('idCardNumber') && <span className="text-xs text-green-600">(từ CCCD)</span>}
         </label>
         <div className="relative">
           <FileText className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
@@ -438,8 +495,11 @@ function Step1Employee({ formData, onChange, errors, imagePreviews, onImageChang
             type="text"
             value={formData.idCardNumber}
             onChange={(e) => onChange('idCardNumber', e.target.value)}
+            disabled={extractedFields.has('idCardNumber')}
             className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none ${
-              errors.idCardNumber ? 'border-red-500' : 'border-gray-300'
+              extractedFields.has('idCardNumber')
+                ? 'bg-gray-100 cursor-not-allowed border-gray-300'
+                : errors.idCardNumber ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="079123456789"
           />
@@ -453,28 +513,34 @@ function Step1Employee({ formData, onChange, errors, imagePreviews, onImageChang
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block mb-2 text-sm font-medium text-gray-700">
-            Ngày sinh
+            Ngày sinh {extractedFields.has('dateOfBirth') && <span className="text-xs text-green-600">(từ CCCD)</span>}
           </label>
           <div className="relative">
             <Calendar className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
             <DatePickerInput
               value={formData.dateOfBirth}
               onChange={(value) => onChange('dateOfBirth', value)}
-              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none cursor-pointer"
+              disabled={extractedFields.has('dateOfBirth')}
+              className={`w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none cursor-pointer ${
+                extractedFields.has('dateOfBirth') ? 'bg-gray-100 cursor-not-allowed' : ''
+              }`}
             />
           </div>
         </div>
 
         <div>
           <label className="block mb-2 text-sm font-medium text-gray-700">
-            Giới tính
+            Giới tính {extractedFields.has('gender') && <span className="text-xs text-green-600">(từ CCCD)</span>}
           </label>
           <div className="relative">
             <Users className="absolute left-3 top-2.5 w-5 h-5 text-gray-400 pointer-events-none" />
             <select 
               value={formData.gender}
               onChange={(e) => onChange('gender', e.target.value)}
-              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none appearance-none"
+              disabled={extractedFields.has('gender')}
+              className={`w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none appearance-none ${
+                extractedFields.has('gender') ? 'bg-gray-100 cursor-not-allowed' : ''
+              }`}
             >
               <option value="">Chọn giới tính</option>
               <option value="male">Nam</option>
@@ -659,7 +725,7 @@ function Step3Employee({ formData, onChange, errors }) {
   );
 }
 
-function Step4Employee({ formData, onChange, errors }) {
+function Step4Employee({ formData, onChange, errors, extractedFields = new Set() }) {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -696,7 +762,7 @@ function Step4Employee({ formData, onChange, errors }) {
       </div>
       <div>
         <label className="block mb-2 text-sm font-medium text-gray-700">
-          Địa chỉ cụ thể *
+          Địa chỉ cụ thể * {extractedFields.has('address') && <span className="text-xs text-green-600">(từ CCCD)</span>}
         </label>
         <div className="relative">
           <MapPin className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
@@ -704,8 +770,11 @@ function Step4Employee({ formData, onChange, errors }) {
             type="text"
             value={formData.address}
             onChange={(e) => onChange('address', e.target.value)}
+            disabled={extractedFields.has('address')}
             className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none ${
-              errors.address ? 'border-red-500' : 'border-gray-300'
+              extractedFields.has('address')
+                ? 'bg-gray-100 cursor-not-allowed border-gray-300'
+                : errors.address ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="123 Đường ABC"
           />
