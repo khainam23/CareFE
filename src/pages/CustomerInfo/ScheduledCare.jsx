@@ -4,6 +4,7 @@ import { customerService } from '@/services/customerService';
 import chatService from '@/services/chatService';
 import ChatWindow from '@/components/chat/ChatWindow';
 import { useAuthStore } from '@/store/authStore';
+import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
 const ScheduledCare = () => {
@@ -16,6 +17,7 @@ const ScheduledCare = () => {
   const [chatRetries, setChatRetries] = useState({}); // Track retry counts
   const { user } = useAuthStore();
 
+
   // Fetch bookings on mount
   useEffect(() => {
     fetchBookings();
@@ -26,9 +28,9 @@ const ScheduledCare = () => {
       setLoading(true);
       setError(null);
       const response = await customerService.getBookings();
-      
+
       console.log('Bookings response:', response);
-      
+
       if (response.success && response.data) {
         // Transform API data to match component structure
         const transformedData = response.data.map(booking => ({
@@ -51,7 +53,7 @@ const ScheduledCare = () => {
       console.error('Error fetching bookings:', error);
       const errorMessage = error.response?.data?.message || error.message || 'Không thể tải lịch chăm sóc';
       setError(errorMessage);
-      
+
       Swal.fire({
         icon: 'error',
         title: 'Lỗi tải dữ liệu',
@@ -114,7 +116,7 @@ const ScheduledCare = () => {
         setAppointments(appointments.map(apt =>
           apt.id === id ? { ...apt, rating } : apt
         ));
-        
+
         Swal.fire({
           icon: 'success',
           title: 'Cảm ơn!',
@@ -149,13 +151,13 @@ const ScheduledCare = () => {
     if (result.isConfirmed) {
       try {
         const response = await customerService.cancelBooking(id, result.value || '');
-        
+
         if (response.success) {
           // Update local state
           setAppointments(appointments.map(apt =>
             apt.id === id ? { ...apt, status: 'cancelled' } : apt
           ));
-          
+
           Swal.fire({
             icon: 'success',
             title: 'Đã hủy',
@@ -192,13 +194,13 @@ const ScheduledCare = () => {
       }
 
       console.log('Opening chat for booking ID:', appointmentId);
-      
+
       // Try to create chat room first (will create if not exists)
       try {
         console.log('Creating chat room for booking:', appointmentId);
         const createResponse = await chatService.createChatRoomForBooking(appointmentId);
         console.log('Create chat room response:', createResponse);
-        
+
         if (createResponse?.data && createResponse.data.id) {
           const chatRoom = createResponse.data;
           console.log('Chat room created/retrieved successfully, ID:', chatRoom.id);
@@ -212,13 +214,13 @@ const ScheduledCare = () => {
       } catch (createErr) {
         console.warn('Failed to create chat room, trying to fetch existing:', createErr);
       }
-      
+
       // Fallback: Try to fetch existing chat room
       const chatRoomResponse = await chatService.getChatRoomByBooking(appointmentId);
       console.log('Chat room response:', chatRoomResponse);
-      
+
       const chatRoom = chatRoomResponse?.data;
-      
+
       if (chatRoom && chatRoom.id) {
         console.log('Chat room loaded, ID:', chatRoom.id);
         setChatRooms(prev => ({
@@ -250,7 +252,7 @@ const ScheduledCare = () => {
       console.error('Error opening chat:', err);
       console.error('Error response:', err.response?.data);
       console.error('Error message:', err.message);
-      
+
       const errorMessage = err.response?.data?.message || 'Không thể mở chat với caregiver';
       Swal.fire({
         icon: 'error',
@@ -381,9 +383,8 @@ const ScheduledCare = () => {
                   {getStatusBadge(appointment.status)}
                   <ChevronDown
                     size={20}
-                    className={`text-gray-400 transition-transform ${
-                      expandedId === appointment.id ? 'rotate-180' : ''
-                    }`}
+                    className={`text-gray-400 transition-transform ${expandedId === appointment.id ? 'rotate-180' : ''
+                      }`}
                   />
                 </div>
               </button>
@@ -412,11 +413,10 @@ const ScheduledCare = () => {
                                 <Star
                                   key={star}
                                   size={28}
-                                  className={`cursor-pointer transition-colors ${
-                                    star <= appointment.rating
+                                  className={`cursor-pointer transition-colors ${star <= appointment.rating
                                       ? 'fill-yellow-400 text-yellow-400'
                                       : 'text-gray-300'
-                                  }`}
+                                    }`}
                                 />
                               ))}
                             </div>
@@ -454,11 +454,10 @@ const ScheduledCare = () => {
                       )}
                       <button
                         onClick={() => handleOpenChat(appointment.id)}
-                        className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors font-bold text-base ${
-                          openChatIds.has(appointment.id)
+                        className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors font-bold text-base ${openChatIds.has(appointment.id)
                             ? 'bg-blue-700 '
                             : 'bg-blue-600  hover:bg-blue-700'
-                        }`}
+                          }`}
                       >
                         <MessageCircle size={18} />
                         {openChatIds.has(appointment.id) ? 'Đóng chat' : 'Chat'}
@@ -498,10 +497,12 @@ const ScheduledCare = () => {
 
       {/* Booking Button */}
       <div className="flex justify-end">
-        <button className="px-8 py-4 bg-teal-600 rounded-lg hover:bg-teal-700 transition-colors font-bold text-lg flex items-center gap-2  shadow-lg">
-          <Calendar size={24} />
-          Đặt buổi chăm sóc mới
-        </button>
+        <Link to="/tim-kiem-chuyen-vien">
+          <button className="px-8 text-white py-4 bg-teal-600 rounded-lg hover:bg-teal-700 transition-colors font-bold text-lg flex items-center gap-2  shadow-lg">
+            <Calendar size={24} />
+            Đặt buổi chăm sóc mới
+          </button>
+        </Link>
       </div>
     </div>
   );
