@@ -7,14 +7,14 @@ import ScheduledCare from './ScheduledCare';
 const CustomerInfo = () => {
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('profile');
+  const tabParam = searchParams.get('tab');
 
   // Đọc query parameter để tự động chuyển tab
   useEffect(() => {
-    const tabParam = searchParams.get('tab');
     if (tabParam === 'schedule') {
       setActiveTab('schedule');
     }
-  }, [searchParams]);
+  }, [tabParam]);
 
   const tabs = [
     {
