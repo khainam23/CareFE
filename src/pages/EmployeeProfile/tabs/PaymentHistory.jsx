@@ -20,36 +20,9 @@ const PaymentHistory = () => {
   const fetchPayments = async () => {
     try {
       setLoading(true);
-      // Thử lấy từ payments API trước
-      try {
-        const response = await caregiverService.getPayments();
-        if (response.success && response.data) {
-          setPayments(response.data);
-          return;
-        }
-      } catch (paymentErr) {
-        console.warn('Payments API not available, using bookings instead');
-      }
-      
-      // Fallback: Lấy từ bookings đã hoàn thành
-      const bookingsResponse = await caregiverService.getBookings();
-      if (bookingsResponse.success) {
-        const completedBookings = bookingsResponse.data.filter(b => b.status === 'COMPLETED');
-        const mappedPayments = completedBookings.map(booking => ({
-          id: booking.id,
-          transactionId: `TXN${booking.id}`,
-          bookingId: booking.id,
-          bookingCode: booking.bookingCode,
-          amount: booking.totalPrice || 0,
-          paymentMethod: 'BANK_TRANSFER',
-          status: 'COMPLETED',
-          paidAt: booking.actualEndTime || booking.updatedAt,
-          notes: `Thanh toán cho ${booking.serviceName || 'dịch vụ chăm sóc'}`,
-          createdAt: booking.createdAt,
-          customerName: booking.customerName || 'Khách hàng',
-          serviceName: booking.serviceName || 'Dịch vụ chăm sóc',
-        }));
-        setPayments(mappedPayments);
+      const response = await caregiverService.getPayments();
+      if (response.success && response.data) {
+        setPayments(response.data);
       }
     } catch (err) {
       console.error('Error fetching payments:', err);
