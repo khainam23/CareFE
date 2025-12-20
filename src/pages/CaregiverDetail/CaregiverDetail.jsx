@@ -139,6 +139,8 @@ function CaregiverDetail() {
           confirmButtonColor: '#14b8a6'
         });
         setIsBookingModalOpen(false);
+        // Chuyển đến trang thông tin khách hàng với tab lịch chăm sóc đã đặt
+        navigate('/customer-info?tab=schedule');
       } else {
         throw new Error('Thanh toán không thành công');
       }
@@ -401,7 +403,7 @@ function CaregiverDetail() {
               <h3 className="text-xl font-bold text-gray-900 mb-6">Thông tin giá</h3>
               
               <div className="mb-6">
-                <p className="text-sm text-gray-500 mb-2">Giá theo giờ</p>
+                <p className="text-sm text-gray-500 mb-2">Giá theo giờ từ</p>
                 <p className="text-4xl font-bold text-teal-600">
                   {(caregiver.hourlyRate || 0).toLocaleString()}đ
                 </p>

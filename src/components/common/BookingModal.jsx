@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { X, Calendar, Clock, DollarSign, Briefcase, MapPin, Plus, CreditCard } from 'lucide-react';
 import Button from './Button/Button';
 import DatePickerInput from '@/components/DatePickerInput';
@@ -6,6 +7,7 @@ import { publicService } from '@/services/publicService';
 import { customerService } from '@/services/customerService';
 
 function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     serviceId: '',
     customService: '',
@@ -230,6 +232,8 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
         setShowNewAddressInput(false);
         setNewAddress({ address: '', label: '' });
         onClose();
+        // Chuyển đến trang thông tin khách hàng với tab lịch chăm sóc đã đặt
+        navigate('/customer-info?tab=schedule');
       } else {
         setError('Thanh toán không thành công');
       }
@@ -258,6 +262,8 @@ function BookingModal({ isOpen, onClose, caregiver, onSubmit }) {
     setBookingCreated(null);
     setShowPaymentOptions(false);
     onClose();
+    // Chuyển đến trang thông tin khách hàng với tab lịch chăm sóc đã đặt
+    navigate('/customer-info?tab=schedule');
   };
 
   if (!isOpen) return null;

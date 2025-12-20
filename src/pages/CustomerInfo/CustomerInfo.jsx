@@ -1,10 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { User, Calendar } from 'lucide-react';
 import PersonalProfile from './PersonalProfile';
 import ScheduledCare from './ScheduledCare';
 
 const CustomerInfo = () => {
+  const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('profile');
+
+  // Đọc query parameter để tự động chuyển tab
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'schedule') {
+      setActiveTab('schedule');
+    }
+  }, [searchParams]);
 
   const tabs = [
     {
