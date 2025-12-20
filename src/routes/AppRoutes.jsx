@@ -3,7 +3,7 @@ import {
   Home, NotFound, Login, SignUp, FindCaregiver, CaregiverDetail, About, 
   CustomerInfo, EmployeeProfile, TermsOfService, PrivacyPolicy, PaymentReturn,
   SupportDashboard, SupportBookings, SupportCustomers, SupportCaregivers, SupportReviews,
-  SupportChat
+  SupportChat, Settings
 } from '@pages';
 import MainLayout from '@components/layout/MainLayout';
 import ProtectedRoute from '@components/common/ProtectedRoute';
@@ -101,6 +101,16 @@ const AppRoutes = () => {
             element={
               <ProtectedRoute allowedRoles={['customer']}>
                 <CustomerInfo />
+              </ProtectedRoute>
+            } 
+          />
+
+          {/* Protected Settings - Customer only */}
+          <Route 
+            path={ROUTES.SETTINGS} 
+            element={
+              <ProtectedRoute allowedRoles={['customer']}>
+                <Settings />
               </ProtectedRoute>
             } 
           />
