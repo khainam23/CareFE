@@ -7,15 +7,15 @@ import 'react-datepicker/dist/react-datepicker.css';
 const DISPLAY_FORMAT = 'dd/MM/yyyy';
 const STORAGE_FORMAT = 'yyyy-MM-dd';
 
-const DateInput = forwardRef(({ value, onClick, placeholder = 'dd/mm/yyyy', className, disabled }, ref) => (
+const DateInput = forwardRef(({ value, onClick, placeholder = 'dd/mm/yyyy', className, disabled, onChange }, ref) => (
   <input
     ref={ref}
     onClick={onClick}
     value={value}
     placeholder={placeholder}
-    readOnly
     disabled={disabled}
     className={className}
+    onChange={onChange}
   />
 ));
 
@@ -49,20 +49,33 @@ const DatePickerInput = ({
 }) => {
   const selected = useMemo(() => normalizeValue(value), [value]);
 
+  const handleDateChange = (date) => {
+    if (!date || Number.isNaN(date.getTime())) {
+      onChange('');
+    } else {
+      onChange(format(date, STORAGE_FORMAT));
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const inputValue = e.target.value;
+    const normalized = normalizeValue(inputValue);
+    
+    if (normalized && !Number.isNaN(normalized.getTime())) {
+      handleDateChange(normalized);
+    } else if (inputValue === '') {
+      onChange('');
+    }
+  };
+
   return (
     <DatePicker
       locale={vi}
       selected={selected}
       dateFormat={DISPLAY_FORMAT}
       placeholderText="dd/mm/yyyy"
-      onChange={(date) => {
-        if (!date || Number.isNaN(date.getTime())) {
-          onChange('');
-        } else {
-          onChange(format(date, STORAGE_FORMAT));
-        }
-      }}
-      customInput={<DateInput className={className} disabled={disabled} />}
+      onChange={handleDateChange}
+      customInput={<DateInput className={className} disabled={disabled} onChange={handleInputChange} />}
       disabled={disabled}
       maxDate={maxDate}
       showPopperArrow={false}

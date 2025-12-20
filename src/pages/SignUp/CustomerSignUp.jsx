@@ -319,6 +319,8 @@ function Step1Customer({ formData, onChange, errors }) {
             <DatePickerInput
               value={formData.dateOfBirth}
               onChange={(value) => onChange('dateOfBirth', value)}
+              allowKeyboardInput
+              valueFormat="DD/MM/YYYY"
               className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer"
             />
           </div>
