@@ -124,7 +124,7 @@ const PersonalProfile = () => {
         
         // Update user in auth store if name changed
         if (editForm.name !== profile.name) {
-          updateUser({ name: editForm.name });
+          updateUser({ fullName: editForm.name });
         }
         
         Swal.fire({
